@@ -2,6 +2,7 @@ package com.summer.main;
 
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
+import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.VideoI;
@@ -119,6 +120,25 @@ public class Main {
         }
     }
 
+    @RequestMapping(value = "/getVideoByName",method = RequestMethod.POST)
+    public void getVideoByName(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideoByName(videoBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
     @RequestMapping(value = "/getVideosByContacts",method = RequestMethod.POST)
     public void getVideosByContacts(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
@@ -134,8 +154,24 @@ public class Main {
         }
     }
 
+    @RequestMapping(value = "/commentVideos",method = RequestMethod.POST)
+    public void commentVideos(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        CommentBean commentBean = GsonUtil.getInstance().fromJson(str,CommentBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.commentVideos(commentBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public void init(HttpServletRequest req, HttpServletResponse rep){
+
+
+    public static  void init(HttpServletRequest req, HttpServletResponse rep){
         try {
             req.setCharacterEncoding("UTF-8");
         } catch (UnsupportedEncodingException e) {

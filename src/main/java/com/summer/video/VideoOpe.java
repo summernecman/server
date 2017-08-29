@@ -4,6 +4,7 @@ import com.summer.base.bean.BaseResBean;
 import com.summer.main.DBUtil;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
+import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.bean.VideoBean;
@@ -56,6 +57,37 @@ public class VideoOpe implements VideoI {
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(videos);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideoByName(VideoBean videoBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select * from video WHERE  file = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,videoBean.getFile());
+            set  = ps.executeQuery();
+            while (set.next()){
+                videoBean.setId(set.getInt(set.findColumn("id")));
+                videoBean.setFile(set.getString(set.findColumn("file")));
+                videoBean.setCreated(set.getString(set.findColumn("created")));
+                videoBean.setFromid(set.getInt(set.findColumn("fromid")));
+                videoBean.setToid(set.getInt(set.findColumn("toid")));
+                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
+                videoBean.setTophone(set.getString(set.findColumn("tophone")));
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(videoBean);
         return baseResBean;
     }
 
@@ -130,8 +162,7 @@ public class VideoOpe implements VideoI {
         } finally {
             DBUtil.close(connection,ps,set);
         }
-        baseResBean.setData(videoBean);
-        return baseResBean;
+        return getVideoByName(videoBean);
     }
 
     public BaseResBean getVideosByContacts(UserBean userBean) {
@@ -182,6 +213,34 @@ public class VideoOpe implements VideoI {
             data.add(videoBeen);
         }
         baseResBean.setData(data);
+        return baseResBean;
+    }
+
+    public BaseResBean commentVideos(CommentBean commentBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "insert into comment(rate,tips,remark,created,videoname,fromuser,touser) VALUES (?,?,?,?,?,?,?)";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setFloat(1,commentBean.getRate());
+            ps.setString(2,commentBean.getTips());
+            ps.setString(3,commentBean.getRemark());
+            ps.setString(4,commentBean.getCreated());
+            ps.setString(5,commentBean.getVideoname());
+            ps.setString(6,commentBean.getFromuser());
+            ps.setString(7,commentBean.getTouser());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(commentBean);
         return baseResBean;
     }
 }
