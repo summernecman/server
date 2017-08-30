@@ -74,6 +74,22 @@ public class Main {
     }
 
 
+    @RequestMapping(value = "/getLoginInfo",method = RequestMethod.POST)
+    public void getLoginInfo(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getLoginInfo(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @RequestMapping(value = "/getVideos",method = RequestMethod.POST)
     public void getVideos(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);

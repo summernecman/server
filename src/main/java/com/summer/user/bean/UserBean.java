@@ -21,6 +21,10 @@ public class UserBean extends BaseBean {
 
     private int state;
 
+    private String uuuid;
+
+    private String headurl;
+
     public static final int STATE_OFFLINE  = 0;
 
     public static final int STATE_ONLINE  = 1;
@@ -83,5 +87,21 @@ public class UserBean extends BaseBean {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public String getUuuid() {
+        return uuuid;
+    }
+
+    public void setUuuid(String uuuid) {
+        this.uuuid = uuuid;
+    }
+
+    public String getHeadurl() {
+        return headurl;
+    }
+
+    public void setHeadurl(String headurl) {
+        this.headurl = headurl;
     }
 }

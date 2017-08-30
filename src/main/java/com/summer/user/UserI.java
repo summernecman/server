@@ -24,4 +24,12 @@ public interface UserI  {
 
     public BaseResBean getUserInfoByPhone(UserBean user);
 
+    public BaseResBean getLoginInfo(UserBean user);
+
+    public BaseResBean setLoginInfo(UserBean user);
+
+    public BaseResBean setHeadUrl(UserBean user);
+
+    public BaseResBean setUserName(UserBean user);
+
 }

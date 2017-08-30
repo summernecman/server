@@ -116,14 +116,6 @@ public class UserOpe  implements UserI{
 
     public BaseResBean login(UserBean user) {
         BaseResBean baseResBean = new BaseResBean();
-        UserBean u = (UserBean) getUserState(user).getData();
-        if(u.getState()==UserBean.STATE_ONLINE){
-            baseResBean.setException(true);
-            baseResBean.setErrorMessage("已经有用户登录此账号");
-            return baseResBean;
-        }
-
-        UserBean userBean = new UserBean();
         String str = "select * from user WHERE  phone = ? and pwd = ?";
         PreparedStatement ps = null;
         ResultSet set = null;
@@ -135,12 +127,13 @@ public class UserOpe  implements UserI{
             ps.setString(2,user.getPwd());
             set  = ps.executeQuery();
             while (set.next()){
-                userBean.setId(set.getInt(set.findColumn("id")));
-                userBean.setPhone(set.getString(set.findColumn("phone")));
-                userBean.setPwd(set.getString(set.findColumn("pwd")));
-                userBean.setUsertype(set.getInt(set.findColumn("usertype")));
-                userBean.setBelong(set.getString(set.findColumn("belong")));
-                userBean.setName(set.getString(set.findColumn("name")));
+                user.setId(set.getInt(set.findColumn("id")));
+                user.setPhone(set.getString(set.findColumn("phone")));
+                user.setPwd(set.getString(set.findColumn("pwd")));
+                user.setUsertype(set.getInt(set.findColumn("usertype")));
+                user.setBelong(set.getString(set.findColumn("belong")));
+                user.setName(set.getString(set.findColumn("name")));
+                user.setHeadurl(set.getString(set.findColumn("headurl")));
                 break;
             }
         } catch (NamingException e) {
@@ -150,10 +143,10 @@ public class UserOpe  implements UserI{
         } finally {
             DBUtil.close(connection,ps,set);
         }
-        if(userBean.getPhone()!=null){
-            userBean.setState(UserBean.STATE_ONLINE);
-            //setUserState(userBean);
-            baseResBean.setData(userBean);
+        if(user.getPhone()!=null){
+            baseResBean.setData(user);
+            setLoginInfo(user);
+
         }else{
             baseResBean.setException(true);
         }
@@ -197,6 +190,102 @@ public class UserOpe  implements UserI{
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(userBean);
+        return baseResBean;
+    }
+
+    public BaseResBean getLoginInfo(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select uuuid from user where phone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPhone());
+            set  = ps.executeQuery();
+            while (set.next()){
+                user.setUuuid(set.getString(set.findColumn("uuuid")));
+                break;
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean setLoginInfo(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update user SET uuuid = ? WHERE phone = ? and pwd = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getUuuid());
+            ps.setString(2,user.getPhone());
+            ps.setString(3,user.getPwd());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean setHeadUrl(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update user SET headurl = ? WHERE phone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getHeadurl());
+            ps.setString(2,user.getPhone());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean setUserName(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update user SET name = ? WHERE phone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getName());
+            ps.setString(2,user.getPhone());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
         return baseResBean;
     }
 }
