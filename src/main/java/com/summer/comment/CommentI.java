@@ -9,4 +9,6 @@ import com.summer.user.bean.UserBean;
 public interface CommentI {
 
     public BaseResBean getCommentByUserName(UserBean userBean);
+
+    public BaseResBean getTips(UserBean userBean);
 }

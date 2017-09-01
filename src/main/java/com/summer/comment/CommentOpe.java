@@ -53,4 +53,32 @@ public class CommentOpe implements CommentI {
         baseResBean.setData(comments);
         return baseResBean;
     }
+
+    public BaseResBean getTips(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
+        String str = "select tips from comment WHERE  touser = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,userBean.getPhone());
+            set  = ps.executeQuery();
+            while (set.next()){
+                CommentBean commentBean = new CommentBean();
+                commentBean.setTips(set.getString(set.findColumn("tips")));
+                comments.add(commentBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(comments);
+        return baseResBean;
+    }
 }

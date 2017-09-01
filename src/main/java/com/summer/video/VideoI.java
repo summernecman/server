@@ -21,4 +21,12 @@ public interface VideoI {
     public BaseResBean getVideosByContacts(UserBean userBean);
 
     public BaseResBean commentVideos(CommentBean commentBean);
+
+    public BaseResBean getUserCallInfo(UserBean user);
+
+    public BaseResBean getUserCallInInfo(UserBean user);
+
+    public BaseResBean getUserCallOutInfo(UserBean user);
+
+    public BaseResBean getUserCallTimeInfo(UserBean user);
 }

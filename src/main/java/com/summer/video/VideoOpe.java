@@ -8,6 +8,7 @@ import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.bean.VideoBean;
+import com.summer.video.bean.VideoTimeBean;
 
 import javax.naming.NamingException;
 import java.sql.Connection;
@@ -141,7 +142,7 @@ public class VideoOpe implements VideoI {
 
 
         BaseResBean baseResBean = new BaseResBean();
-        String str = "INSERT  into  video(file,created,fromid,toid,fromphone,tophone) VALUES(?,?,?,?,?,?)";
+        String str = "INSERT  into  video(file,created,fromid,toid,fromphone,tophone,timenum) VALUES(?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -154,6 +155,7 @@ public class VideoOpe implements VideoI {
             ps.setInt(4,touserbean.getId());
             ps.setString(5,videoBean.getFromphone());
             ps.setString(6,videoBean.getTophone());
+            ps.setLong(7,videoBean.getTimenum());
             ps.execute();
         } catch (NamingException e) {
             e.printStackTrace();
@@ -243,4 +245,92 @@ public class VideoOpe implements VideoI {
         baseResBean.setData(commentBean);
         return baseResBean;
     }
+
+    public BaseResBean getUserCallInfo(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        VideoTimeBean videoTimeBean = new VideoTimeBean();
+        videoTimeBean.setTimehours((Long) getUserCallTimeInfo(user).getData());
+        videoTimeBean.setTimein((Integer) getUserCallInInfo(user).getData());
+        videoTimeBean.setTimeout((Integer) getUserCallOutInfo(user).getData());
+        baseResBean.setData(videoTimeBean);
+       return baseResBean;
+    }
+
+    public BaseResBean getUserCallInInfo(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(tophone) from video WHERE tophone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPhone());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserCallOutInfo(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(fromphone) from video WHERE fromphone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPhone());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserCallTimeInfo(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select sum(timenum) from video WHERE fromphone = ? or tophone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPhone());
+            ps.setString(2,user.getPhone());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getLong(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+
 }

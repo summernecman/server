@@ -21,6 +21,8 @@ public class VideoBean extends BaseBean {
 
     private String tophone;
 
+    private long timenum;
+
     public int getId() {
         return id;
     }
@@ -75,5 +77,13 @@ public class VideoBean extends BaseBean {
 
     public void setTophone(String tophone) {
         this.tophone = tophone;
+    }
+
+    public long getTimenum() {
+        return timenum;
+    }
+
+    public void setTimenum(long timenum) {
+        this.timenum = timenum;
     }
 }
