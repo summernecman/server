@@ -1,5 +1,6 @@
 package com.summer.main;
 
+import com.summer.base.bean.BaseResBean;
 import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
 import com.summer.comment.bean.TipBean;
@@ -7,6 +8,7 @@ import com.summer.comment.bean.TipsBean;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
+import com.summer.video.bean.VideoBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,6 +45,22 @@ public class CommentMapping {
     }
 
 
+    @RequestMapping(value = "/getVideoCommentByVideoName",method = RequestMethod.POST)
+    public void getVideoCommentByVideoName(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getVideoCommentByVideoName(videoBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @RequestMapping(value = "/getUserTips",method = RequestMethod.POST)
     public void getUserTips(HttpServletRequest req, HttpServletResponse rep){
         Main.init(req,rep);
@@ -55,7 +73,8 @@ public class CommentMapping {
             TipsBean tipBean = GsonUtil.getInstance().fromJson(comments.get(i).getTips(),TipsBean.class);
             for(int j = 0; j<tipBean.getTipBeen().size(); j++){
                 if(tipBeanHashMap.get(tipBean.getTipBeen().get(j).getPosition())==null){
-                    tipBeanHashMap.put(tipBean.getTipBeen().get(j).getPosition(),new TipBean());
+                    TipBean tipBean1 = new TipBean(tipBean.getTipBeen().get(j).getPosition(),tipBean.getTipBeen().get(j).getTip(),0,false);
+                    tipBeanHashMap.put(tipBean.getTipBeen().get(j).getPosition(),tipBean1);
                 }
                 if(tipBean.getTipBeen().get(j).isSelect()){
                     tipBeanHashMap.get(tipBean.getTipBeen().get(j).getPosition()).setNum(tipBeanHashMap.get(tipBean.getTipBeen().get(j).getPosition()).getNum()+1);
@@ -65,7 +84,9 @@ public class CommentMapping {
 
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(tipBeanHashMap));
+            BaseResBean baseResBean = new BaseResBean();
+            baseResBean.setData(tipBeanHashMap);
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

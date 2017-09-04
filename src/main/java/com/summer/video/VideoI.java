@@ -14,6 +14,8 @@ public interface VideoI {
 
     public BaseResBean getVideoByName(VideoBean videoBean);
 
+    public BaseResBean getVideoByVideoId(VideoBean videoBean);
+
     public BaseResBean getVideosByUserPhone(UserBean userBean);
 
     public BaseResBean addVideo(VideoBean videoBean);

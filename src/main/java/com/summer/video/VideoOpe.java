@@ -92,6 +92,40 @@ public class VideoOpe implements VideoI {
         return baseResBean;
     }
 
+    public BaseResBean getVideoByVideoId(VideoBean v) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
+        String str = "select * from video WHERE  id = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,v.getId());
+            set  = ps.executeQuery();
+            while (set.next()){
+                VideoBean videoBean = new VideoBean();
+                videoBean.setId(set.getInt(set.findColumn("id")));
+                videoBean.setFile(set.getString(set.findColumn("file")));
+                videoBean.setCreated(set.getString(set.findColumn("created")));
+                videoBean.setFromid(set.getInt(set.findColumn("fromid")));
+                videoBean.setToid(set.getInt(set.findColumn("toid")));
+                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
+                videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videos.add(videoBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(videos);
+        return baseResBean;
+    }
+
     public BaseResBean getVideosByUserPhone(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
@@ -170,7 +204,7 @@ public class VideoOpe implements VideoI {
     public BaseResBean getVideosByContacts(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video WHERE  fromphone = ?";
+        String str = "select * from video WHERE  fromphone = ? or tophone = ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -178,6 +212,7 @@ public class VideoOpe implements VideoI {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setString(1,userBean.getPhone());
+            ps.setString(2,userBean.getPhone());
             set  = ps.executeQuery();
             while (set.next()){
                 VideoBean videoBean = new VideoBean();
