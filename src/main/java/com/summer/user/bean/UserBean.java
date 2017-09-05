@@ -7,6 +7,8 @@ import com.summer.base.bean.BaseBean;
  */
 public class UserBean extends BaseBean {
 
+    private String chatid;
+
     private int id;
 
     private String phone;
@@ -103,5 +105,13 @@ public class UserBean extends BaseBean {
 
     public void setHeadurl(String headurl) {
         this.headurl = headurl;
+    }
+
+    public String getChatid() {
+        return chatid;
+    }
+
+    public void setChatid(String chatid) {
+        this.chatid = chatid;
     }
 }

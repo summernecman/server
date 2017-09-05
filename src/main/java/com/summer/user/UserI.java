@@ -3,6 +3,8 @@ package com.summer.user;
 import com.summer.base.bean.BaseResBean;
 import com.summer.user.bean.UserBean;
 
+import java.util.ArrayList;
+
 /**
  * Created by SWSD on 17-08-23.
  */
@@ -31,5 +33,9 @@ public interface UserI  {
     public BaseResBean setHeadUrl(UserBean user);
 
     public BaseResBean setUserName(UserBean user);
+
+    public BaseResBean getUsersInfoByPhone(ArrayList<UserBean> list);
+
+    public BaseResBean getArrayUsersInfoByPhone(ArrayList<ArrayList<UserBean>> list);
 
 }

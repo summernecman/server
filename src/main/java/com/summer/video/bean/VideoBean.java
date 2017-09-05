@@ -1,6 +1,7 @@
 package com.summer.video.bean;
 
 import com.summer.base.bean.BaseBean;
+import com.summer.user.bean.UserBean;
 
 /**
  * Created by SWSD on 17-08-24.
@@ -22,6 +23,10 @@ public class VideoBean extends BaseBean {
     private String tophone;
 
     private long timenum;
+
+    private UserBean fromUser;
+
+    private UserBean toUser;
 
     public int getId() {
         return id;
@@ -85,5 +90,21 @@ public class VideoBean extends BaseBean {
 
     public void setTimenum(long timenum) {
         this.timenum = timenum;
+    }
+
+    public UserBean getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(UserBean fromUser) {
+        this.fromUser = fromUser;
+    }
+
+    public UserBean getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(UserBean toUser) {
+        this.toUser = toUser;
     }
 }

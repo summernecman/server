@@ -11,7 +11,11 @@ public interface CommentI {
 
     public BaseResBean getCommentByUserName(UserBean userBean);
 
+    public BaseResBean getCommentNumByUserName(UserBean userBean);
+
     public BaseResBean getTips(UserBean userBean);
 
     public BaseResBean getVideoCommentByVideoName(VideoBean videoBean);
+
+    public BaseResBean getVideoCommentByVideoNameAndFrom(VideoBean videoBean);
 }

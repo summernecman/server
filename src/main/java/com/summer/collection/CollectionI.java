@@ -13,6 +13,8 @@ public interface CollectionI {
 
     public BaseResBean getCollectionsByUserId(UserBean userBean);
 
+    public BaseResBean getCollectionNumByUserId(UserBean userBean);
+
     public BaseResBean getCollectionVideosByUserId(UserBean userBean);
 
 

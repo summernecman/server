@@ -1,5 +1,6 @@
 package com.summer.main;
 
+import com.google.gson.reflect.TypeToken;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 /**
  * Created by SWSD on 2017-07-19.
@@ -42,6 +44,8 @@ public class Main {
             e.printStackTrace();
         }
     }
+
+
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public void login(HttpServletRequest req, HttpServletResponse rep){

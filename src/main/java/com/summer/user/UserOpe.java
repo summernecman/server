@@ -167,19 +167,19 @@ public class UserOpe  implements UserI{
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
-        UserBean userBean = new UserBean();
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setString(1,user.getPhone());
             set  = ps.executeQuery();
             while (set.next()){
-                userBean.setId(set.getInt(set.findColumn("id")));
-                userBean.setPhone(set.getString(set.findColumn("phone")));
-                userBean.setPwd(set.getString(set.findColumn("pwd")));
-                userBean.setUsertype(set.getInt(set.findColumn("usertype")));
-                userBean.setBelong(set.getString(set.findColumn("belong")));
-                userBean.setName(set.getString(set.findColumn("name")));
+                user.setId(set.getInt(set.findColumn("id")));
+                user.setPhone(set.getString(set.findColumn("phone")));
+                user.setPwd(set.getString(set.findColumn("pwd")));
+                user.setUsertype(set.getInt(set.findColumn("usertype")));
+                user.setBelong(set.getString(set.findColumn("belong")));
+                user.setName(set.getString(set.findColumn("name")));
+                user.setHeadurl(set.getString(set.findColumn("headurl")));
                 break;
             }
         } catch (NamingException e) {
@@ -189,7 +189,7 @@ public class UserOpe  implements UserI{
         } finally {
             DBUtil.close(connection,ps,set);
         }
-        baseResBean.setData(userBean);
+        baseResBean.setData(user);
         return baseResBean;
     }
 
@@ -286,6 +286,28 @@ public class UserOpe  implements UserI{
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean getUsersInfoByPhone(ArrayList<UserBean> list) {
+        BaseResBean baseResBean = new BaseResBean();
+        for(int i=0;list!=null && i<list.size();i++){
+            UserBean userBean = (UserBean) getUserInfoByPhone(list.get(i)).getData();
+            list.set(i,userBean);
+        }
+        baseResBean.setData(list);
+        return baseResBean;
+    }
+
+    public BaseResBean getArrayUsersInfoByPhone(ArrayList<ArrayList<UserBean>> list) {
+        BaseResBean baseResBean = new BaseResBean();
+        for(int i=0;list!=null && i<list.size();i++){
+            for(int j=0;j<list.get(i).size();j++){
+                UserBean userBean = (UserBean) getUserInfoByPhone(list.get(i).get(j)).getData();
+                list.get(i).set(j,userBean);
+            }
+        }
+        baseResBean.setData(list);
         return baseResBean;
     }
 }

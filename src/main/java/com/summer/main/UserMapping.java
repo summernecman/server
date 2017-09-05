@@ -1,5 +1,6 @@
 package com.summer.main;
 
+import com.google.gson.reflect.TypeToken;
 import com.summer.base.bean.BaseResBean;
 import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
@@ -50,6 +51,37 @@ public class UserMapping {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping(value = "/getUsersInfoByPhone",method = RequestMethod.POST)
+    public void getUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        ArrayList<UserBean> data  = GsonUtil.getInstance().fromJson(str,new TypeToken<ArrayList<UserBean>>(){}.getType());
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUsersInfoByPhone(data)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getArrayUsersInfoByPhone",method = RequestMethod.POST)
+    public void getArrayUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        ArrayList<ArrayList<UserBean>> data  = GsonUtil.getInstance().fromJson(str,new TypeToken<ArrayList<ArrayList<UserBean>>>(){}.getType());
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getArrayUsersInfoByPhone(data)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     @RequestMapping(value = "/getusercallinfo",method = RequestMethod.POST)

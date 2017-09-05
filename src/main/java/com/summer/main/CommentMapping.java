@@ -45,6 +45,26 @@ public class CommentMapping {
     }
 
 
+    @RequestMapping(value = "/getCommentNumByUserName",method = RequestMethod.POST)
+    public void getCommentNumByUserName(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentNumByUserName(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
     @RequestMapping(value = "/getVideoCommentByVideoName",method = RequestMethod.POST)
     public void getVideoCommentByVideoName(HttpServletRequest req, HttpServletResponse rep){
         Main.init(req,rep);
@@ -92,6 +112,22 @@ public class CommentMapping {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping(value = "/getVideoCommentByVideoNameAndFrom",method = RequestMethod.POST)
+    public void getVideoCommentByVideoNameAndFrom(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getVideoCommentByVideoNameAndFrom(videoBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

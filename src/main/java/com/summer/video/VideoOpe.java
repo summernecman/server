@@ -9,6 +9,7 @@ import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.bean.VideoBean;
 import com.summer.video.bean.VideoTimeBean;
+import sun.reflect.generics.tree.VoidDescriptor;
 
 import javax.naming.NamingException;
 import java.sql.Connection;
@@ -25,7 +26,7 @@ import java.util.Set;
  */
 public class VideoOpe implements VideoI {
 
-
+    UserI userI = new UserOpe();
 
     public BaseResBean getVideos(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
@@ -223,6 +224,7 @@ public class VideoOpe implements VideoI {
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -235,10 +237,17 @@ public class VideoOpe implements VideoI {
         ArrayList<ArrayList<VideoBean>> data = new ArrayList<ArrayList<VideoBean>>();
         HashMap<String,ArrayList<VideoBean>> map = new HashMap<String, ArrayList<VideoBean>>();
         for(int i=0;i<videos.size();i++){
-            if(map.get(videos.get(i).getTophone())==null){
-                map.put(videos.get(i).getTophone(),new ArrayList<VideoBean>());
+            if(videos.get(i).getFromphone().equals(userBean.getPhone())){
+                if(map.get(videos.get(i).getTophone())==null){
+                    map.put(videos.get(i).getTophone(),new ArrayList<VideoBean>());
+                }
+                map.get(videos.get(i).getTophone()).add(videos.get(i));
+            }else{
+                if(map.get(videos.get(i).getFromphone())==null){
+                    map.put(videos.get(i).getFromphone(),new ArrayList<VideoBean>());
+                }
+                map.get(videos.get(i).getFromphone()).add(videos.get(i));
             }
-            map.get(videos.get(i).getTophone()).add(videos.get(i));
         }
         Iterator<String> key = map.keySet().iterator();
         while (key.hasNext()){
@@ -248,6 +257,17 @@ public class VideoOpe implements VideoI {
                 videoBeen.add(map.get(k).get(i));
             }
             data.add(videoBeen);
+        }
+        for(int i=0;i<data.size();i++){
+            for(int j=0;j<data.get(i).size();j++){
+                UserBean u  = new UserBean();
+                u.setPhone(data.get(i).get(j).getFromphone());
+                data.get(i).get(j).setFromUser((UserBean) userI.getUserInfoByPhone(u).getData());
+
+                UserBean u1  = new UserBean();
+                u1.setPhone(data.get(i).get(j).getTophone());
+                data.get(i).get(j).setToUser((UserBean) userI.getUserInfoByPhone(u1).getData());
+            }
         }
         baseResBean.setData(data);
         return baseResBean;

@@ -38,6 +38,25 @@ public class CollectionMapping {
         }
     }
 
+    @RequestMapping(value = "/getCollectionNumByUserId",method = RequestMethod.POST)
+    public void getCollectionNumByUserId(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(collectionI.getCollectionNumByUserId(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
     @RequestMapping(value = "/collect",method = RequestMethod.POST)
     public void collect(HttpServletRequest req, HttpServletResponse rep){
         Main.init(req,rep);

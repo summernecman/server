@@ -55,6 +55,31 @@ public class CollectionOpe implements CollectionI {
         return baseResBean;
     }
 
+    public BaseResBean getCollectionNumByUserId(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select COUNT(id) from collection WHERE  userid = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num= 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
     public BaseResBean getCollectionVideosByUserId(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CollectionBean> collectionBeen = (ArrayList<CollectionBean>) getCollectionsByUserId(userBean).getData();
