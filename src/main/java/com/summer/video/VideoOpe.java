@@ -114,6 +114,7 @@ public class VideoOpe implements VideoI {
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -122,6 +123,19 @@ public class VideoOpe implements VideoI {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
+        }
+
+        for(int i=0;i<videos.size();i++){
+            UserBean userBean = new UserBean();
+            userBean.setPhone(videos.get(i).getFromphone());
+            UserBean userBean1 = (UserBean) userI.getUserInfoByPhone(userBean).getData();
+            videos.get(i).setFromUser(userBean1);
+
+            UserBean userBean2 = new UserBean();
+            userBean2.setPhone(videos.get(i).getTophone());
+            UserBean userBean3 = (UserBean) userI.getUserInfoByPhone(userBean2).getData();
+            videos.get(i).setToUser(userBean3);
+
         }
         baseResBean.setData(videos);
         return baseResBean;
@@ -275,6 +289,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean commentVideos(CommentBean commentBean) {
         BaseResBean baseResBean = new BaseResBean();
+
         String str = "insert into comment(rate,tips,remark,created,videoname,fromuser,touser) VALUES (?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
         ResultSet set = null;

@@ -92,6 +92,8 @@ public class UserOpe  implements UserI{
                 userBean.setUsertype(set.getInt(set.findColumn("usertype")));
                 userBean.setBelong(set.getString(set.findColumn("belong")));
                 userBean.setName(set.getString(set.findColumn("name")));
+                userBean.setState(set.getInt(set.findColumn("state")));
+                userBean.setHeadurl(set.getString(set.findColumn("headurl")));
                 users.add(userBean);
             }
         } catch (NamingException e) {

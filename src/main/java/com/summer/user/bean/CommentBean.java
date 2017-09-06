@@ -23,6 +23,10 @@ public class CommentBean extends BaseBean{
 
     private String touser;
 
+    private UserBean fromUser;
+
+    private UserBean toUser;
+
     public int getId() {
         return id;
     }
@@ -85,5 +89,21 @@ public class CommentBean extends BaseBean{
 
     public void setTouser(String touser) {
         this.touser = touser;
+    }
+
+    public UserBean getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(UserBean fromUser) {
+        this.fromUser = fromUser;
+    }
+
+    public UserBean getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(UserBean toUser) {
+        this.toUser = toUser;
     }
 }

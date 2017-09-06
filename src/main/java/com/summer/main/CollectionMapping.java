@@ -2,6 +2,8 @@ package com.summer.main;
 
 import com.summer.collection.CollectionI;
 import com.summer.collection.CollectionOpe;
+import com.summer.collection.bean.CollectionBean;
+import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.bean.VideoBean;
@@ -37,6 +39,22 @@ public class CollectionMapping {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping(value = "/isCollectedByVideoIdAndUserId",method = RequestMethod.POST)
+    public void isCollectedByVideoIdAndUserId(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        CollectionBean collectionBean = GsonUtil.getInstance().fromJson(str,CollectionBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(collectionI.isCollectedByVideoIdAndUserId(collectionBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @RequestMapping(value = "/getCollectionNumByUserId",method = RequestMethod.POST)
     public void getCollectionNumByUserId(HttpServletRequest req, HttpServletResponse rep){

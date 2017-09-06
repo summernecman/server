@@ -2,6 +2,8 @@ package com.summer.comment;
 
 import com.summer.base.bean.BaseResBean;
 import com.summer.main.DBUtil;
+import com.summer.user.UserI;
+import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.video.bean.VideoBean;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
  */
 public class CommentOpe implements CommentI {
 
+    UserI userI = new UserOpe();
 
     public BaseResBean getCommentByUserName(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
@@ -49,6 +52,20 @@ public class CommentOpe implements CommentI {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
+        }
+
+        for(int i=0;i<comments.size();i++){
+            UserBean userBean2 = new UserBean();
+            userBean2.setPhone(comments.get(i).getFromuser());
+            UserBean userBean1 = (UserBean) userI.getUserInfoByPhone(userBean2).getData();
+            comments.get(i).setFromUser(userBean1);
+
+
+            UserBean userBean3 = new UserBean();
+            userBean3.setPhone(comments.get(i).getTouser());
+            UserBean userBean4 = (UserBean) userI.getUserInfoByPhone(userBean3).getData();
+            comments.get(i).setToUser(userBean1);
+
         }
         baseResBean.setData(comments);
         return baseResBean;

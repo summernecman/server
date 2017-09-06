@@ -52,6 +52,20 @@ public class UserMapping {
         }
     }
 
+    @RequestMapping(value = "/getUserList",method = RequestMethod.POST)
+    public void getUserList(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserList()));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @RequestMapping(value = "/getUsersInfoByPhone",method = RequestMethod.POST)
     public void getUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
         Main.init(req,rep);
