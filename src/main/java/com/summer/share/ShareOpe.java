@@ -2,6 +2,7 @@ package com.summer.share;
 
 import com.summer.base.bean.BaseResBean;
 import com.summer.main.DBUtil;
+import com.summer.user.bean.UserBean;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
 import com.summer.video.bean.VideoBean;
@@ -43,6 +44,31 @@ public class ShareOpe implements ShareI {
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(shareBean);
+        return baseResBean;
+    }
+
+    public BaseResBean getShareNumByUserPhone(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "SELECT count(id) from share WHERE receiptid = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num  = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            set = ps.executeQuery();
+            set.next();
+            num =  set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
         return baseResBean;
     }
 

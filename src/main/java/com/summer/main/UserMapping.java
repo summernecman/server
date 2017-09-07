@@ -66,6 +66,23 @@ public class UserMapping {
         }
     }
 
+
+    @RequestMapping(value = "/getUserListWithOutMe",method = RequestMethod.POST)
+    public void getUserListWithOutMe(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithOutMe(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @RequestMapping(value = "/getUsersInfoByPhone",method = RequestMethod.POST)
     public void getUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
         Main.init(req,rep);
@@ -75,6 +92,22 @@ public class UserMapping {
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(userI.getUsersInfoByPhone(data)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getUserInfoByPhone",method = RequestMethod.POST)
+    public void getUserInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean  data  = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserInfoByPhone(data)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

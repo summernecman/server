@@ -6,6 +6,7 @@ import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
+import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
 import com.summer.video.bean.VideoBean;
 import com.summer.video.bean.VideoTimeBean;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -233,7 +235,8 @@ public class VideoOpe implements VideoI {
                 VideoBean videoBean = new VideoBean();
                 videoBean.setId(set.getInt(set.findColumn("id")));
                 videoBean.setFile(set.getString(set.findColumn("file")));
-                videoBean.setCreated(set.getString(set.findColumn("created")));
+                String s = set.getString(set.findColumn("created"));
+                videoBean.setCreated(DateFormatUtil.getdDateStr(DateFormatUtil.YYYY_MM_DD_HH_MM_SS,DateFormatUtil.MM_DD_HH_MM_SS,s.substring(0,s.length()-2)));
                 videoBean.setFromid(set.getInt(set.findColumn("fromid")));
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
@@ -244,6 +247,8 @@ public class VideoOpe implements VideoI {
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);

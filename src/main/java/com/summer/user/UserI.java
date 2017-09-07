@@ -16,6 +16,8 @@ public interface UserI  {
 
     public BaseResBean getUserList();
 
+    public BaseResBean getUserListWithOutMe(UserBean userBean);
+
     public BaseResBean registed(String username);
 
     public BaseResBean regist(UserBean user);

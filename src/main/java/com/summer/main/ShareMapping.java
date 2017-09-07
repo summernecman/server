@@ -43,6 +43,24 @@ public class ShareMapping {
     }
 
 
+    @RequestMapping(value = "/getShareNumByUserPhone",method = RequestMethod.POST)
+    public void getShareNumByUserPhone(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(shareI.getShareNumByUserPhone(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
     @RequestMapping(value = "/share",method = RequestMethod.POST)
     public void share(HttpServletRequest req, HttpServletResponse rep){
         Main.init(req,rep);

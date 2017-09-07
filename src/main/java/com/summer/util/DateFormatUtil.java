@@ -43,6 +43,13 @@ public class DateFormatUtil {
         return format.format(date);
     }
 
+    public static String getdDateStr(String dateFormat1, String dateFormat,String time) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat1);
+        Date date = format.parse(time);
+        SimpleDateFormat format1 = new SimpleDateFormat(dateFormat);
+        return format1.format(date);
+    }
+
     public static Date getStrDate(String time, String dateFormat) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat);
         return format.parse(time);

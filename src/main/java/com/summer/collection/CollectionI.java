@@ -21,6 +21,9 @@ public interface CollectionI {
     public BaseResBean isCollectedByVideoIdAndUserId(CollectionBean collectionBean);
 
 
-    public BaseResBean collect(VideoBean videoBean);
+    public BaseResBean collect(CollectionBean collectionBean);
+
+    public BaseResBean disCollect(CollectionBean collectionBean);
+
 
 }

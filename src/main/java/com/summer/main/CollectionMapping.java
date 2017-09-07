@@ -79,11 +79,26 @@ public class CollectionMapping {
     public void collect(HttpServletRequest req, HttpServletResponse rep){
         Main.init(req,rep);
         String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
+        CollectionBean collectionBean = GsonUtil.getInstance().fromJson(str,CollectionBean.class);
         System.out.println(str);
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(collectionI.collect(videoBean)));
+            printWriter.println(GsonUtil.getInstance().toJson(collectionI.collect(collectionBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/discollect",method = RequestMethod.POST)
+    public void discollect(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        CollectionBean collectionBean = GsonUtil.getInstance().fromJson(str,CollectionBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(collectionI.disCollect(collectionBean)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

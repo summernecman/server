@@ -1,5 +1,6 @@
 package com.summer.collection;
 
+import com.mysql.jdbc.log.LogUtils;
 import com.summer.base.bean.BaseResBean;
 import com.summer.collection.bean.CollectionBean;
 import com.summer.main.DBUtil;
@@ -10,10 +11,7 @@ import com.summer.video.bean.VideoBean;
 
 import javax.naming.NamingException;
 import javax.sql.rowset.BaseRowSet;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 /**
@@ -98,19 +96,21 @@ public class CollectionOpe implements CollectionI {
 
     public BaseResBean isCollectedByVideoIdAndUserId(CollectionBean collectionBean) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id)from collection WHERE videoid = ? and userid = ? ";
+        String str = "select id from collection WHERE videoid = ? and userid = ? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
-        int num = 0;
+        int num = -1;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setInt(1,collectionBean.getVideoid());
             ps.setInt(2,collectionBean.getUserid());
             set = ps.executeQuery();
-            set.next();
-            num = set.getInt(1);
+            while (set.next()){
+                num = set.getInt(1);
+                break;
+            }
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -118,24 +118,73 @@ public class CollectionOpe implements CollectionI {
         } finally {
             DBUtil.close(connection,ps,set);
         }
-
-        baseResBean.setData(num==0?false:true);
+        collectionBean.setId(num);
+        baseResBean.setData(num==-1?null:collectionBean);
         return baseResBean;
     }
 
 
-    public BaseResBean collect(VideoBean videoBean) {
+//    public BaseResBean collect(VideoBean videoBean) {
+//        BaseResBean baseResBean = new BaseResBean();
+//        String str = "insert into collection(videoid,userid) values(?,?)";
+//        PreparedStatement ps = null;
+//        ResultSet set = null;
+//        Connection connection = null;
+//        try {
+//            connection = DBUtil.getConnection();
+//            ps = connection.prepareStatement(str);
+//            ps.setInt(1,videoBean.getId());
+//            ps.setInt(2,videoBean.getFromid());
+//             ps.execute();
+//        } catch (NamingException e) {
+//            e.printStackTrace();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } finally {
+//            DBUtil.close(connection,ps,set);
+//        }
+//        baseResBean.setData(videoBean);
+//        return baseResBean;
+//    }
+
+
+    public BaseResBean collect(CollectionBean collectionBean) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "insert into collection(videoid,userid) values(?,?)";
+        String str = "{call get_share_id(?,?,?)}";
+        CallableStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareCall(str);
+            ps.setInt(1,collectionBean.getVideoid());
+            ps.setInt(2,collectionBean.getUserid());
+            ps.registerOutParameter(3,Types.INTEGER);
+            ps.execute();
+            System.out.println(ps.getInt(3));
+            collectionBean.setId(ps.getInt(3));
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(collectionBean);
+        return baseResBean;
+    }
+
+    public BaseResBean disCollect(CollectionBean collectionBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "DELETE from collection WHERE  id = ? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setInt(1,videoBean.getId());
-            ps.setInt(2,videoBean.getFromid());
-             ps.execute();
+            ps.setInt(1,collectionBean.getId());
+            ps.execute();
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -143,7 +192,7 @@ public class CollectionOpe implements CollectionI {
         } finally {
             DBUtil.close(connection,ps,set);
         }
-        baseResBean.setData(videoBean);
+        baseResBean.setData(collectionBean);
         return baseResBean;
     }
 }

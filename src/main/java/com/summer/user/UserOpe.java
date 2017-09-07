@@ -107,6 +107,19 @@ public class UserOpe  implements UserI{
         return baseResBean;
     }
 
+    public BaseResBean getUserListWithOutMe(UserBean userBean) {
+        ArrayList<UserBean> users  = (ArrayList<UserBean>) getUserList().getData();
+        for(int i=0;users!=null && i<users.size();i++){
+            if(users.get(i).getPhone().equals(userBean.getPhone())){
+                users.remove(i);
+                break;
+            }
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(users);
+        return  baseResBean;
+    }
+
     public BaseResBean registed(String username) {
         BaseResBean baseResBean = new BaseResBean();
         return null;
