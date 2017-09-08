@@ -18,4 +18,6 @@ public interface CommentI {
     public BaseResBean getVideoCommentByVideoName(VideoBean videoBean);
 
     public BaseResBean getVideoCommentByVideoNameAndFrom(VideoBean videoBean);
+
+    public BaseResBean getVideoRateCommentByUserPhone(UserBean userBean);
 }

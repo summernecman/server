@@ -20,9 +20,12 @@ import java.util.ArrayList;
  */
 public class CommentOpe implements CommentI {
 
-    UserI userI = new UserOpe();
+    UserI userI ;
 
     public BaseResBean getCommentByUserName(UserBean userBean) {
+        if(userI ==null){
+            userI= new UserOpe();
+        }
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
         String str = "select * from comment WHERE  touser = ?";
@@ -192,6 +195,31 @@ public class CommentOpe implements CommentI {
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(comments);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideoRateCommentByUserPhone(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select avg(rate) from comment WHERE  touser = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        float num = 0f;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,userBean.getPhone());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getFloat(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
         return baseResBean;
     }
 }

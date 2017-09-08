@@ -27,6 +27,8 @@ public class UserBean extends BaseBean {
 
     private String headurl;
 
+    private float avg;
+
     public static final int STATE_OFFLINE  = 0;
 
     public static final int STATE_ONLINE  = 1;
@@ -113,5 +115,13 @@ public class UserBean extends BaseBean {
 
     public void setChatid(String chatid) {
         this.chatid = chatid;
+    }
+
+    public float getAvg() {
+        return avg;
+    }
+
+    public void setAvg(float avg) {
+        this.avg = avg;
     }
 }

@@ -1,6 +1,8 @@
 package com.summer.user;
 
 import com.summer.base.bean.BaseResBean;
+import com.summer.comment.CommentI;
+import com.summer.comment.CommentOpe;
 import com.summer.main.DBUtil;
 import com.summer.user.bean.UserBean;
 
@@ -16,6 +18,7 @@ import java.util.ArrayList;
  */
 public class UserOpe  implements UserI{
 
+    CommentI commentI ;
 
     public BaseResBean getUserState(UserBean bean) {
         BaseResBean baseResBean = new BaseResBean();
@@ -305,10 +308,18 @@ public class UserOpe  implements UserI{
     }
 
     public BaseResBean getUsersInfoByPhone(ArrayList<UserBean> list) {
+        if(commentI==null){
+            commentI = new CommentOpe();
+        }
         BaseResBean baseResBean = new BaseResBean();
         for(int i=0;list!=null && i<list.size();i++){
             UserBean userBean = (UserBean) getUserInfoByPhone(list.get(i)).getData();
             list.set(i,userBean);
+        }
+        for(int i=0;list!=null&&i<list.size();i++){
+           float rate =  (Float) (commentI.getVideoRateCommentByUserPhone(list.get(i)).getData());
+            list.get(i).setAvg(rate);
+
         }
         baseResBean.setData(list);
         return baseResBean;
