@@ -1,6 +1,7 @@
 package com.summer.user.bean;
 
 import com.summer.base.bean.BaseBean;
+import com.summer.unit.UnitBean;
 
 /**
  * Created by SWSD on 17-08-23.
@@ -28,6 +29,11 @@ public class UserBean extends BaseBean {
     private String headurl;
 
     private float avg;
+
+    private int unitid;
+
+    private UnitBean unit;
+
 
     public static final int STATE_OFFLINE  = 0;
 
@@ -123,5 +129,21 @@ public class UserBean extends BaseBean {
 
     public void setAvg(float avg) {
         this.avg = avg;
+    }
+
+    public int getUnitid() {
+        return unitid;
+    }
+
+    public void setUnitid(int unitid) {
+        this.unitid = unitid;
+    }
+
+    public UnitBean getUnit() {
+        return unit;
+    }
+
+    public void setUnit(UnitBean unit) {
+        this.unit = unit;
     }
 }

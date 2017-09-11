@@ -6,4 +6,7 @@ package com.summer.feedback;
 public class FeedBackOpe implements FeedBackI {
 
 
+    public void sendFeedBack() {
+
+    }
 }

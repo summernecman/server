@@ -60,6 +60,15 @@ public class VideoOpe implements VideoI {
         } finally {
             DBUtil.close(connection,ps,set);
         }
+        for(int i=0;i<videos.size();i++){
+            UserBean from = new UserBean();
+            from.setId(videos.get(i).getFromid());
+
+            UserBean to = new UserBean();
+            to.setId(videos.get(i).getToid());
+            videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
+            videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
+        }
         baseResBean.setData(videos);
         return baseResBean;
     }
@@ -91,6 +100,13 @@ public class VideoOpe implements VideoI {
         } finally {
             DBUtil.close(connection,ps,set);
         }
+        UserBean from = new UserBean();
+        from.setId(videoBean.getFromid());
+
+        UserBean to = new UserBean();
+        to.setId(videoBean.getToid());
+        videoBean.setFromUser((UserBean) userI.getUserInfoById(from).getData());
+        videoBean.setToUser((UserBean) userI.getUserInfoById(to).getData());
         baseResBean.setData(videoBean);
         return baseResBean;
     }
@@ -173,6 +189,16 @@ public class VideoOpe implements VideoI {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
+        }
+
+        for(int i=0;i<videos.size();i++){
+            UserBean from = new UserBean();
+            from.setId(videos.get(i).getFromid());
+
+            UserBean to = new UserBean();
+            to.setId(videos.get(i).getToid());
+            videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
+            videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
         }
         baseResBean.setData(videos);
         return baseResBean;
@@ -295,7 +321,7 @@ public class VideoOpe implements VideoI {
     public BaseResBean commentVideos(CommentBean commentBean) {
         BaseResBean baseResBean = new BaseResBean();
 
-        String str = "insert into comment(rate,tips,remark,created,videoname,fromuser,touser) VALUES (?,?,?,?,?,?,?)";
+        String str = "insert into comment(rate,tips,remark,created,videoname,fromuser,touser,fromid,toid) VALUES (?,?,?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -309,6 +335,8 @@ public class VideoOpe implements VideoI {
             ps.setString(5,commentBean.getVideoname());
             ps.setString(6,commentBean.getFromuser());
             ps.setString(7,commentBean.getTouser());
+            ps.setInt(8,commentBean.getFromid());
+            ps.setInt(9,commentBean.getToid());
             ps.execute();
         } catch (NamingException e) {
             e.printStackTrace();

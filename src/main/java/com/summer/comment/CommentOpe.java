@@ -47,6 +47,8 @@ public class CommentOpe implements CommentI {
                 commentBean.setTips(set.getString(set.findColumn("tips")));
                 commentBean.setTouser(set.getString(set.findColumn("touser")));
                 commentBean.setVideoname(set.getString(set.findColumn("videoname")));
+                commentBean.setFromid(set.getInt(set.findColumn("fromid")));
+                commentBean.setToid(set.getInt(set.findColumn("toid")));
                 comments.add(commentBean);
             }
         } catch (NamingException e) {
@@ -59,14 +61,14 @@ public class CommentOpe implements CommentI {
 
         for(int i=0;i<comments.size();i++){
             UserBean userBean2 = new UserBean();
-            userBean2.setPhone(comments.get(i).getFromuser());
-            UserBean userBean1 = (UserBean) userI.getUserInfoByPhone(userBean2).getData();
+            userBean2.setId(comments.get(i).getFromid());
+            UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean2).getData();
             comments.get(i).setFromUser(userBean1);
 
 
             UserBean userBean3 = new UserBean();
-            userBean3.setPhone(comments.get(i).getTouser());
-            UserBean userBean4 = (UserBean) userI.getUserInfoByPhone(userBean3).getData();
+            userBean3.setId(comments.get(i).getToid());
+            UserBean userBean4 = (UserBean) userI.getUserInfoById(userBean3).getData();
             comments.get(i).setToUser(userBean1);
 
         }
@@ -127,6 +129,34 @@ public class CommentOpe implements CommentI {
         return baseResBean;
     }
 
+    public BaseResBean getTipsByUserId(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
+        String str = "select tips from comment WHERE  toid = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            set  = ps.executeQuery();
+            while (set.next()){
+                CommentBean commentBean = new CommentBean();
+                commentBean.setTips(set.getString(set.findColumn("tips")));
+                comments.add(commentBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(comments);
+        return baseResBean;
+    }
+
     public BaseResBean getVideoCommentByVideoName(VideoBean videoBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
@@ -149,6 +179,8 @@ public class CommentOpe implements CommentI {
                 commentBean.setTips(set.getString(set.findColumn("tips")));
                 commentBean.setTouser(set.getString(set.findColumn("touser")));
                 commentBean.setVideoname(set.getString(set.findColumn("videoname")));
+                commentBean.setFromid(set.getInt(set.findColumn("fromid")));
+                commentBean.setToid(set.getInt(set.findColumn("toid")));
                 comments.add(commentBean);
             }
         } catch (NamingException e) {
@@ -157,6 +189,19 @@ public class CommentOpe implements CommentI {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
+        }
+        for(int i=0;i<comments.size();i++){
+            UserBean userBean2 = new UserBean();
+            userBean2.setId(comments.get(i).getFromid());
+            UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean2).getData();
+            comments.get(i).setFromUser(userBean1);
+
+
+            UserBean userBean3 = new UserBean();
+            userBean3.setId(comments.get(i).getToid());
+            UserBean userBean4 = (UserBean) userI.getUserInfoById(userBean3).getData();
+            comments.get(i).setToUser(userBean1);
+
         }
         baseResBean.setData(comments);
         return baseResBean;
@@ -185,6 +230,8 @@ public class CommentOpe implements CommentI {
                 commentBean.setTips(set.getString(set.findColumn("tips")));
                 commentBean.setTouser(set.getString(set.findColumn("touser")));
                 commentBean.setVideoname(set.getString(set.findColumn("videoname")));
+                commentBean.setFromid(set.getInt(set.findColumn("fromid")));
+                commentBean.setToid(set.getInt(set.findColumn("toid")));
                 comments.add(commentBean);
             }
         } catch (NamingException e) {

@@ -1,6 +1,7 @@
 package com.summer.user;
 
 import com.summer.base.bean.BaseResBean;
+import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBean;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ public interface UserI  {
     public BaseResBean setUserState(UserBean userBean);
 
     public BaseResBean getUserList();
+
+    public BaseResBean getUnTypeUserList(UserBean userBean);
 
     public BaseResBean getUserListWithOutMe(UserBean userBean);
 
@@ -38,6 +41,14 @@ public interface UserI  {
 
     public BaseResBean getUsersInfoByPhone(ArrayList<UserBean> list);
 
+    public BaseResBean getOtherUsersInfoByPhone(AllUserBean allUserBean);
+
     public BaseResBean getArrayUsersInfoByPhone(ArrayList<ArrayList<UserBean>> list);
+
+    public BaseResBean getUserInfoById(UserBean userBean);
+
+    public BaseResBean updateUnitInfo(UserBean userBean);
+
+    public BaseResBean updateUUUid(UserBean userBean);
 
 }

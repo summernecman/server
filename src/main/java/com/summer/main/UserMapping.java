@@ -2,10 +2,12 @@ package com.summer.main;
 
 import com.google.gson.reflect.TypeToken;
 import com.summer.base.bean.BaseResBean;
-import com.summer.comment.CommentI;
-import com.summer.comment.CommentOpe;
+import com.summer.unit.UnitBean;
+import com.summer.unit.UnitI;
+import com.summer.unit.UnitOpe;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
+import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
@@ -36,6 +38,8 @@ public class UserMapping {
     UserI userI = new UserOpe();
 
     VideoI videoI = new VideoOpe();
+
+    UnitI unitI = new UnitOpe();
 
     @RequestMapping(value = "/setHeadurl",method = RequestMethod.POST)
     public void setHeadUrl(HttpServletRequest req, HttpServletResponse rep){
@@ -97,6 +101,25 @@ public class UserMapping {
             e.printStackTrace();
         }
     }
+
+
+    @RequestMapping(value = "/getOtherUsersInfoByPhone",method = RequestMethod.POST)
+    public void getOtherUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        AllUserBean data = GsonUtil.getInstance().fromJson(str,AllUserBean.class);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getOtherUsersInfoByPhone(data)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 
     @RequestMapping(value = "/getUserInfoByPhone",method = RequestMethod.POST)
@@ -266,6 +289,46 @@ public class UserMapping {
             e.printStackTrace();
         }
     }
+
+
+    @RequestMapping(value = "/updateUnit",method = RequestMethod.POST)
+    public void unpdateUnit(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean data = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        UnitBean userBean = (UnitBean) unitI.getUnitByName(data.getUnit()).getData();
+        if(userBean==null){
+            unitI.addUnit(data.getUnit());
+            userBean = (UnitBean) unitI.getUnitByName(data.getUnit()).getData();
+        }
+        data.setUnit(userBean);
+        data.setUnitid(userBean.getId());
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.updateUnitInfo(data)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getUnTypeUserList",method = RequestMethod.POST)
+    public void getUnTypeUserList(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUnTypeUserList(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }
