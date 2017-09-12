@@ -190,10 +190,26 @@ public class Main {
     }
 
 
+    @RequestMapping(value = "/getAllVideos",method = RequestMethod.POST)
+    public void getAllVideos(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.getAllVideos()));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
     public static  void init(HttpServletRequest req, HttpServletResponse rep){
         try {
             req.setCharacterEncoding("UTF-8");
+            rep.setHeader("Access-Control-Allow-Origin", "*");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

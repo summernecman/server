@@ -9,6 +9,9 @@ import com.summer.unit.UnitI;
 import com.summer.unit.UnitOpe;
 import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBean;
+import com.summer.video.VideoI;
+import com.summer.video.VideoOpe;
+import com.summer.video.bean.VideoTimeBean;
 
 import javax.naming.NamingException;
 import java.sql.Connection;
@@ -25,6 +28,8 @@ public class UserOpe  implements UserI{
     CommentI commentI ;
 
     UnitI unitI ;
+
+    VideoI videoI;
 
     public BaseResBean getUserState(UserBean bean) {
         BaseResBean baseResBean = new BaseResBean();
@@ -273,6 +278,7 @@ public class UserOpe  implements UserI{
                 user.setBelong(set.getString(set.findColumn("belong")));
                 user.setName(set.getString(set.findColumn("name")));
                 user.setHeadurl(set.getString(set.findColumn("headurl")));
+                user.setUnitid(set.getInt(set.findColumn("unitid")));
                 break;
             }
         } catch (NamingException e) {
@@ -282,6 +288,11 @@ public class UserOpe  implements UserI{
         } finally {
             DBUtil.close(connection,ps,set);
         }
+        if(unitI==null){
+            unitI = new UnitOpe();
+        }
+        UnitBean u = new UnitBean(user.getUnitid());
+        user.setUnit((UnitBean) unitI.getUnitById(u).getData());
         baseResBean.setData(user);
         return baseResBean;
     }
@@ -456,6 +467,7 @@ public class UserOpe  implements UserI{
                 user.setName(set.getString(set.findColumn("name")));
                 user.setBelong(set.getString(set.findColumn("belong")));
                 user.setState(set.getInt(set.findColumn("state")));
+                user.setUnitid(set.getInt(set.findColumn("unitid")));
                 user.setHeadurl(set.getString(set.findColumn("headurl")));
                 break;
             }
@@ -466,6 +478,12 @@ public class UserOpe  implements UserI{
         } finally {
             DBUtil.close(connection,ps,set);
         }
+        if(unitI==null){
+            unitI = new UnitOpe();
+        }
+        UnitBean u = new UnitBean(user.getUnitid());
+        user.setUnit((UnitBean) unitI.getUnitById(u).getData());
+
         baseResBean.setData(user);
         return baseResBean;
     }
@@ -513,6 +531,108 @@ public class UserOpe  implements UserI{
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(userBean);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserListWithType(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        String str = "select * from user WHERE usertype = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,user.getUsertype());
+            set  = ps.executeQuery();
+            while (set.next()){
+                UserBean userBean = new UserBean();
+                userBean.setId(set.getInt(set.findColumn("id")));
+                userBean.setPhone(set.getString(set.findColumn("phone")));
+                userBean.setPwd(set.getString(set.findColumn("pwd")));
+                userBean.setUsertype(set.getInt(set.findColumn("usertype")));
+                userBean.setBelong(set.getString(set.findColumn("belong")));
+                userBean.setName(set.getString(set.findColumn("name")));
+                userBean.setState(set.getInt(set.findColumn("state")));
+                userBean.setHeadurl(set.getString(set.findColumn("headurl")));
+                userBean.setUuuid(set.getString(set.findColumn("uuuid")));
+                userBean.setUnitid(set.getInt(set.findColumn("unitid")));
+                users.add(userBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        if(unitI==null){
+            unitI = new UnitOpe();
+        }
+        if(videoI ==null){
+            videoI = new VideoOpe();
+        }
+        for(int i=0;i<users.size();i++){
+            UnitBean u = new UnitBean(users.get(i).getUnitid());
+            users.get(i).setUnit((UnitBean) unitI.getUnitById(u).getData());
+            VideoTimeBean videoTimeBean = (VideoTimeBean) videoI.getUserCallInfo(users.get(i)).getData();
+            users.get(i).setCallinfo(videoTimeBean);
+        }
+        baseResBean.setData(users);
+        return baseResBean;
+    }
+
+
+    public BaseResBean addUser(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "insert into user(phone,pwd,usertype,name,belong) VALUES (?,?,?,?,?)";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPhone());
+            ps.setString(2,user.getPwd());
+            ps.setInt(3,user.getUsertype());
+            ps.setString(4,user.getName());
+            ps.setString(5,user.getBelong());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean isUserExist(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select COUNT(id)from user WHERE  phone = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPhone());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num==0?false:true);
         return baseResBean;
     }
 }

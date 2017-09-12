@@ -2,6 +2,7 @@ package com.summer.user.bean;
 
 import com.summer.base.bean.BaseBean;
 import com.summer.unit.UnitBean;
+import com.summer.video.bean.VideoTimeBean;
 
 /**
  * Created by SWSD on 17-08-23.
@@ -34,12 +35,21 @@ public class UserBean extends BaseBean {
 
     private UnitBean unit;
 
+    private VideoTimeBean callinfo;
+
 
     public static final int STATE_OFFLINE  = 0;
 
     public static final int STATE_ONLINE  = 1;
 
     public static final int STATE_INVIDEO  = 2;
+
+
+    public static final int USER_TYPE_SERVER  = 0;
+
+    public static final int USER_TYPE_ENGINEER  = 1;
+
+    public static final int USER_TYPE_CUSTOMER  = 2;
 
 
 
@@ -145,5 +155,13 @@ public class UserBean extends BaseBean {
 
     public void setUnit(UnitBean unit) {
         this.unit = unit;
+    }
+
+    public VideoTimeBean getCallinfo() {
+        return callinfo;
+    }
+
+    public void setCallinfo(VideoTimeBean callinfo) {
+        this.callinfo = callinfo;
     }
 }

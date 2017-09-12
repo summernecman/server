@@ -51,4 +51,11 @@ public interface UserI  {
 
     public BaseResBean updateUUUid(UserBean userBean);
 
+    public BaseResBean getUserListWithType(UserBean userBean);
+
+    public BaseResBean addUser(UserBean userBean);
+
+    public BaseResBean isUserExist(UserBean userBean);
+
+
 }

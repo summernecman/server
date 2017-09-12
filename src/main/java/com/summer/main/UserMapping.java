@@ -13,6 +13,7 @@ import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
+import com.summer.video.bean.VideoTimeBean;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -329,6 +330,85 @@ public class UserMapping {
         }
     }
 
+
+
+    @RequestMapping(value = "/getServerInfo",method = RequestMethod.POST)
+    public void getServerInfo(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        userBean.setUsertype(UserBean.USER_TYPE_SERVER);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithType(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getCustomerInfo",method = RequestMethod.POST)
+    public void getCustomerInfo(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        userBean.setUsertype(UserBean.USER_TYPE_CUSTOMER);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithType(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getEngineerInfo",method = RequestMethod.POST)
+    public void getEngineerInfo(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        userBean.setUsertype(UserBean.USER_TYPE_ENGINEER);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithType(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/addUser",method = RequestMethod.POST)
+    public void addUser(HttpServletRequest req, HttpServletResponse rep){
+        Main.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        if((Boolean) (userI.isUserExist(userBean).getData())){
+            try {
+                BaseResBean baseResBean = new BaseResBean();
+                baseResBean.setException(true);
+                baseResBean.setErrorMessage("用户已存在");
+                PrintWriter printWriter = rep.getWriter();
+                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            try {
+                PrintWriter printWriter = rep.getWriter();
+                printWriter.println(GsonUtil.getInstance().toJson(userI.addUser(userBean)));
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
 
 }

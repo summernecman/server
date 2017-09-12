@@ -111,6 +111,53 @@ public class VideoOpe implements VideoI {
         return baseResBean;
     }
 
+    public BaseResBean getAllVideos() {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
+        String str = "select * from video";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set  = ps.executeQuery();
+            while (set.next()){
+                VideoBean videoBean = new VideoBean();
+                videoBean.setId(set.getInt(set.findColumn("id")));
+                videoBean.setFile(set.getString(set.findColumn("file")));
+                videoBean.setCreated(set.getString(set.findColumn("created")));
+                videoBean.setFromid(set.getInt(set.findColumn("fromid")));
+                videoBean.setToid(set.getInt(set.findColumn("toid")));
+                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
+                videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videos.add(videoBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+
+        for(int i=0;i<videos.size();i++){
+            UserBean userBean = new UserBean();
+            userBean.setPhone(videos.get(i).getFromphone());
+            UserBean userBean1 = (UserBean) userI.getUserInfoByPhone(userBean).getData();
+            videos.get(i).setFromUser(userBean1);
+
+            UserBean userBean2 = new UserBean();
+            userBean2.setPhone(videos.get(i).getTophone());
+            UserBean userBean3 = (UserBean) userI.getUserInfoByPhone(userBean2).getData();
+            videos.get(i).setToUser(userBean3);
+
+        }
+        baseResBean.setData(videos);
+        return baseResBean;
+    }
+
     public BaseResBean getVideoByVideoId(VideoBean v) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();

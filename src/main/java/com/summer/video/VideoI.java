@@ -14,6 +14,8 @@ public interface VideoI {
 
     public BaseResBean getVideoByName(VideoBean videoBean);
 
+    public BaseResBean getAllVideos();
+
     public BaseResBean getVideoByVideoId(VideoBean videoBean);
 
     public BaseResBean getVideosByUserPhone(UserBean userBean);
@@ -31,4 +33,5 @@ public interface VideoI {
     public BaseResBean getUserCallOutInfo(UserBean user);
 
     public BaseResBean getUserCallTimeInfo(UserBean user);
+
 }
