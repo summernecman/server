@@ -1,5 +1,6 @@
 package com.summer.user;
 
+import com.summer.base.OnFinishListener;
 import com.summer.base.bean.BaseResBean;
 import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
@@ -166,9 +167,15 @@ public class UserOpe  implements UserI{
         if(unitI==null){
             unitI = new UnitOpe();
         }
+        if(commentI  == null){
+             commentI = new CommentOpe();
+        }
         for(int i=0;i<users.size();i++){
             UnitBean u = new UnitBean(users.get(i).getUnitid());
             users.get(i).setUnit((UnitBean) unitI.getUnitById(u).getData());
+
+            users.get(i).setAvg((Float) commentI.getVideoRateCommentByUserPhone(users.get(i)).getData());
+
         }
         baseResBean.setData(users);
         return baseResBean;
@@ -189,6 +196,11 @@ public class UserOpe  implements UserI{
 
     public BaseResBean registed(String username) {
         BaseResBean baseResBean = new BaseResBean();
+        return null;
+    }
+
+    public BaseResBean registOnEM(UserBean userBean, OnFinishListener onFinishListener) {
+
         return null;
     }
 

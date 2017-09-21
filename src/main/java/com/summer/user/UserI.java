@@ -1,5 +1,6 @@
 package com.summer.user;
 
+import com.summer.base.OnFinishListener;
 import com.summer.base.bean.BaseResBean;
 import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBean;
@@ -22,6 +23,8 @@ public interface UserI  {
     public BaseResBean getUserListWithOutMe(UserBean userBean);
 
     public BaseResBean registed(String username);
+
+    public BaseResBean registOnEM(UserBean userBean, OnFinishListener onFinishListener);
 
     public BaseResBean regist(UserBean user);
 
@@ -56,6 +59,5 @@ public interface UserI  {
     public BaseResBean addUser(UserBean userBean);
 
     public BaseResBean isUserExist(UserBean userBean);
-
 
 }

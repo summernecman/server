@@ -31,6 +31,14 @@ public class CommentBean extends BaseBean{
 
     private int toid;
 
+    private int agreeNum;
+
+    private boolean agree;
+
+
+
+
+
     public int getId() {
         return id;
     }
@@ -125,5 +133,21 @@ public class CommentBean extends BaseBean{
 
     public void setToid(int toid) {
         this.toid = toid;
+    }
+
+    public int getAgreeNum() {
+        return agreeNum;
+    }
+
+    public void setAgreeNum(int agreeNum) {
+        this.agreeNum = agreeNum;
+    }
+
+    public boolean isAgree() {
+        return agree;
+    }
+
+    public void setAgree(boolean agree) {
+        this.agree = agree;
     }
 }

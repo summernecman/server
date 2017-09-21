@@ -1,12 +1,8 @@
 package com.summer.main;
 
-import com.summer.collection.CollectionI;
-import com.summer.collection.CollectionOpe;
-import com.summer.collection.bean.CollectionBean;
 import com.summer.crash.CrashBean;
 import com.summer.crash.CrashI;
 import com.summer.crash.CrashOpe;
-import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +24,7 @@ public class CrashMapping {
 
     @RequestMapping(value = "/sendCrash",method = RequestMethod.POST)
     public void getCollectionVideosByUserId(HttpServletRequest req, HttpServletResponse rep){
-        Main.init(req,rep);
+        VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         CrashBean crashBean  = GsonUtil.getInstance().fromJson(str,CrashBean.class);
         System.out.println(str);

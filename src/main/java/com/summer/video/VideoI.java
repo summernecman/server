@@ -34,4 +34,8 @@ public interface VideoI {
 
     public BaseResBean getUserCallTimeInfo(UserBean user);
 
+    public BaseResBean isVideoUploaded(VideoBean videoBean);
+
+    public BaseResBean setVideoUploaded(VideoBean videoBean);
+
 }

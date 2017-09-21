@@ -482,5 +482,54 @@ public class VideoOpe implements VideoI {
         return baseResBean;
     }
 
+    public BaseResBean isVideoUploaded(VideoBean videoBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select uploaded from video WHERE file = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int uploaded = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,videoBean.getFile());
+            set  = ps.executeQuery();
+            set.next();
+            uploaded = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(uploaded==0?false:true);
+        return baseResBean;
+    }
+
+    public BaseResBean setVideoUploaded(VideoBean videoBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update video set uploaded = ? WHERE file = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int uploaded = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,1);
+            ps.setString(2,videoBean.getFile());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(videoBean);
+        return baseResBean;
+    }
+
 
 }

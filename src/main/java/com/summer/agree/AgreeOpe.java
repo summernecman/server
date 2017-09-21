@@ -39,14 +39,15 @@ public class AgreeOpe implements AgreeI {
 
     public BaseResBean cancleAgree(AgreeBean agree) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "DELETE FROM agree WHERE id = ?";
+        String str = "DELETE FROM agree WHERE commentid = ? and agreeid = ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setInt(1,agree.getId());
+            ps.setInt(1,agree.getCommentid());
+            ps.setInt(2,agree.getAgreeid());
             ps.execute();
         } catch (NamingException e) {
             e.printStackTrace();
@@ -61,7 +62,7 @@ public class AgreeOpe implements AgreeI {
 
     public BaseResBean getAgreeNum(AgreeBean agree) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id) FROM agree";
+        String str = "select count(id) FROM agree WHERE commentid = ? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -69,6 +70,7 @@ public class AgreeOpe implements AgreeI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
+            ps.setInt(1,agree.getCommentid());
             set = ps.executeQuery();
             set.next();
             num = set.getInt(1);
@@ -85,7 +87,7 @@ public class AgreeOpe implements AgreeI {
 
     public BaseResBean isAgreeNum(AgreeBean agree) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id) FROM agree WHERE agreeid = ? ";
+        String str = "select count(id) FROM agree WHERE agreeid = ? and commentid = ? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -93,6 +95,8 @@ public class AgreeOpe implements AgreeI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
+            ps.setInt(1,agree.getAgreeid());
+            ps.setInt(2,agree.getCommentid());
             set = ps.executeQuery();
             set.next();
             num = set.getInt(1);

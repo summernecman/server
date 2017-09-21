@@ -164,4 +164,24 @@ public class UserBean extends BaseBean {
     public void setCallinfo(VideoTimeBean callinfo) {
         this.callinfo = callinfo;
     }
+
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "chatid='" + chatid + '\'' +
+                ", id=" + id +
+                ", phone='" + phone + '\'' +
+                ", pwd='" + pwd + '\'' +
+                ", usertype=" + usertype +
+                ", belong='" + belong + '\'' +
+                ", name='" + name + '\'' +
+                ", state=" + state +
+                ", uuuid='" + uuuid + '\'' +
+                ", headurl='" + headurl + '\'' +
+                ", avg=" + avg +
+                ", unitid=" + unitid +
+                ", unit=" + unit +
+                ", callinfo=" + callinfo +
+                '}';
+    }
 }

@@ -2,9 +2,9 @@ package com.summer.main;
 
 import com.summer.agree.AgreeBean;
 import com.summer.agree.AgreeI;
+import com.summer.agree.AgreeNumBean;
 import com.summer.agree.AgreeOpe;
 import com.summer.base.bean.BaseResBean;
-import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ public class AgreeMapping {
 
     @RequestMapping(value = "/addAgree",method = RequestMethod.POST)
     public void addAgree(HttpServletRequest req, HttpServletResponse rep){
-        Main.init(req,rep);
+        VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         AgreeBean agreeBean = GsonUtil.getInstance().fromJson(str,AgreeBean.class);
         System.out.println(str);
@@ -41,7 +41,7 @@ public class AgreeMapping {
 
     @RequestMapping(value = "/cancleAgree",method = RequestMethod.POST)
     public void cancleAgree(HttpServletRequest req, HttpServletResponse rep){
-        Main.init(req,rep);
+        VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         AgreeBean agreeBean = GsonUtil.getInstance().fromJson(str,AgreeBean.class);
         System.out.println(str);
@@ -56,7 +56,7 @@ public class AgreeMapping {
 
     @RequestMapping(value = "/getAgreeNum",method = RequestMethod.POST)
     public void getAgreeNum(HttpServletRequest req, HttpServletResponse rep){
-        Main.init(req,rep);
+        VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         AgreeBean agreeBean = GsonUtil.getInstance().fromJson(str,AgreeBean.class);
         System.out.println(str);
@@ -71,7 +71,7 @@ public class AgreeMapping {
 
     @RequestMapping(value = "/isAgreeNum",method = RequestMethod.POST)
     public void isAgreeNum(HttpServletRequest req, HttpServletResponse rep){
-        Main.init(req,rep);
+        VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         AgreeBean agreeBean = GsonUtil.getInstance().fromJson(str,AgreeBean.class);
         System.out.println(str);
@@ -84,20 +84,27 @@ public class AgreeMapping {
         }
     }
 
+
+
+
     @RequestMapping(value = "/clickAgree",method = RequestMethod.POST)
     public void clickAgree(HttpServletRequest req, HttpServletResponse rep){
-        Main.init(req,rep);
+        VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         AgreeBean agreeBean = GsonUtil.getInstance().fromJson(str,AgreeBean.class);
         System.out.println(str);
         BaseResBean baseResBean = new BaseResBean();
+        AgreeNumBean agreeNumBean = new AgreeNumBean();
         if((Boolean) (agreeI.isAgreeNum(agreeBean).getData())){
             agreeI.cancleAgree(agreeBean);
             baseResBean.setData(false);
+            agreeNumBean.setAgree(false);
         }else{
             agreeI.addAgree(agreeBean);
-            baseResBean.setData(true);
+            agreeNumBean.setAgree(true);
         }
+        agreeNumBean.setAgreenum((Integer) (agreeI.getAgreeNum(agreeBean).getData()));
+        baseResBean.setData(agreeNumBean);
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(baseResBean));

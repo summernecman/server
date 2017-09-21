@@ -13,6 +13,14 @@ public class AgreeBean extends BaseBean {
 
     private int agreeid;
 
+    public AgreeBean() {
+    }
+
+    public AgreeBean(int commentid, int agreeid) {
+        this.commentid = commentid;
+        this.agreeid = agreeid;
+    }
+
     public int getId() {
         return id;
     }

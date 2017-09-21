@@ -1,5 +1,8 @@
 package com.summer.comment;
 
+import com.summer.agree.AgreeBean;
+import com.summer.agree.AgreeI;
+import com.summer.agree.AgreeOpe;
 import com.summer.base.bean.BaseResBean;
 import com.summer.main.DBUtil;
 import com.summer.user.UserI;
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 public class CommentOpe implements CommentI {
 
     UserI userI ;
+
+    AgreeI agreeI;
 
     public BaseResBean getCommentByUserName(UserBean userBean) {
         if(userI ==null){
@@ -71,8 +76,26 @@ public class CommentOpe implements CommentI {
             UserBean userBean4 = (UserBean) userI.getUserInfoById(userBean3).getData();
             comments.get(i).setToUser(userBean1);
 
+
+
         }
         baseResBean.setData(comments);
+        return baseResBean;
+    }
+
+    public BaseResBean getCommentByUserNameWithMyOption(CommentBean commentBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> list = (ArrayList<CommentBean>) getCommentByUserName(commentBean.getToUser()).getData();
+        if(agreeI == null){
+            agreeI = new AgreeOpe();
+        }
+        for(int i=0;i<list.size();i++){
+            AgreeBean agreeBean = new AgreeBean(list.get(i).getId(),commentBean.getFromUser().getId());
+            list.get(i).setAgree((Boolean) (agreeI.isAgreeNum(agreeBean).getData()));
+            list.get(i).setAgreeNum((Integer) agreeI.getAgreeNum(new AgreeBean(list.get(i).getId(),0)).getData());
+
+        }
+        baseResBean.setData(list);
         return baseResBean;
     }
 
@@ -256,6 +279,31 @@ public class CommentOpe implements CommentI {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setString(1,userBean.getPhone());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getFloat(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideoRateCommentByUseId(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select avg(rate) from comment WHERE  toid = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        float num = 0f;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
             set  = ps.executeQuery();
             set.next();
             num = set.getFloat(1);

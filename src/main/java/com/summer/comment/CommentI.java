@@ -1,6 +1,7 @@
 package com.summer.comment;
 
 import com.summer.base.bean.BaseResBean;
+import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.video.bean.VideoBean;
 
@@ -10,6 +11,8 @@ import com.summer.video.bean.VideoBean;
 public interface CommentI {
 
     public BaseResBean getCommentByUserName(UserBean userBean);
+
+    public BaseResBean getCommentByUserNameWithMyOption(CommentBean commentBean);
 
     public BaseResBean getCommentNumByUserName(UserBean userBean);
 
@@ -22,4 +25,6 @@ public interface CommentI {
     public BaseResBean getVideoCommentByVideoNameAndFrom(VideoBean videoBean);
 
     public BaseResBean getVideoRateCommentByUserPhone(UserBean userBean);
+
+    public BaseResBean getVideoRateCommentByUseId(UserBean userBean);
 }
