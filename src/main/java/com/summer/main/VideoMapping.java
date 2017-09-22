@@ -248,7 +248,7 @@ public class VideoMapping {
         }
     }
 
-    @RequestMapping(value = "/setVideoUploaded",method = RequestMethod.GET)
+    @RequestMapping(value = "/setVideoUploaded",method = RequestMethod.POST)
     public void setVideoUploaded(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
         String  str = req.getParameter("data");
