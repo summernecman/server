@@ -35,6 +35,8 @@ public class CommentBean extends BaseBean{
 
     private boolean agree;
 
+    private int videoid;
+
 
 
 
@@ -149,5 +151,13 @@ public class CommentBean extends BaseBean{
 
     public void setAgree(boolean agree) {
         this.agree = agree;
+    }
+
+    public int getVideoid() {
+        return videoid;
+    }
+
+    public void setVideoid(int videoid) {
+        this.videoid = videoid;
     }
 }

@@ -22,7 +22,13 @@ public interface VideoI {
 
     public BaseResBean addVideo(VideoBean videoBean);
 
+    public BaseResBean insert_and_getid_fromvieo(VideoBean videoBean);
+
+    public BaseResBean updateVideoById(VideoBean videoBean);
+
     public BaseResBean getVideosByContacts(UserBean userBean);
+
+    public BaseResBean getVideosByContacts2(UserBean userBean);
 
     public BaseResBean commentVideos(CommentBean commentBean);
 
@@ -37,5 +43,8 @@ public interface VideoI {
     public BaseResBean isVideoUploaded(VideoBean videoBean);
 
     public BaseResBean setVideoUploaded(VideoBean videoBean);
+
+    public BaseResBean getMaxVideoId();
+
 
 }

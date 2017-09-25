@@ -157,6 +157,20 @@ public class CommentMapping {
         }
     }
 
+    @RequestMapping(value = "/getVideoCommentByVideoIdAndFrom",method = RequestMethod.POST)
+    public void getVideoCommentByVideoIdAndFrom(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getVideoCommentByVideoIdAndFrom(videoBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

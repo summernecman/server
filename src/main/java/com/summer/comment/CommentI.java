@@ -24,6 +24,8 @@ public interface CommentI {
 
     public BaseResBean getVideoCommentByVideoNameAndFrom(VideoBean videoBean);
 
+    public BaseResBean getVideoCommentByVideoIdAndFrom(VideoBean videoBean);
+
     public BaseResBean getVideoRateCommentByUserPhone(UserBean userBean);
 
     public BaseResBean getVideoRateCommentByUseId(UserBean userBean);

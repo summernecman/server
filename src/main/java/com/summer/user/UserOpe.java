@@ -435,7 +435,7 @@ public class UserOpe  implements UserI{
                 list.remove(i);
                 i--;
             }
-            list.set(i,userBean);
+            //list.set(i,userBean);
         }
         for(int i=0;list!=null&&i<list.size();i++){
             float rate =  (Float) (commentI.getVideoRateCommentByUserPhone(list.get(i)).getData());

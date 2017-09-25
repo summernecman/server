@@ -13,10 +13,7 @@ import com.summer.video.bean.VideoTimeBean;
 import sun.reflect.generics.tree.VoidDescriptor;
 
 import javax.naming.NamingException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -291,6 +288,59 @@ public class VideoOpe implements VideoI {
         return getVideoByName(videoBean);
     }
 
+    public BaseResBean insert_and_getid_fromvieo(VideoBean videoBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "{call insert_and_getid_fromvieo(?,?,?,?,?,?,?,?)}";
+        CallableStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareCall(str);
+           ps.setString(1,videoBean.getFile());
+            ps.setString(2,videoBean.getCreated());
+            ps.setInt(3,videoBean.getFromid());
+            ps.setInt(4,videoBean.getToid());
+            ps.setString(5,videoBean.getFromphone());
+            ps.setString(6,videoBean.getTophone());
+            ps.setLong(7,videoBean.getTimenum());
+            ps.registerOutParameter(8,Types.INTEGER);
+            ps.execute();
+            videoBean.setId(ps.getInt(8));
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(videoBean);
+        return baseResBean;
+    }
+
+    public BaseResBean updateVideoById(VideoBean videoBean) {
+
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update video set file = ? WHERE  id = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,videoBean.getFile());
+            ps.setInt(2,videoBean.getId());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        return getVideoByName(videoBean);
+    }
+
     public BaseResBean getVideosByContacts(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
@@ -365,10 +415,75 @@ public class VideoOpe implements VideoI {
         return baseResBean;
     }
 
+    public BaseResBean getVideosByContacts2(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
+        String str = "select * from video WHERE  fromphone = ? or tophone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,userBean.getPhone());
+            ps.setString(2,userBean.getPhone());
+            set  = ps.executeQuery();
+            while (set.next()){
+                VideoBean videoBean = new VideoBean();
+                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
+                videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videos.add(videoBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        ArrayList<ArrayList<VideoBean>> data = new ArrayList<ArrayList<VideoBean>>();
+        HashMap<String,ArrayList<VideoBean>> map = new HashMap<String, ArrayList<VideoBean>>();
+        for(int i=0;i<videos.size();i++){
+            if(videos.get(i).getFromphone().equals(userBean.getPhone())){
+                if(map.get(videos.get(i).getTophone())==null){
+                    map.put(videos.get(i).getTophone(),new ArrayList<VideoBean>());
+                }
+                map.get(videos.get(i).getTophone()).add(videos.get(i));
+            }else{
+                if(map.get(videos.get(i).getFromphone())==null){
+                    map.put(videos.get(i).getFromphone(),new ArrayList<VideoBean>());
+                }
+                map.get(videos.get(i).getFromphone()).add(videos.get(i));
+            }
+        }
+        Iterator<String> key = map.keySet().iterator();
+        while (key.hasNext()){
+            ArrayList<VideoBean> videoBeen = new ArrayList<VideoBean>();
+            String k = key.next();
+            for(int i=0;i<map.get(k).size();i++){
+                videoBeen.add(map.get(k).get(i));
+            }
+            data.add(videoBeen);
+        }
+        for(int i=0;i<data.size();i++){
+            for(int j=0;j<data.get(i).size();j++){
+                UserBean u  = new UserBean();
+                u.setPhone(data.get(i).get(j).getFromphone());
+                data.get(i).get(j).setFromUser((UserBean) userI.getUserInfoByPhone(u).getData());
+
+                UserBean u1  = new UserBean();
+                u1.setPhone(data.get(i).get(j).getTophone());
+                data.get(i).get(j).setToUser((UserBean) userI.getUserInfoByPhone(u1).getData());
+            }
+        }
+        baseResBean.setData(data);
+        return baseResBean;
+    }
+
     public BaseResBean commentVideos(CommentBean commentBean) {
         BaseResBean baseResBean = new BaseResBean();
 
-        String str = "insert into comment(rate,tips,remark,created,videoname,fromuser,touser,fromid,toid) VALUES (?,?,?,?,?,?,?,?,?)";
+        String str = "insert into comment(rate,tips,remark,created,videoname,fromuser,touser,fromid,toid,videoid) VALUES (?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -384,6 +499,7 @@ public class VideoOpe implements VideoI {
             ps.setString(7,commentBean.getTouser());
             ps.setInt(8,commentBean.getFromid());
             ps.setInt(9,commentBean.getToid());
+            ps.setInt(10,commentBean.getVideoid());
             ps.execute();
         } catch (NamingException e) {
             e.printStackTrace();
@@ -528,6 +644,30 @@ public class VideoOpe implements VideoI {
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(videoBean);
+        return baseResBean;
+    }
+
+    public BaseResBean getMaxVideoId() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select max(id) from video";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int max = -1;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set = ps.executeQuery();
+            set.next();
+            max = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(max);
         return baseResBean;
     }
 
