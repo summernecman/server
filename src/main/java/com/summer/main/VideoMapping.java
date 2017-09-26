@@ -10,6 +10,7 @@ import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
 import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
+import com.summer.video.bean.VideoBeseResBean;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -245,9 +246,11 @@ public class VideoMapping {
         String  str = req.getParameter("data");
         LimitBean limitBean = GsonUtil.getInstance().fromJson(str,LimitBean.class);
         System.out.println(str);
+        VideoBeseResBean videoBeseResBean = (VideoBeseResBean) videoI.getAllVideosWithLimit(limitBean);
+        videoBeseResBean.setTotal((Integer) videoI.getAllVideosCount().getData());
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getAllVideosWithLimit(limitBean)));
+            printWriter.println(GsonUtil.getInstance().toJson(videoBeseResBean));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

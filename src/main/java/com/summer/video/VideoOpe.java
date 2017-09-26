@@ -10,6 +10,7 @@ import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
 import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
+import com.summer.video.bean.VideoBeseResBean;
 import com.summer.video.bean.VideoTimeBean;
 import sun.reflect.generics.tree.VoidDescriptor;
 
@@ -156,8 +157,32 @@ public class VideoOpe implements VideoI {
         return baseResBean;
     }
 
-    public BaseResBean getAllVideosWithLimit(LimitBean limitBean) {
+    public BaseResBean getAllVideosCount() {
         BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from video";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getAllVideosWithLimit(LimitBean limitBean) {
+        VideoBeseResBean baseResBean = new VideoBeseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
         String str = "select * from video limit ?,?";
         PreparedStatement ps = null;
@@ -201,6 +226,7 @@ public class VideoOpe implements VideoI {
             videos.get(i).setToUser(userBean3);
 
         }
+        baseResBean.setTotal(videos.size());
         baseResBean.setData(videos);
         return baseResBean;
     }

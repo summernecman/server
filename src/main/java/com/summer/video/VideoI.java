@@ -17,6 +17,8 @@ public interface VideoI {
 
     public BaseResBean getAllVideos();
 
+    public BaseResBean getAllVideosCount();
+
     public BaseResBean getAllVideosWithLimit(LimitBean limitBean);
 
     public BaseResBean getVideoByVideoId(VideoBean videoBean);
