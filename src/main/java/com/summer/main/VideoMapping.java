@@ -8,6 +8,7 @@ import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
+import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -32,9 +33,9 @@ import java.util.ArrayList;
 @RequestMapping("/server")
 public class VideoMapping {
 
-    UserI userI = new UserOpe();
+    UserOpe userI = new UserOpe();
 
-    VideoI videoI = new VideoOpe();
+    VideoOpe videoI = new VideoOpe();
 
 
     @RequestMapping(value = "/userlist",method = RequestMethod.POST)
@@ -231,6 +232,22 @@ public class VideoMapping {
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(videoI.getAllVideos()));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getAllVideosWithLimit",method = RequestMethod.POST)
+    public void getAllVideosWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        LimitBean limitBean = GsonUtil.getInstance().fromJson(str,LimitBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.getAllVideosWithLimit(limitBean)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

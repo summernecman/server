@@ -3,6 +3,7 @@ package com.summer.main;
 import com.summer.base.bean.BaseResBean;
 import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
+import com.summer.comment.bean.RateLevelBean;
 import com.summer.comment.bean.TipBean;
 import com.summer.comment.bean.TipsBean;
 import com.summer.user.bean.CommentBean;
@@ -27,9 +28,9 @@ import java.util.HashMap;
 @RequestMapping("/comment")
 public class CommentMapping {
 
-    CommentI commentI = new CommentOpe();
+    CommentOpe commentI = new CommentOpe();
 
-    @RequestMapping(value = "/getCommentByUserName",method = RequestMethod.POST)
+    @RequestMapping(value = "/getCommentByUserPhone",method = RequestMethod.POST)
     public void getCommentByUserName(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
@@ -38,6 +39,37 @@ public class CommentMapping {
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentByUserName(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getCommentByUserId",method = RequestMethod.POST)
+    public void getCommentByUserId(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentByUserId(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getShortCommentByUserId",method = RequestMethod.POST)
+    public void getShortCommentByUserId(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getShortCommentByUserId(userBean)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -142,6 +174,39 @@ public class CommentMapping {
         }
     }
 
+
+    @RequestMapping(value = "/getUserTipsByUserId",method = RequestMethod.POST)
+    public void getUserTipsByUserId(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        ArrayList<CommentBean> comments = (ArrayList<CommentBean>) commentI.getTipsByUserId(userBean).getData();
+        HashMap<Integer,TipBean> tipBeanHashMap = new HashMap<Integer, TipBean>();
+        for(int i=0;i<comments.size();i++){
+            TipsBean tipBean = GsonUtil.getInstance().fromJson(comments.get(i).getTips(),TipsBean.class);
+            for(int j = 0; j<tipBean.getTipBeen().size(); j++){
+                if(tipBeanHashMap.get(tipBean.getTipBeen().get(j).getPosition())==null){
+                    TipBean tipBean1 = new TipBean(tipBean.getTipBeen().get(j).getPosition(),tipBean.getTipBeen().get(j).getTip(),0,false);
+                    tipBeanHashMap.put(tipBean.getTipBeen().get(j).getPosition(),tipBean1);
+                }
+                if(tipBean.getTipBeen().get(j).isSelect()){
+                    tipBeanHashMap.get(tipBean.getTipBeen().get(j).getPosition()).setNum(tipBeanHashMap.get(tipBean.getTipBeen().get(j).getPosition()).getNum()+1);
+                }
+            }
+        }
+
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            BaseResBean baseResBean = new BaseResBean();
+            baseResBean.setData(tipBeanHashMap);
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @RequestMapping(value = "/getVideoCommentByVideoNameAndFrom",method = RequestMethod.POST)
     public void getVideoCommentByVideoNameAndFrom(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
@@ -166,6 +231,40 @@ public class CommentMapping {
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(commentI.getVideoCommentByVideoIdAndFrom(videoBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getVideoCommentRateLevelByuserId",method = RequestMethod.POST)
+    public void getVideoCommentRateLevelByuserId(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        ArrayList<RateLevelBean> rateLevelBeen = (ArrayList<RateLevelBean>) commentI.getVideoCommentRateLevelByuserId(userBean).getData();
+        HashMap<Integer,Integer> map = new HashMap<Integer, Integer>();
+        for(int i=0;i<=5;i++){
+            map.put(i,0);
+        }
+        for(int i=0;rateLevelBeen!=null&&i<rateLevelBeen.size();i++){
+            int rate = (int) rateLevelBeen.get(i).getRatef();
+            if(rate>5){
+                rate=5;
+            }
+
+            if(rate<0){
+                rate=0;
+            }
+            int n = map.get(rate);
+            map.put(rate,n+1);
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(map);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

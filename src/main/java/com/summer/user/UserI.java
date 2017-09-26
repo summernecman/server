@@ -20,6 +20,10 @@ public interface UserI  {
 
     public BaseResBean getUnTypeUserList(UserBean userBean);
 
+    public BaseResBean getUnTypeUserShortList(UserBean userBean);
+
+    public BaseResBean getUnTypeUserShortListWithOutMe(UserBean userBean);
+
     public BaseResBean getUserListWithOutMe(UserBean userBean);
 
     public BaseResBean registed(String username);
@@ -50,14 +54,22 @@ public interface UserI  {
 
     public BaseResBean getUserInfoById(UserBean userBean);
 
+    public BaseResBean getUserShortInfoById(UserBean userBean);
+
     public BaseResBean updateUnitInfo(UserBean userBean);
 
     public BaseResBean updateUUUid(UserBean userBean);
 
     public BaseResBean getUserListWithType(UserBean userBean);
 
+    public BaseResBean getUserListWithTypeAndLimit(UserBean userBean);
+
     public BaseResBean addUser(UserBean userBean);
 
     public BaseResBean isUserExist(UserBean userBean);
+
+    public BaseResBean updateArea(UserBean userBean);
+
+    public BaseResBean updateRemark(UserBean userBean);
 
 }

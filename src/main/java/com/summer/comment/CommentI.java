@@ -12,6 +12,10 @@ public interface CommentI {
 
     public BaseResBean getCommentByUserName(UserBean userBean);
 
+    public BaseResBean getCommentByUserId(UserBean userBean);
+
+    public BaseResBean getShortCommentByUserId(UserBean userBean);
+
     public BaseResBean getCommentByUserNameWithMyOption(CommentBean commentBean);
 
     public BaseResBean getCommentNumByUserName(UserBean userBean);
@@ -29,4 +33,6 @@ public interface CommentI {
     public BaseResBean getVideoRateCommentByUserPhone(UserBean userBean);
 
     public BaseResBean getVideoRateCommentByUseId(UserBean userBean);
+
+    public BaseResBean getVideoCommentRateLevelByuserId(UserBean userBean);
 }

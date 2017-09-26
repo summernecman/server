@@ -2,6 +2,8 @@ package com.summer.main;
 
 import com.google.gson.reflect.TypeToken;
 import com.summer.base.bean.BaseResBean;
+import com.summer.contact.ContactBean;
+import com.summer.contact.ContactOpe;
 import com.summer.em.EMI;
 import com.summer.em.EMOpe;
 import com.summer.em.bean.EMUserBean;
@@ -40,13 +42,15 @@ import java.util.ArrayList;
 @RequestMapping("/user")
 public class UserMapping {
 
-    UserI userI = new UserOpe();
+    UserOpe userI = new UserOpe();
 
-    VideoI videoI = new VideoOpe();
+    VideoOpe videoI = new VideoOpe();
 
-    UnitI unitI = new UnitOpe();
+    UnitOpe unitI = new UnitOpe();
 
-    EMI emi = new EMOpe();
+    EMOpe emi = new EMOpe();
+
+    ContactOpe contactI = new ContactOpe();
 
     @RequestMapping(value = "/setHeadurl",method = RequestMethod.POST)
     public void setHeadUrl(HttpServletRequest req, HttpServletResponse rep){
@@ -393,6 +397,23 @@ public class UserMapping {
         }
     }
 
+
+    @RequestMapping(value = "/getServerInfoWithLimit",method = RequestMethod.POST)
+    public void getServerInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        userBean.setUsertype(UserBean.USER_TYPE_SERVER);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithTypeAndLimit(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @RequestMapping(value = "/getCustomerInfo",method = RequestMethod.POST)
     public void getCustomerInfo(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
@@ -426,34 +447,104 @@ public class UserMapping {
         }
     }
 
-    @RequestMapping(value = "/addUser",method = RequestMethod.POST)
-    public void addUser(HttpServletRequest req, HttpServletResponse rep){
+//    @RequestMapping(value = "/addUser",method = RequestMethod.POST)
+//    public void addUser(HttpServletRequest req, HttpServletResponse rep){
+//        VideoMapping.init(req,rep);
+//        String  str = req.getParameter("data");
+//        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+//        System.out.println(str);
+//        if((Boolean) (userI.isUserExist(userBean).getData())){
+//            try {
+//                BaseResBean baseResBean = new BaseResBean();
+//                baseResBean.setException(true);
+//                baseResBean.setErrorMessage("用户已存在");
+//                PrintWriter printWriter = rep.getWriter();
+//                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+//                printWriter.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }else{
+//            try {
+//                PrintWriter printWriter = rep.getWriter();
+//                printWriter.println(GsonUtil.getInstance().toJson(userI.addUser(userBean)));
+//                printWriter.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//    }
+
+
+
+    @RequestMapping(value = "/getUnTypeUserShortList",method = RequestMethod.POST)
+    public void getUnTypeUserShortList(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
         System.out.println(str);
-        if((Boolean) (userI.isUserExist(userBean).getData())){
-            try {
-                BaseResBean baseResBean = new BaseResBean();
-                baseResBean.setException(true);
-                baseResBean.setErrorMessage("用户已存在");
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }else{
-            try {
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(userI.addUser(userBean)));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUnTypeUserShortList(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
 
+    @RequestMapping(value = "/updateAreaByid",method = RequestMethod.POST)
+    public void updateAreaByid(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.updateArea(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/updateRemarkById",method = RequestMethod.POST)
+    public void updateRemarkById(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.updateRemark(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/saveUserInfoInWeb",method = RequestMethod.POST)
+    public void saveUserInfoInWeb(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        userI.updateArea(userBean);
+        userI.updateRemark(userBean);
+        for(int i=0;i<userBean.getContacts().size();i++){
+            ContactBean contactBean = new ContactBean();
+            contactBean.setFromid(userBean.getId());
+            contactBean.setToid(userBean.getContacts().get(i).getId());
+            contactI.addContactsByUserid(contactBean);
+        }
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -22,7 +22,7 @@ import java.io.PrintWriter;
 @RequestMapping("/agree")
 public class AgreeMapping {
 
-    AgreeI agreeI = new AgreeOpe();
+    AgreeOpe agreeI = new AgreeOpe();
 
     @RequestMapping(value = "/addAgree",method = RequestMethod.POST)
     public void addAgree(HttpServletRequest req, HttpServletResponse rep){

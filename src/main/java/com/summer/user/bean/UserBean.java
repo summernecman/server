@@ -4,6 +4,8 @@ import com.summer.base.bean.BaseBean;
 import com.summer.unit.UnitBean;
 import com.summer.video.bean.VideoTimeBean;
 
+import java.util.ArrayList;
+
 /**
  * Created by SWSD on 17-08-23.
  */
@@ -33,9 +35,22 @@ public class UserBean extends BaseBean {
 
     private int unitid;
 
+    private String area;
+
     private UnitBean unit;
 
+    private ArrayList<UserBean> contacts;
+
+    private int pagesize;
+
+    private int pagestart;
+
     private VideoTimeBean callinfo;
+
+    private String remark;
+
+
+
 
 
     public static final int STATE_OFFLINE  = 0;
@@ -165,6 +180,46 @@ public class UserBean extends BaseBean {
         this.callinfo = callinfo;
     }
 
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public ArrayList<UserBean> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(ArrayList<UserBean> contacts) {
+        this.contacts = contacts;
+    }
+
+    public int getPagesize() {
+        return pagesize;
+    }
+
+    public void setPagesize(int pagesize) {
+        this.pagesize = pagesize;
+    }
+
+    public int getPagestart() {
+        return pagestart;
+    }
+
+    public void setPagestart(int pagestart) {
+        this.pagestart = pagestart;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     @Override
     public String toString() {
         return "UserBean{" +
@@ -180,7 +235,9 @@ public class UserBean extends BaseBean {
                 ", headurl='" + headurl + '\'' +
                 ", avg=" + avg +
                 ", unitid=" + unitid +
+                ", area='" + area + '\'' +
                 ", unit=" + unit +
+                ", contacts=" + contacts +
                 ", callinfo=" + callinfo +
                 '}';
     }

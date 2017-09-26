@@ -3,6 +3,7 @@ package com.summer.video;
 import com.summer.base.bean.BaseResBean;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
+import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 
 /**
@@ -15,6 +16,8 @@ public interface VideoI {
     public BaseResBean getVideoByName(VideoBean videoBean);
 
     public BaseResBean getAllVideos();
+
+    public BaseResBean getAllVideosWithLimit(LimitBean limitBean);
 
     public BaseResBean getVideoByVideoId(VideoBean videoBean);
 
