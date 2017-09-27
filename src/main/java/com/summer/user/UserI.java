@@ -64,6 +64,8 @@ public interface UserI  {
 
     public BaseResBean getUserListWithTypeAndLimit(UserBean userBean);
 
+    public BaseResBean getUserNumWithType(UserBean userBean);
+
     public BaseResBean addUser(UserBean userBean);
 
     public BaseResBean isUserExist(UserBean userBean);
@@ -71,5 +73,7 @@ public interface UserI  {
     public BaseResBean updateArea(UserBean userBean);
 
     public BaseResBean updateRemark(UserBean userBean);
+
+    public BaseResBean getUserNums(UserBean userBean);
 
 }

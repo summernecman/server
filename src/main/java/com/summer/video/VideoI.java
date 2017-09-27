@@ -1,6 +1,7 @@
 package com.summer.video;
 
 import com.summer.base.bean.BaseResBean;
+import com.summer.contact.ContactBean;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.video.bean.LimitBean;
@@ -25,6 +26,8 @@ public interface VideoI {
 
     public BaseResBean getVideosByUserPhone(UserBean userBean);
 
+    public BaseResBean getVideosByBothUserId(ContactBean contactBean);
+
     public BaseResBean addVideo(VideoBean videoBean);
 
     public BaseResBean insert_and_getid_fromvieo(VideoBean videoBean);
@@ -34,6 +37,8 @@ public interface VideoI {
     public BaseResBean getVideosByContacts(UserBean userBean);
 
     public BaseResBean getVideosByContacts2(UserBean userBean);
+
+    public BaseResBean getByContacts(UserBean userBean);
 
     public BaseResBean commentVideos(CommentBean commentBean);
 

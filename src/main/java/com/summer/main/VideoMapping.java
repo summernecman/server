@@ -1,6 +1,7 @@
 package com.summer.main;
 
 import com.summer.base.bean.BaseResBean;
+import com.summer.contact.ContactBean;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
@@ -176,6 +177,38 @@ public class VideoMapping {
         }
     }
 
+    @RequestMapping(value = "/getMyContactsById",method = RequestMethod.POST)
+    public void getMyContactsById(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean u = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.getByContacts(u)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getVideosByBothUserId",method = RequestMethod.POST)
+    public void getVideosByBothUserId(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        ContactBean c = GsonUtil.getInstance().fromJson(str,ContactBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideosByBothUserId(c)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 
@@ -245,6 +278,24 @@ public class VideoMapping {
         init(req,rep);
         String  str = req.getParameter("data");
         LimitBean limitBean = GsonUtil.getInstance().fromJson(str,LimitBean.class);
+        System.out.println(str);
+        VideoBeseResBean videoBeseResBean = (VideoBeseResBean) videoI.getAllVideosWithLimit(limitBean);
+        videoBeseResBean.setTotal((Integer) videoI.getAllVideosCount().getData());
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoBeseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getAllVideosWithLimitFrom1",method = RequestMethod.POST)
+    public void getAllVideosWithLimitFrom1(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        LimitBean limitBean = GsonUtil.getInstance().fromJson(str,LimitBean.class);
+        limitBean.setPagestart(limitBean.getPagestart()-1);
         System.out.println(str);
         VideoBeseResBean videoBeseResBean = (VideoBeseResBean) videoI.getAllVideosWithLimit(limitBean);
         videoBeseResBean.setTotal((Integer) videoI.getAllVideosCount().getData());

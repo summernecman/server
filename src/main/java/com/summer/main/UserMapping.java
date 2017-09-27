@@ -15,7 +15,9 @@ import com.summer.unit.UnitOpe;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.AllUserBean;
+import com.summer.user.bean.UserBaseResBean;
 import com.summer.user.bean.UserBean;
+import com.summer.user.bean.WebIndexInfo;
 import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
 import com.summer.video.VideoI;
@@ -381,6 +383,43 @@ public class UserMapping {
 
 
 
+    @RequestMapping(value = "/getUsersInfo",method = RequestMethod.POST)
+    public void getUsersInfo(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        UserBaseResBean userBaseResBean = (UserBaseResBean) userI.getUserListWithType(userBean);
+        userBaseResBean.setTotal((Integer) userI.getUserNumWithType(userBean).getData());
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userBaseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getUsersInfoWithLimit",method = RequestMethod.POST)
+    public void getUsersInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        UserBaseResBean userBaseResBean = (UserBaseResBean) userI.getUserListWithTypeAndLimit(userBean);
+        userBaseResBean.setTotal((Integer) userI.getUserNumWithType(userBean).getData());
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userBaseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     @RequestMapping(value = "/getServerInfo",method = RequestMethod.POST)
     public void getServerInfo(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
@@ -431,6 +470,24 @@ public class UserMapping {
     }
 
 
+    @RequestMapping(value = "/getCustomerInfoWithLimit",method = RequestMethod.POST)
+    public void getCustomerInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        userBean.setUsertype(UserBean.USER_TYPE_CUSTOMER);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithTypeAndLimit(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     @RequestMapping(value = "/getEngineerInfo",method = RequestMethod.POST)
     public void getEngineerInfo(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
@@ -441,6 +498,23 @@ public class UserMapping {
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithType(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getEngineerInfoWithLimit",method = RequestMethod.POST)
+    public void getEngineerInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        userBean.setUsertype(UserBean.USER_TYPE_ENGINEER);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithTypeAndLimit(userBean)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -547,4 +621,28 @@ public class UserMapping {
             e.printStackTrace();
         }
     }
+
+
+
+
+    @RequestMapping(value = "/getWebIndexInfo",method = RequestMethod.POST)
+    public void getWebIndexInfo(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+
+        WebIndexInfo webIndexInfo = new WebIndexInfo();
+        UserBean u1 = new UserBean();
+        u1.setUsertype(1);
+        webIndexInfo.setEngineerall((Integer) userI.getUserNums(u1).getData());
+
+//        try {
+//            PrintWriter printWriter = rep.getWriter();
+//            printWriter.println(GsonUtil.getInstance().toJson(userI.updateRemark(userBean)));
+//            printWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
 }

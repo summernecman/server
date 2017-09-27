@@ -186,7 +186,7 @@ public class CommentOpe implements CommentI {
 
     public BaseResBean getCommentByUserNameWithMyOption(CommentBean commentBean) {
         BaseResBean baseResBean = new BaseResBean();
-        ArrayList<CommentBean> list = (ArrayList<CommentBean>) getCommentByUserName(commentBean.getToUser()).getData();
+        ArrayList<CommentBean> list = (ArrayList<CommentBean>) getCommentByUserId(commentBean.getToUser()).getData();
         if(agreeI == null){
             agreeI = new AgreeOpe();
         }

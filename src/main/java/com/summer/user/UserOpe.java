@@ -11,12 +11,14 @@ import com.summer.unit.UnitBean;
 import com.summer.unit.UnitI;
 import com.summer.unit.UnitOpe;
 import com.summer.user.bean.AllUserBean;
+import com.summer.user.bean.UserBaseResBean;
 import com.summer.user.bean.UserBean;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
 import com.summer.video.bean.VideoTimeBean;
 
 import javax.naming.NamingException;
+import java.lang.reflect.WildcardType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -513,20 +515,26 @@ public class UserOpe  implements UserI{
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
+
+        UserBean userBean = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setInt(1,user.getId());
             set  = ps.executeQuery();
             while (set.next()){
-                user.setPhone(set.getString(set.findColumn("phone")));
-                user.setUuuid(set.getString(set.findColumn("uuuid")));
-                user.setPwd(set.getString(set.findColumn("pwd")));
-                user.setName(set.getString(set.findColumn("name")));
-                user.setBelong(set.getString(set.findColumn("belong")));
-                user.setState(set.getInt(set.findColumn("state")));
-                user.setUnitid(set.getInt(set.findColumn("unitid")));
-                user.setHeadurl(set.getString(set.findColumn("headurl")));
+                userBean = new UserBean();
+                userBean.setId(set.getInt(set.findColumn("id")));
+                userBean.setPhone(set.getString(set.findColumn("phone")));
+                userBean.setUuuid(set.getString(set.findColumn("uuuid")));
+                userBean.setPwd(set.getString(set.findColumn("pwd")));
+                userBean.setName(set.getString(set.findColumn("name")));
+                userBean.setBelong(set.getString(set.findColumn("belong")));
+                userBean.setState(set.getInt(set.findColumn("state")));
+                userBean.setUnitid(set.getInt(set.findColumn("unitid")));
+                userBean.setHeadurl(set.getString(set.findColumn("headurl")));
+                userBean.setArea(set.getString(set.findColumn("area")));
+                userBean.setRemark(set.getString(set.findColumn("remark")));
                 break;
             }
         } catch (NamingException e) {
@@ -539,10 +547,11 @@ public class UserOpe  implements UserI{
         if(unitI==null){
             unitI = new UnitOpe();
         }
-        UnitBean u = new UnitBean(user.getUnitid());
-        user.setUnit((UnitBean) unitI.getUnitById(u).getData());
-
-        baseResBean.setData(user);
+        if(userBean!=null){
+            UnitBean u = new UnitBean(userBean.getUnitid());
+            userBean.setUnit((UnitBean) unitI.getUnitById(u).getData());
+        }
+        baseResBean.setData(userBean);
         return baseResBean;
     }
 
@@ -597,7 +606,7 @@ public class UserOpe  implements UserI{
     }
 
     public BaseResBean updateUUUid(UserBean userBean) {
-        BaseResBean baseResBean = new BaseResBean();
+        UserBaseResBean baseResBean = new UserBaseResBean();
         String str = "update user set uuuid = ? where id = ?;";
         PreparedStatement ps = null;
         ResultSet set = null;
@@ -620,7 +629,7 @@ public class UserOpe  implements UserI{
     }
 
     public BaseResBean getUserListWithType(UserBean user) {
-        BaseResBean baseResBean = new BaseResBean();
+        UserBaseResBean baseResBean = new UserBaseResBean();
         ArrayList<UserBean> users = new ArrayList<UserBean>();
         String str = "select * from user WHERE usertype = ? ";
         PreparedStatement ps = null;
@@ -681,7 +690,7 @@ public class UserOpe  implements UserI{
     }
 
     public BaseResBean getUserListWithTypeAndLimit(UserBean user) {
-        BaseResBean baseResBean = new BaseResBean();
+        UserBaseResBean baseResBean = new UserBaseResBean();
         ArrayList<UserBean> users = new ArrayList<UserBean>();
         String str = "select * from user WHERE usertype = ? ORDER BY id limit ?,?";
         PreparedStatement ps = null;
@@ -691,8 +700,8 @@ public class UserOpe  implements UserI{
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setInt(1,user.getUsertype());
-            ps.setInt(2,user.getPagestart());
-            ps.setInt(3,user.getPagestart()+user.getPagesize());
+            ps.setInt(2,user.getPagestart()*user.getPagesize());
+            ps.setInt(3,user.getPagesize());
             set  = ps.executeQuery();
             while (set.next()){
                 UserBean userBean = new UserBean();
@@ -740,6 +749,31 @@ public class UserOpe  implements UserI{
         }
 
         baseResBean.setData(users);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserNumWithType(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from user WHERE usertype = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,user.getUsertype());
+            set = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
         return baseResBean;
     }
 
@@ -841,6 +875,31 @@ public class UserOpe  implements UserI{
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserNums(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(*) from user where usertype = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getUsertype());
+            set = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
         return baseResBean;
     }
 }
