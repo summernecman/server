@@ -3,6 +3,7 @@ package com.summer.comment;
 import com.summer.base.bean.BaseResBean;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
+import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 
 /**
@@ -10,15 +11,26 @@ import com.summer.video.bean.VideoBean;
  */
 public interface CommentI {
 
+    public BaseResBean getCommentsWithLimit(LimitBean limitBean);
+
+    public BaseResBean getCommentsNum();
+
     public BaseResBean getCommentByUserName(UserBean userBean);
 
+    public BaseResBean getCommentByUserIdWithLimit(UserBean userBean);
+
     public BaseResBean getCommentByUserId(UserBean userBean);
+
+    public BaseResBean getShortCommentByUserIdWithLimit(UserBean userBean);
+
 
     public BaseResBean getShortCommentByUserId(UserBean userBean);
 
     public BaseResBean getCommentByUserNameWithMyOption(CommentBean commentBean);
 
     public BaseResBean getCommentNumByUserName(UserBean userBean);
+
+    public BaseResBean getCommentNumByUserId(UserBean userBean);
 
     public BaseResBean getTips(UserBean userBean);
 
@@ -33,6 +45,8 @@ public interface CommentI {
     public BaseResBean getVideoRateCommentByUserPhone(UserBean userBean);
 
     public BaseResBean getVideoRateCommentByUseId(UserBean userBean);
+
+    public BaseResBean getVideoRateCommentByVideoid(VideoBean videoBean);
 
     public BaseResBean getVideoCommentRateLevelByuserId(UserBean userBean);
 }

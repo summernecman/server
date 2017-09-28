@@ -7,75 +7,85 @@ import com.summer.base.bean.BaseBean;
  */
 public class WebIndexInfo extends BaseBean {
 
-    private int serveronline;
+    private long serveronline;
 
-    private int serverall;
+    private long serverall;
 
-    private int engineerline;
+    private long customall;
 
-    private int engineerall;
+    private long engineerline;
 
-    private int chatingnum;
+    private long engineerall;
 
-    private int userall;
+    private long chatingnum;
 
-    private int videonum;
+    private long userall;
+
+    private long videonum;
 
     private long chattimes;
 
-    public int getServeronline() {
+    public long getServeronline() {
         return serveronline;
     }
 
-    public void setServeronline(int serveronline) {
+    public void setServeronline(long serveronline) {
         this.serveronline = serveronline;
     }
 
-    public int getServerall() {
+    public long getServerall() {
         return serverall;
     }
 
-    public void setServerall(int serverall) {
+    public void setServerall(long serverall) {
         this.serverall = serverall;
     }
 
-    public int getEngineerline() {
+    public long getCustomall() {
+        return customall;
+    }
+
+    public void setCustomall(long customall) {
+        this.customall = customall;
+    }
+
+    public long getEngineerline() {
         return engineerline;
     }
 
-    public void setEngineerline(int engineerline) {
+    public void setEngineerline(long engineerline) {
         this.engineerline = engineerline;
     }
 
-    public int getEngineerall() {
+    public long getEngineerall() {
         return engineerall;
     }
 
-    public void setEngineerall(int engineerall) {
+    public void setEngineerall(long engineerall) {
         this.engineerall = engineerall;
     }
 
-    public int getChatingnum() {
+    public long getChatingnum() {
         return chatingnum;
     }
 
-    public void setChatingnum(int chatingnum) {
+    public void setChatingnum(long chatingnum) {
         this.chatingnum = chatingnum;
     }
 
-    public int getUserall() {
+    public long getUserall() {
         return userall;
     }
 
-    public void setUserall(int userall) {
+    public void setUserall(long userall) {
         this.userall = userall;
     }
 
-    public int getVideonum() {
+    public long getVideonum() {
         return videonum;
     }
 
-    public void setVideonum(int videonum) {
+    public void setVideonum(long videonum) {
         this.videonum = videonum;
     }
 

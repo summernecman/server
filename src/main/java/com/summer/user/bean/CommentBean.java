@@ -37,6 +37,8 @@ public class CommentBean extends BaseBean{
 
     private int videoid;
 
+    private String headUrl;
+
 
 
 
@@ -159,5 +161,13 @@ public class CommentBean extends BaseBean{
 
     public void setVideoid(int videoid) {
         this.videoid = videoid;
+    }
+
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
     }
 }

@@ -38,6 +38,30 @@ public class UserOpe  implements UserI{
 
     ContactI contactI;
 
+    public BaseResBean getUserNum() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select COUNT(id) from user";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection =null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
     public BaseResBean getUserState(UserBean bean) {
         BaseResBean baseResBean = new BaseResBean();
         String str = "select * from user where phone = ?";
@@ -900,6 +924,31 @@ public class UserOpe  implements UserI{
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getHeadUrlById(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select headurl from user where id = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        String url = "";
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            set = ps.executeQuery();
+            set.next();
+            url = set.getString(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(url);
         return baseResBean;
     }
 }

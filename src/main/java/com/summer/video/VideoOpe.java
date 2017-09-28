@@ -329,7 +329,7 @@ public class VideoOpe implements VideoI {
     public BaseResBean getVideosByBothUserId(ContactBean contactBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video WHERE  (fromid = ? and toid = ?) or  (fromid = ? and toid = ?)";
+        String str = "select * from video WHERE  (fromid = ? and toid = ?) or  (fromid = ? and toid = ?) ORDER  BY  id DESC ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -345,7 +345,8 @@ public class VideoOpe implements VideoI {
                 VideoBean videoBean = new VideoBean();
                 videoBean.setId(set.getInt(set.findColumn("id")));
                 videoBean.setFile(set.getString(set.findColumn("file")));
-                videoBean.setCreated(set.getString(set.findColumn("created")));
+                String s = set.getString(set.findColumn("created"));
+                videoBean.setCreated(DateFormatUtil.getdDateStr(DateFormatUtil.YYYY_MM_DD_HH_MM_SS,DateFormatUtil.MM_DD_HH_MM,s.substring(0,s.length()-2)));
                 videoBean.setFromid(set.getInt(set.findColumn("fromid")));
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
@@ -356,6 +357,8 @@ public class VideoOpe implements VideoI {
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
@@ -622,7 +625,8 @@ public class VideoOpe implements VideoI {
             set  = ps.executeQuery();
             while (set.next()){
                 VideoBean videoBean = new VideoBean();
-                videoBean.setCreated(set.getString(set.findColumn("created")));
+                String s = set.getString(set.findColumn("created"));
+                videoBean.setCreated(DateFormatUtil.getdDateStr(DateFormatUtil.YYYY_MM_DD_HH_MM_SS,DateFormatUtil.MM_DD_HH_MM,s.substring(0,s.length()-2)));
                 videoBean.setFromid(set.getInt(set.findColumn("fromid")));
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videos.add(videoBean);
@@ -630,6 +634,8 @@ public class VideoOpe implements VideoI {
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
@@ -646,7 +652,7 @@ public class VideoOpe implements VideoI {
                 if(map.get(videos.get(i).getFromid())==null){
                     map.put(videos.get(i).getFromid(),new ArrayList<VideoBean>());
                 }
-                map.get(videos.get(i).getFromphone()).add(videos.get(i));
+                map.get(videos.get(i).getFromid()).add(videos.get(i));
             }
         }
 
@@ -786,6 +792,30 @@ public class VideoOpe implements VideoI {
         return baseResBean;
     }
 
+    public BaseResBean getCallTimeInfo() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select sum(timenum) from video";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getLong(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
     public BaseResBean isVideoUploaded(VideoBean videoBean) {
         BaseResBean baseResBean = new BaseResBean();
         String str = "select uploaded from video WHERE file = ? ";
@@ -845,6 +875,55 @@ public class VideoOpe implements VideoI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
+            set = ps.executeQuery();
+            set.next();
+            max = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(max);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideoNum() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from video";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int max = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set = ps.executeQuery();
+            set.next();
+            max = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(max);
+        return baseResBean;
+    }
+
+    public BaseResBean getCallNum() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from video WHERE file<> ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long max = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,"");
             set = ps.executeQuery();
             set.next();
             max = set.getInt(1);

@@ -12,6 +12,8 @@ import java.util.ArrayList;
  */
 public interface UserI  {
 
+    public BaseResBean getUserNum();
+
     public BaseResBean getUserState(UserBean user);
 
     public BaseResBean setUserState(UserBean userBean);
@@ -75,5 +77,7 @@ public interface UserI  {
     public BaseResBean updateRemark(UserBean userBean);
 
     public BaseResBean getUserNums(UserBean userBean);
+
+    public BaseResBean getHeadUrlById(UserBean userBean);
 
 }

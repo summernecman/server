@@ -13,6 +13,7 @@ import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
+import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 
 import javax.naming.NamingException;
@@ -33,6 +34,93 @@ public class CommentOpe implements CommentI {
 
     VideoI videoI;
 
+
+    public BaseResBean getCommentsWithLimit(LimitBean limitBean) {
+        if(userI ==null){
+            userI= new UserOpe();
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
+        String str = "select * from comment limit ?,?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,limitBean.getPagestart()*limitBean.getPagesize());
+            ps.setInt(2,limitBean.getPagesize());
+            set  = ps.executeQuery();
+            while (set.next()){
+                CommentBean commentBean = new CommentBean();
+                commentBean.setCreated(set.getString(set.findColumn("created")));
+                commentBean.setFromuser(set.getString(set.findColumn("fromuser")));
+                commentBean.setId(set.getInt(set.findColumn("id")));
+                commentBean.setRate(set.getFloat(set.findColumn("rate")));
+                commentBean.setRemark(set.getString(set.findColumn("remark")));
+                //commentBean.setTips(set.getString(set.findColumn("tips")));
+                commentBean.setTouser(set.getString(set.findColumn("touser")));
+                //commentBean.setVideoname(set.getString(set.findColumn("videoname")));
+                commentBean.setVideoid(set.getInt(set.findColumn("videoid")));
+                commentBean.setFromid(set.getInt(set.findColumn("fromid")));
+                commentBean.setToid(set.getInt(set.findColumn("toid")));
+                comments.add(commentBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+
+        for(int i=0;i<comments.size();i++){
+            UserBean userBean2 = new UserBean();
+            userBean2.setId(comments.get(i).getFromid());
+            UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean2).getData();
+            comments.get(i).setFromUser(userBean1);
+
+
+            UserBean userBean3 = new UserBean();
+            userBean3.setId(comments.get(i).getToid());
+            UserBean userBean4 = (UserBean) userI.getUserInfoById(userBean3).getData();
+            comments.get(i).setToUser(userBean1);
+
+
+
+
+        }
+        baseResBean.setData(comments);
+        return baseResBean;
+    }
+
+    public BaseResBean getCommentsNum() {
+        if(userI ==null){
+            userI= new UserOpe();
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
+        String str = "select COUNT(id) FROM comment";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
 
     public BaseResBean getCommentByUserName(UserBean userBean) {
         if(userI ==null){
@@ -86,6 +174,60 @@ public class CommentOpe implements CommentI {
 
 
 
+        }
+        baseResBean.setData(comments);
+        return baseResBean;
+    }
+
+    public BaseResBean getCommentByUserIdWithLimit(UserBean userBean) {
+        if(userI ==null){
+            userI= new UserOpe();
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
+        String str = "select * from comment WHERE  toid = ? limit ?,?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            ps.setInt(2,userBean.getPagestart()*userBean.getPagesize());
+            ps.setInt(3,userBean.getPagesize());
+            set  = ps.executeQuery();
+            while (set.next()){
+                CommentBean commentBean = new CommentBean();
+                commentBean.setCreated(set.getString(set.findColumn("created")));
+                commentBean.setFromuser(set.getString(set.findColumn("fromuser")));
+                commentBean.setId(set.getInt(set.findColumn("id")));
+                commentBean.setRate(set.getFloat(set.findColumn("rate")));
+                commentBean.setRemark(set.getString(set.findColumn("remark")));
+                commentBean.setTips(set.getString(set.findColumn("tips")));
+                commentBean.setTouser(set.getString(set.findColumn("touser")));
+                commentBean.setVideoname(set.getString(set.findColumn("videoname")));
+                commentBean.setFromid(set.getInt(set.findColumn("fromid")));
+                commentBean.setToid(set.getInt(set.findColumn("toid")));
+                comments.add(commentBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+
+        for(int i=0;i<comments.size();i++){
+            UserBean userBean2 = new UserBean();
+            userBean2.setId(comments.get(i).getFromid());
+            UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean2).getData();
+            comments.get(i).setFromUser(userBean1);
+
+            UserBean userBean3 = new UserBean();
+            userBean3.setId(comments.get(i).getToid());
+            UserBean userBean4 = (UserBean) userI.getUserInfoById(userBean3).getData();
+            comments.get(i).setToUser(userBean1);
         }
         baseResBean.setData(comments);
         return baseResBean;
@@ -148,6 +290,54 @@ public class CommentOpe implements CommentI {
         return baseResBean;
     }
 
+
+
+    public BaseResBean getShortCommentByUserIdWithLimit(UserBean userBean) {
+        if(userI ==null){
+            userI= new UserOpe();
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
+        String str = "select created,fromid,fromuser,id,remark,rate from comment WHERE  toid = ? ORDER BY id limit ?,? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            ps.setInt(2,userBean.getPagestart()*userBean.getPagesize());
+            ps.setInt(3,userBean.getPagesize());
+            set  = ps.executeQuery();
+            while (set.next()){
+                CommentBean commentBean = new CommentBean();
+                commentBean.setCreated(set.getString(set.findColumn("created")));
+                commentBean.setFromuser(set.getString(set.findColumn("fromuser")));
+                commentBean.setId(set.getInt(set.findColumn("id")));
+                commentBean.setRate(set.getFloat(set.findColumn("rate")));
+                commentBean.setRemark(set.getString(set.findColumn("remark")));
+                commentBean.setFromid(set.getInt(set.findColumn("fromid")));
+                comments.add(commentBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        if(userI == null){
+            userI = new UserOpe();
+        }
+        for(int i=0;i<comments.size();i++){
+            UserBean userBean1 = new UserBean();
+            userBean1.setId(comments.get(i).getFromid());
+            comments.get(i).setHeadUrl((String) userI.getHeadUrlById(userBean1).getData());
+        }
+        baseResBean.setData(comments);
+        return baseResBean;
+    }
+
     public BaseResBean getShortCommentByUserId(UserBean userBean) {
         if(userI ==null){
             userI= new UserOpe();
@@ -180,6 +370,14 @@ public class CommentOpe implements CommentI {
         } finally {
             DBUtil.close(connection,ps,set);
         }
+        if(userI == null){
+            userI = new UserOpe();
+        }
+        for(int i=0;i<comments.size();i++){
+            UserBean userBean1 = new UserBean();
+            userBean1.setId(comments.get(i).getFromid());
+            comments.get(i).setHeadUrl((String) userI.getHeadUrlById(userBean1).getData());
+        }
         baseResBean.setData(comments);
         return baseResBean;
     }
@@ -211,6 +409,31 @@ public class CommentOpe implements CommentI {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setString(1,userBean.getPhone());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getCommentNumByUserId(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from comment WHERE toid = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
             set  = ps.executeQuery();
             set.next();
             num = set.getInt(1);
@@ -449,6 +672,31 @@ public class CommentOpe implements CommentI {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setInt(1,userBean.getId());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getFloat(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideoRateCommentByVideoid(VideoBean videoBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select rate from comment WHERE  videoid = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        float num = 0f;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,videoBean.getId());
             set  = ps.executeQuery();
             set.next();
             num = set.getFloat(1);

@@ -634,15 +634,27 @@ public class UserMapping {
         WebIndexInfo webIndexInfo = new WebIndexInfo();
         UserBean u1 = new UserBean();
         u1.setUsertype(1);
-        webIndexInfo.setEngineerall((Integer) userI.getUserNums(u1).getData());
-
-//        try {
-//            PrintWriter printWriter = rep.getWriter();
-//            printWriter.println(GsonUtil.getInstance().toJson(userI.updateRemark(userBean)));
-//            printWriter.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        UserBean userBean = new UserBean();
+        userBean.setUsertype(0);
+        UserBean u2 = new UserBean();
+        u2.setUsertype(2);
+        webIndexInfo.setEngineerline(0);
+        webIndexInfo.setServeronline(0);
+        webIndexInfo.setCustomall((Long) userI.getUserNums(u2).getData());
+        webIndexInfo.setServerall((Long) userI.getUserNums(userBean).getData());
+        webIndexInfo.setEngineerall((Long) userI.getUserNums(u1).getData());
+        webIndexInfo.setUserall((Long) userI.getUserNum().getData());
+        webIndexInfo.setChattimes((Long) videoI.getCallTimeInfo().getData());
+        webIndexInfo.setVideonum((Long) videoI.getCallNum().getData());
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(webIndexInfo);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

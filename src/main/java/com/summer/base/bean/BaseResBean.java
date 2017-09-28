@@ -13,6 +13,8 @@ public class BaseResBean extends BaseBean {
 
     private String errorMessage ="";
 
+    private int total;
+
     public Object getData() {
         return data;
     }
@@ -43,5 +45,13 @@ public class BaseResBean extends BaseBean {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }

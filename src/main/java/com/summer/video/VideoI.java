@@ -50,11 +50,17 @@ public interface VideoI {
 
     public BaseResBean getUserCallTimeInfo(UserBean user);
 
+    public BaseResBean getCallTimeInfo();
+
     public BaseResBean isVideoUploaded(VideoBean videoBean);
 
     public BaseResBean setVideoUploaded(VideoBean videoBean);
 
     public BaseResBean getMaxVideoId();
+
+    public BaseResBean getVideoNum();
+
+    public BaseResBean getCallNum();
 
 
 }
