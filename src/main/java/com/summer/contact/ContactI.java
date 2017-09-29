@@ -10,6 +10,10 @@ public interface ContactI  {
 
     public BaseResBean getContactsByUserId(UserBean userBean);
 
+    public BaseResBean getContactsByUserId2(UserBean userBean);
+
+    public BaseResBean getContactsByUserIdWithOutAgree(UserBean userBean);
+
     public BaseResBean addContactsByUserid(ContactBean bean);
 
     public BaseResBean isContactsExits(ContactBean bean);

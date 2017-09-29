@@ -28,6 +28,8 @@ public class VideoBean extends BaseBean {
 
     private UserBean toUser;
 
+    private int uploaded;
+
     public int getId() {
         return id;
     }
@@ -106,5 +108,13 @@ public class VideoBean extends BaseBean {
 
     public void setToUser(UserBean toUser) {
         this.toUser = toUser;
+    }
+
+    public int getUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(int uploaded) {
+        this.uploaded = uploaded;
     }
 }

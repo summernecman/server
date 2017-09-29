@@ -18,6 +18,9 @@ import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBaseResBean;
 import com.summer.user.bean.UserBean;
 import com.summer.user.bean.WebIndexInfo;
+import com.summer.userarea.UserAreaBean;
+import com.summer.userarea.UserAreaI;
+import com.summer.userarea.UserAreaOpe;
 import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
 import com.summer.video.VideoI;
@@ -53,6 +56,8 @@ public class UserMapping {
     EMOpe emi = new EMOpe();
 
     ContactOpe contactI = new ContactOpe();
+
+    UserAreaOpe userAreaI = new UserAreaOpe();
 
     @RequestMapping(value = "/setHeadurl",method = RequestMethod.POST)
     public void setHeadUrl(HttpServletRequest req, HttpServletResponse rep){
@@ -122,9 +127,29 @@ public class UserMapping {
         String  str = req.getParameter("data");
         System.out.println(str);
         AllUserBean data = GsonUtil.getInstance().fromJson(str,AllUserBean.class);
+
+        ArrayList<UserBean> users = (ArrayList<UserBean>) contactI.getContactsByUserIdWithOutAgree(data.getMe()).getData();
+        if(users.size()==0){
+            //users= (ArrayList<UserBean>) userI.getUnTypeUserList(data.getMe()).getData();
+        }
+
+        ArrayList<UserBean> userBeen = (ArrayList<UserBean>) userI.getOtherUsersShortInfoByPhone(data).getData();
+
+        for(int i=0;i<users.size();i++){
+            for(int j=0;j<userBeen.size();j++){
+                if(userBeen.get(j).getPhone().equals(users.get(i).getPhone())){
+                    users.get(i).setState(UserBean.STATE_ONLINE);
+                }else{
+                    users.get(i).setState(UserBean.STATE_OFFLINE);
+                }
+            }
+        }
+
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(users);
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getOtherUsersInfoByPhone(data)));
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -572,11 +597,20 @@ public class UserMapping {
     public void updateAreaByid(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        ArrayList<UserAreaBean> userBean = GsonUtil.getInstance().fromJson(str,new TypeToken<ArrayList<UserAreaBean>>(){}.getType());
         System.out.println(str);
+
+        for(int i=0;i<userBean.size();i++){
+            if((Boolean) (userAreaI.isUserHaveArea(userBean.get(i)).getData())){
+                continue;
+            }
+            userAreaI.addUserArea(userBean.get(i));
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(userBean);
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.updateArea(userBean)));
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -605,7 +639,10 @@ public class UserMapping {
         String  str = req.getParameter("data");
         UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
         System.out.println(str);
-        userI.updateArea(userBean);
+        userAreaI.delete(userBean);
+        for(int i=0;userBean.getArea()!=null && i<userBean.getArea().size();i++){
+            userAreaI.addUserArea(new UserAreaBean(userBean.getId(),userBean.getArea().get(i).getId()));
+        }
         userI.updateRemark(userBean);
         for(int i=0;i<userBean.getContacts().size();i++){
             ContactBean contactBean = new ContactBean();

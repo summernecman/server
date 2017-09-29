@@ -1,5 +1,6 @@
 package com.summer.user.bean;
 
+import com.summer.area.AreaBean;
 import com.summer.base.bean.BaseBean;
 import com.summer.unit.UnitBean;
 import com.summer.video.bean.VideoTimeBean;
@@ -35,7 +36,7 @@ public class UserBean extends BaseBean {
 
     private int unitid;
 
-    private String area;
+    private ArrayList<AreaBean> area;
 
     private UnitBean unit;
 
@@ -180,11 +181,11 @@ public class UserBean extends BaseBean {
         this.callinfo = callinfo;
     }
 
-    public String getArea() {
+    public ArrayList<AreaBean> getArea() {
         return area;
     }
 
-    public void setArea(String area) {
+    public void setArea(ArrayList<AreaBean> area) {
         this.area = area;
     }
 

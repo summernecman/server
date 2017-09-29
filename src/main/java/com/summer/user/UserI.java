@@ -40,6 +40,8 @@ public interface UserI  {
 
     public BaseResBean getUserInfoByPhone(UserBean user);
 
+    public BaseResBean getUserShortInfoByPhone(UserBean user);
+
     public BaseResBean getLoginInfo(UserBean user);
 
     public BaseResBean setLoginInfo(UserBean user);
@@ -52,7 +54,11 @@ public interface UserI  {
 
     public BaseResBean getOtherUsersInfoByPhone(AllUserBean allUserBean);
 
+    public BaseResBean getOtherUsersShortInfoByPhone(AllUserBean allUserBean);
+
     public BaseResBean getArrayUsersInfoByPhone(ArrayList<ArrayList<UserBean>> list);
+
+    public BaseResBean getUserTypeInfoByPhone(UserBean user);
 
     public BaseResBean getUserInfoById(UserBean userBean);
 
@@ -72,7 +78,6 @@ public interface UserI  {
 
     public BaseResBean isUserExist(UserBean userBean);
 
-    public BaseResBean updateArea(UserBean userBean);
 
     public BaseResBean updateRemark(UserBean userBean);
 

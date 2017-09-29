@@ -28,6 +28,8 @@ public interface VideoI {
 
     public BaseResBean getVideosByBothUserId(ContactBean contactBean);
 
+    public BaseResBean getVideosByBothUserIdWithLimit(ContactBean contactBean);
+
     public BaseResBean addVideo(VideoBean videoBean);
 
     public BaseResBean insert_and_getid_fromvieo(VideoBean videoBean);
@@ -62,5 +64,5 @@ public interface VideoI {
 
     public BaseResBean getCallNum();
 
-
+    public BaseResBean getUnUploadVideoNum(UserBean u);
 }

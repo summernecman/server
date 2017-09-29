@@ -329,17 +329,18 @@ public class VideoOpe implements VideoI {
     public BaseResBean getVideosByBothUserId(ContactBean contactBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video WHERE  (fromid = ? and toid = ?) or  (fromid = ? and toid = ?) ORDER  BY  id DESC ";
+        String str = "select * from video WHERE file<> ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) ORDER  BY  id DESC limit ?,? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setInt(1,contactBean.getFromid());
-            ps.setInt(2,contactBean.getToid());
+            ps.setString(1,"");
+            ps.setInt(2,contactBean.getFromid());
             ps.setInt(3,contactBean.getToid());
-            ps.setInt(4,contactBean.getFromid());
+            ps.setInt(4,contactBean.getToid());
+            ps.setInt(5,contactBean.getFromid());
             set  = ps.executeQuery();
             while (set.next()){
                 VideoBean videoBean = new VideoBean();
@@ -352,6 +353,61 @@ public class VideoOpe implements VideoI {
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
                 videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videos.add(videoBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+
+        for(int i=0;i<videos.size();i++){
+            UserBean from = new UserBean();
+            from.setId(videos.get(i).getFromid());
+
+            UserBean to = new UserBean();
+            to.setId(videos.get(i).getToid());
+            videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
+            videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
+        }
+        baseResBean.setData(videos);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideosByBothUserIdWithLimit(ContactBean contactBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
+        String str = "select * from video WHERE file<> ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) ORDER  BY  id DESC limit ?,? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,"");
+            ps.setInt(2,contactBean.getFromid());
+            ps.setInt(3,contactBean.getToid());
+            ps.setInt(4,contactBean.getToid());
+            ps.setInt(5,contactBean.getFromid());
+            ps.setInt(6,contactBean.getPagestart()*contactBean.getPagesize());
+            ps.setInt(7,contactBean.getPagesize());
+            set  = ps.executeQuery();
+            while (set.next()){
+                VideoBean videoBean = new VideoBean();
+                videoBean.setId(set.getInt(set.findColumn("id")));
+                videoBean.setFile(set.getString(set.findColumn("file")));
+                String s = set.getString(set.findColumn("created"));
+                videoBean.setCreated(DateFormatUtil.getdDateStr(DateFormatUtil.YYYY_MM_DD_HH_MM_SS,DateFormatUtil.MM_DD_HH_MM,s.substring(0,s.length()-2)));
+                videoBean.setFromid(set.getInt(set.findColumn("fromid")));
+                videoBean.setToid(set.getInt(set.findColumn("toid")));
+                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
+                videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -613,7 +669,7 @@ public class VideoOpe implements VideoI {
     public BaseResBean getByContacts(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select created,fromid,toid from video WHERE  fromid = ? or toid = ? ORDER BY id";
+        String str = "select created,fromid,toid from video WHERE (fromid = ? or toid = ?) and file<> ? ORDER BY id";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -622,6 +678,7 @@ public class VideoOpe implements VideoI {
             ps = connection.prepareStatement(str);
             ps.setInt(1,userBean.getId());
             ps.setInt(2,userBean.getId());
+            ps.setString(3,"");
             set  = ps.executeQuery();
             while (set.next()){
                 VideoBean videoBean = new VideoBean();
@@ -924,6 +981,33 @@ public class VideoOpe implements VideoI {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setString(1,"");
+            set = ps.executeQuery();
+            set.next();
+            max = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(max);
+        return baseResBean;
+    }
+
+    public BaseResBean getUnUploadVideoNum(UserBean u) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from video WHERE uploaded = 0 and (fromid = ? or toid = ? ) and file<> ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long max = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,u.getId());
+            ps.setInt(2,u.getId());
+            ps.setString(3,"");
             set = ps.executeQuery();
             set.next();
             max = set.getInt(1);

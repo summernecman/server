@@ -208,7 +208,20 @@ public class VideoMapping {
         }
     }
 
-
+    @RequestMapping(value = "/getVideosByBothUserIdWithLimit",method = RequestMethod.POST)
+    public void getVideosByBothUserIdWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        ContactBean c = GsonUtil.getInstance().fromJson(str,ContactBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideosByBothUserIdWithLimit(c)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -452,6 +465,21 @@ public class VideoMapping {
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(videoI.updateVideoById(videoBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getUnUploadVideoNum",method = RequestMethod.POST)
+    public void getUnUploadVideoNum(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean u = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(videoI.getUnUploadVideoNum(u)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
