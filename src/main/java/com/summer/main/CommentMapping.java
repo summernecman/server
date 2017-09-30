@@ -51,14 +51,14 @@ public class CommentMapping {
 
 
     @RequestMapping(value = "/getCommentByUserPhone",method = RequestMethod.POST)
-    public void getCommentByUserName(HttpServletRequest req, HttpServletResponse rep){
+    public void getCommentByUserPhone(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
         System.out.println(str);
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentByUserName(userBean)));
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentByUserPhone(userBean)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -145,6 +145,7 @@ public class CommentMapping {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
 

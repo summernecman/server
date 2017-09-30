@@ -164,6 +164,19 @@ public class UserMapping {
         String  str = req.getParameter("data");
         System.out.println(str);
         UserBean data = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        if((Boolean) (userI.isUserExist(data).getData())){
+            BaseResBean baseResBean = new BaseResBean();
+            baseResBean.setException(true);
+            baseResBean.setErrorMessage("用户已存在");
+            try {
+                PrintWriter printWriter = rep.getWriter();
+                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         EMUserBean emUserBean = new EMUserBean(data.getPhone(),data.getPwd());
         BaseResBean res = HttpRequest.postJson("https://a1.easemob.com/1122170703115322/service/users", GsonUtil.getInstance().toJson(emUserBean),Global.emTokenBean.getAccess_token());
         System.out.println(res.getData());
@@ -177,9 +190,77 @@ public class UserMapping {
                 e.printStackTrace();
             }
         }else{
+            BaseResBean baseResBean = new BaseResBean();
+            baseResBean.setException(true);
+            baseResBean.setErrorMessage(res.getData().toString());
             try {
                 PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(res));
+                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @RequestMapping(value = "/AddUser",method = RequestMethod.POST)
+    public void AddUser(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean data = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        //判断用户是否存在
+        if((Boolean) (userI.isUserExist(data).getData())){
+            BaseResBean baseResBean = new BaseResBean();
+            baseResBean.setException(true);
+            baseResBean.setErrorMessage("用户已存在");
+            try {
+                PrintWriter printWriter = rep.getWriter();
+                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        if(data.getPwd()==null || "".equals(data.getPwd())){
+            data.setPwd("111111");
+        }
+        //注册环信账号
+        EMUserBean emUserBean = new EMUserBean(data.getPhone(),data.getPwd());
+        BaseResBean res = HttpRequest.postJson("https://a1.easemob.com/1122170703115322/service/users", GsonUtil.getInstance().toJson(emUserBean),Global.emTokenBean.getAccess_token());
+        System.out.println(res.getData());
+
+        if(!res.isException()){
+            //添加用户信息
+            userI.addUser2(data);
+            int id = (Integer) userI.getUserIdByPhone(data).getData();
+            data.setId(id);
+
+            for(int i=0;data.getArea()!=null && i<data.getArea().size();i++){
+                userAreaI.addUserArea(new UserAreaBean(data.getId(),data.getArea().get(i).getId()));
+            }
+            for(int i=0;i<data.getContacts().size();i++){
+                ContactBean contactBean = new ContactBean();
+                contactBean.setFromid(data.getId());
+                contactBean.setToid(data.getContacts().get(i).getId());
+                contactI.addContactsByUserid(contactBean);
+            }
+            try {
+                PrintWriter printWriter = rep.getWriter();
+                printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            BaseResBean baseResBean = new BaseResBean();
+            baseResBean.setException(true);
+            baseResBean.setErrorMessage(res.getData()==null? "":res.getData().toString());
+            try {
+                PrintWriter printWriter = rep.getWriter();
+                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
                 printWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -644,6 +725,7 @@ public class UserMapping {
             userAreaI.addUserArea(new UserAreaBean(userBean.getId(),userBean.getArea().get(i).getId()));
         }
         userI.updateRemark(userBean);
+        contactI.deleteContactsByUserId(userBean);
         for(int i=0;i<userBean.getContacts().size();i++){
             ContactBean contactBean = new ContactBean();
             contactBean.setFromid(userBean.getId());

@@ -15,7 +15,7 @@ public interface CommentI {
 
     public BaseResBean getCommentsNum();
 
-    public BaseResBean getCommentByUserName(UserBean userBean);
+    public BaseResBean getCommentByUserPhone(UserBean userBean);
 
     public BaseResBean getCommentByUserIdWithLimit(UserBean userBean);
 

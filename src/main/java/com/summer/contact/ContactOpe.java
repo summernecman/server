@@ -203,4 +203,28 @@ public class ContactOpe  implements ContactI{
         baseResBean.setData(num>0?true:false);
         return baseResBean;
     }
+
+    public BaseResBean deleteContactsByUserId(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "delete from contact WHERE fromid = ? or toid = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        ArrayList<UserBean> userBeen = new ArrayList<UserBean>();
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            ps.setInt(2,userBean.getId());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(userBeen);
+        return baseResBean;
+    }
 }

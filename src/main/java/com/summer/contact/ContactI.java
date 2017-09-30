@@ -17,4 +17,6 @@ public interface ContactI  {
     public BaseResBean addContactsByUserid(ContactBean bean);
 
     public BaseResBean isContactsExits(ContactBean bean);
+
+    public BaseResBean deleteContactsByUserId(UserBean userBean);
 }

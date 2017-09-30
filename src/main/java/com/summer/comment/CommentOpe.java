@@ -41,7 +41,7 @@ public class CommentOpe implements CommentI {
         }
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select * from comment limit ?,?";
+        String str = "select * from comment ORDER  BY  id DESC limit ?,?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -122,13 +122,13 @@ public class CommentOpe implements CommentI {
         return baseResBean;
     }
 
-    public BaseResBean getCommentByUserName(UserBean userBean) {
+    public BaseResBean getCommentByUserPhone(UserBean userBean) {
         if(userI ==null){
             userI= new UserOpe();
         }
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select * from comment WHERE  touser = ?";
+        String str = "select * from comment WHERE  touser = ?  ORDER  BY  id DESC ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -185,7 +185,7 @@ public class CommentOpe implements CommentI {
         }
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select * from comment WHERE  toid = ? limit ?,?";
+        String str = "select * from comment WHERE  toid = ?   ORDER  BY  id DESC limit ?,?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -239,7 +239,7 @@ public class CommentOpe implements CommentI {
         }
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select * from comment WHERE  toid = ?";
+        String str = "select * from comment WHERE  toid = ?  ORDER  BY  id DESC";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -298,7 +298,7 @@ public class CommentOpe implements CommentI {
         }
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select created,fromid,fromuser,id,remark,rate from comment WHERE  toid = ? ORDER BY id limit ?,? ";
+        String str = "select created,fromid,fromuser,id,remark,rate from comment WHERE  toid = ? ORDER BY id DESC limit ?,? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -344,7 +344,7 @@ public class CommentOpe implements CommentI {
         }
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select created,fromid,fromuser,id,remark,rate from comment WHERE  toid = ?";
+        String str = "select created,fromid,fromuser,id,remark,rate from comment WHERE  toid = ?  ORDER  BY  id DESC";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -557,7 +557,7 @@ public class CommentOpe implements CommentI {
     public BaseResBean getVideoCommentByVideoNameAndFrom(VideoBean videoBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select * from comment WHERE  videoname = ? and touser = ? ";
+        String str = "select * from comment WHERE  videoname = ? and touser = ?  ORDER  BY  id DESC ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -595,7 +595,7 @@ public class CommentOpe implements CommentI {
     public BaseResBean getVideoCommentByVideoIdAndFrom(VideoBean videoBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
-        String str = "select * from comment WHERE  videoid = ? and touser = ? ";
+        String str = "select * from comment WHERE  videoid = ? and touser = ?  ORDER  BY  id DESC";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;

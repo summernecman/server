@@ -633,6 +633,7 @@ public class UserOpe  implements UserI{
                 userBean.setUnitid(set.getInt(set.findColumn("unitid")));
                 userBean.setHeadurl(set.getString(set.findColumn("headurl")));
                 userBean.setRemark(set.getString(set.findColumn("remark")));
+                userBean.setUsertype(set.getInt(set.findColumn("usertype")));
                 break;
             }
         } catch (NamingException e) {
@@ -750,6 +751,7 @@ public class UserOpe  implements UserI{
                 userBean.setUsertype(set.getInt(set.findColumn("usertype")));
                 userBean.setBelong(set.getString(set.findColumn("belong")));
                 userBean.setName(set.getString(set.findColumn("name")));
+                userBean.setRemark(set.getString(set.findColumn("remark")));
                 userBean.setState(set.getInt(set.findColumn("state")));
                 userBean.setHeadurl(set.getString(set.findColumn("headurl")));
                 userBean.setUuuid(set.getString(set.findColumn("uuuid")));
@@ -815,6 +817,7 @@ public class UserOpe  implements UserI{
                 userBean.setPhone(set.getString(set.findColumn("phone")));
                 userBean.setPwd(set.getString(set.findColumn("pwd")));
                 userBean.setUsertype(set.getInt(set.findColumn("usertype")));
+                userBean.setRemark(set.getString(set.findColumn("remark")));
                 userBean.setBelong(set.getString(set.findColumn("belong")));
                 userBean.setName(set.getString(set.findColumn("name")));
                 userBean.setState(set.getInt(set.findColumn("state")));
@@ -890,7 +893,7 @@ public class UserOpe  implements UserI{
 
     public BaseResBean addUser(UserBean user) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "insert into user(phone,pwd,usertype,name) VALUES (?,?,?,?,?)";
+        String str = "insert into user(phone,pwd,usertype,name) VALUES (?,?,?,?)";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -901,7 +904,42 @@ public class UserOpe  implements UserI{
             ps.setString(1,user.getPhone());
             ps.setString(2,user.getPwd());
             ps.setInt(3,user.getUsertype());
-            ps.setString(4,user.getPhone());
+            if(user.getName()==null || "".equals(user.getName())){
+                ps.setString(4,user.getPhone());
+            }else{
+                ps.setString(4,user.getName());
+            }
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean addUser2(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "insert into user(phone,pwd,usertype,name,remark) VALUES (?,?,?,?,?)";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPhone());
+            ps.setString(2,user.getPwd());
+            ps.setInt(3,user.getUsertype());
+            if(user.getName()==null || "".equals(user.getName())){
+                ps.setString(4,user.getPhone());
+            }else{
+                ps.setString(4,user.getName());
+            }
+            ps.setString(5,user.getRemark());
             ps.execute();
         } catch (NamingException e) {
             e.printStackTrace();
@@ -1011,6 +1049,31 @@ public class UserOpe  implements UserI{
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(url);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserIdByPhone(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select id from user where phone = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int id = -1;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,userBean.getPhone());
+            set = ps.executeQuery();
+            set.next();
+            id = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(id);
         return baseResBean;
     }
 }

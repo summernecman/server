@@ -5,12 +5,14 @@ import com.summer.base.bean.BaseResBean;
 import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBean;
 
+import javax.sql.rowset.BaseRowSet;
 import java.util.ArrayList;
 
 /**
  * Created by SWSD on 17-08-23.
  */
 public interface UserI  {
+
 
     public BaseResBean getUserNum();
 
@@ -76,6 +78,8 @@ public interface UserI  {
 
     public BaseResBean addUser(UserBean userBean);
 
+    public BaseResBean addUser2(UserBean userBean);
+
     public BaseResBean isUserExist(UserBean userBean);
 
 
@@ -84,5 +88,7 @@ public interface UserI  {
     public BaseResBean getUserNums(UserBean userBean);
 
     public BaseResBean getHeadUrlById(UserBean userBean);
+
+    public BaseResBean getUserIdByPhone(UserBean userBean);
 
 }
