@@ -26,7 +26,9 @@ public interface CommentI {
 
     public BaseResBean getShortCommentByUserId(UserBean userBean);
 
-    public BaseResBean getCommentByUserNameWithMyOption(CommentBean commentBean);
+    public BaseResBean getCommentByUserIdWithMyOption(CommentBean commentBean);
+
+    public BaseResBean getCommentByUserIdWithMyOptionWithLimit(CommentBean commentBean);
 
     public BaseResBean getCommentNumByUserName(UserBean userBean);
 

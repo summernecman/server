@@ -382,9 +382,28 @@ public class CommentOpe implements CommentI {
         return baseResBean;
     }
 
-    public BaseResBean getCommentByUserNameWithMyOption(CommentBean commentBean) {
+
+
+
+    public BaseResBean getCommentByUserIdWithMyOption(CommentBean commentBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> list = (ArrayList<CommentBean>) getCommentByUserId(commentBean.getToUser()).getData();
+        if(agreeI == null){
+            agreeI = new AgreeOpe();
+        }
+        for(int i=0;i<list.size();i++){
+            AgreeBean agreeBean = new AgreeBean(list.get(i).getId(),commentBean.getFromUser().getId());
+            list.get(i).setAgree((Boolean) (agreeI.isAgreeNum(agreeBean).getData()));
+            list.get(i).setAgreeNum((Integer) agreeI.getAgreeNum(new AgreeBean(list.get(i).getId(),0)).getData());
+
+        }
+        baseResBean.setData(list);
+        return baseResBean;
+    }
+
+    public BaseResBean getCommentByUserIdWithMyOptionWithLimit(CommentBean commentBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> list = (ArrayList<CommentBean>) getCommentByUserIdWithLimit(commentBean.getToUser()).getData();
         if(agreeI == null){
             agreeI = new AgreeOpe();
         }

@@ -1,7 +1,6 @@
 package com.summer.main;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
 import com.summer.comment.bean.RateLevelBean;
 import com.summer.comment.bean.TipBean;
@@ -140,7 +139,23 @@ public class CommentMapping {
         System.out.println(str);
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentByUserNameWithMyOption(commentBean)));
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentByUserIdWithMyOption(commentBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @RequestMapping(value = "/getCommentByUserIdWithMyOptionWithLimit",method = RequestMethod.POST)
+    public void getCommentByUserNameWithMyOptionWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        CommentBean commentBean = GsonUtil.getInstance().fromJson(str,CommentBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(commentI.getCommentByUserIdWithMyOptionWithLimit(commentBean)));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
