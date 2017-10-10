@@ -140,8 +140,12 @@ public class ContactOpe  implements ContactI{
         }
         for(int i=0;i<userBeen.size();i++){
             UserBean u = (UserBean) userI.getUserInfoById(userBeen.get(i)).getData();
-            userBeen.set(i,u);
-
+            if(u!=null){
+                userBeen.set(i,u);
+            }else{
+                userBeen.remove(i);
+                i--;
+            }
         }
         baseResBean.setData(userBeen);
         return baseResBean;

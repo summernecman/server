@@ -121,6 +121,26 @@ public class UserMapping {
     }
 
 
+
+    @RequestMapping(value = "/resetPwd",method = RequestMethod.POST)
+    public void resetPwd(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean userBean  = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        BaseResBean b = userI.resetPwd(userBean);
+        //BaseResBean res = HttpRequest.putJson(Global.URL+"/users/"+userBean.getPhone()+"/"+userBean.getPwd(), null,Global.emTokenBean.getAccess_token());
+
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(b));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @RequestMapping(value = "/getOtherUsersInfoByPhone",method = RequestMethod.POST)
     public void getOtherUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
@@ -139,14 +159,27 @@ public class UserMapping {
             for(int j=0;j<userBeen.size();j++){
                 if(userBeen.get(j).getPhone().equals(users.get(i).getPhone())){
                     users.get(i).setState(UserBean.STATE_ONLINE);
+                    break;
                 }else{
                     users.get(i).setState(UserBean.STATE_OFFLINE);
                 }
             }
         }
 
+
+        ArrayList<UserBean> a = new ArrayList<UserBean>();
+        ArrayList<UserBean> b = new ArrayList<UserBean>();
+        for(int i = 0;users!=null&&users.size()>0&& i<users.size();i++){
+            if(users.get(i).getState()==UserBean.STATE_ONLINE){
+                a.add(users.get(i));
+            }else{
+                b.add(users.get(i));
+            }
+        }
+        a.addAll(b);
+
         BaseResBean baseResBean = new BaseResBean();
-        baseResBean.setData(users);
+        baseResBean.setData(a);
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
@@ -177,7 +210,7 @@ public class UserMapping {
             }
             return;
         }
-        EMUserBean emUserBean = new EMUserBean(data.getPhone(),data.getPwd());
+        EMUserBean emUserBean = new EMUserBean(data.getPhone(),"111111");
         BaseResBean res = HttpRequest.postJson("https://a1.easemob.com/1122170703115322/service/users", GsonUtil.getInstance().toJson(emUserBean),Global.emTokenBean.getAccess_token());
         System.out.println(res.getData());
 
@@ -417,9 +450,17 @@ public class UserMapping {
         try {
             ArrayList<FileItem> list = (ArrayList<FileItem>) upload.parseRequest(req);
             list.get(0).getInputStream();
-            File file = new File(typeFile,list.get(0).getName());
+            String[] ss = new String[]{"!","@","#","$","%","&","^","*","(",")","/","\\","|",",","`","~"};
+            String s = list.get(0).getName();
+            for(int i=0;i<ss.length;i++){
+                s= s.replace(ss[i],"");
+            }
+            if(s.length()>20 ){
+                s= s.substring(s.length()-20,s.length());
+            }
+            File file = new File(typeFile,s);
             System.out.println(file.getPath());
-            files.add(DateFormatUtil.getNowStr(DateFormatUtil.YYYY_MM_DD)+"/"+list.get(0).getName());
+            files.add(DateFormatUtil.getNowStr(DateFormatUtil.YYYY_MM_DD)+"/"+s);
             if(!file.exists()){
                 //file.createNewFile();
                 list.get(0).write(file);

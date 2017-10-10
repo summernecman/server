@@ -36,6 +36,8 @@ public interface UserI  {
 
     public BaseResBean regist(UserBean user);
 
+    public BaseResBean resetPwd(UserBean user);
+
     public BaseResBean login(UserBean user);
 
     public BaseResBean logout(UserBean user);

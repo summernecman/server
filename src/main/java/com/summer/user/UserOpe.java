@@ -285,6 +285,29 @@ public class UserOpe  implements UserI{
         return null;
     }
 
+    public BaseResBean resetPwd(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update user set pwd = ? WHERE phone = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,user.getPwd());
+            ps.setString(2,user.getPhone());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
+        return baseResBean;
+    }
+
     public BaseResBean login(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         String str = "select * from user WHERE  phone = ? and pwd = ?";

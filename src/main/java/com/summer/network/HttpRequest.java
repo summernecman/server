@@ -233,6 +233,57 @@ public class HttpRequest {
         return baseResBean;
     }
 
+    public static BaseResBean putJson(String urlString ,String jsonObject,String token) {
+        BaseResBean baseResBean = new BaseResBean();
+        try {
+            // 创建连接
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestProperty("Content-Type","application/json;charset=UTF-8");//**注意点1**，需要此格式，后边这个字符集可以不设置
+            connection.setRequestProperty("Authorization","Bearer "+token);
+            connection.connect();
+            if(jsonObject!=null){
+                DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                out.write(jsonObject.toString().getBytes("UTF-8"));//**注意点2**，需要此格式
+                out.flush();
+                out.close();
+            }
+            int code = connection.getResponseCode();
+            System.out.println(code);
+            if(code == 200){
+                // 读取响应
+                BufferedReader reader = new BufferedReader(new InputStreamReader( connection.getInputStream(),"utf-8"));//**注意点3**，需要此格式
+                String lines;
+                StringBuffer sb = new StringBuffer("");
+                while ((lines = reader.readLine()) != null) {
+                    sb.append(lines);
+                }
+                System.out.println(sb);
+                reader.close();
+                baseResBean.setData(sb.toString());
+            }else{
+                baseResBean.setException(true);
+                baseResBean.setErrorCode(code);
+            }
+            // 断开连接
+            connection.disconnect();
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return baseResBean;
+    }
 
     public static BaseResBean postJson(String urlString ,String jsonObject,String token) {
         BaseResBean baseResBean = new BaseResBean();
