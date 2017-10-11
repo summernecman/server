@@ -6,6 +6,7 @@ import com.summer.unit.UnitBean;
 import com.summer.video.bean.VideoTimeBean;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by SWSD on 17-08-23.
@@ -50,7 +51,14 @@ public class UserBean extends BaseBean {
 
     private String remark;
 
+    private long chattime;
 
+
+    private float rate;
+
+    private String start;
+
+    private String end;
 
 
 
@@ -221,6 +229,38 @@ public class UserBean extends BaseBean {
         this.remark = remark;
     }
 
+    public long getChattime() {
+        return chattime;
+    }
+
+    public void setChattime(long chattime) {
+        this.chattime = chattime;
+    }
+
+    public float getRate() {
+        return rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
     @Override
     public String toString() {
         return "UserBean{" +
@@ -236,10 +276,17 @@ public class UserBean extends BaseBean {
                 ", headurl='" + headurl + '\'' +
                 ", avg=" + avg +
                 ", unitid=" + unitid +
-                ", area='" + area + '\'' +
+                ", area=" + area +
                 ", unit=" + unit +
                 ", contacts=" + contacts +
+                ", pagesize=" + pagesize +
+                ", pagestart=" + pagestart +
                 ", callinfo=" + callinfo +
+                ", remark='" + remark + '\'' +
+                ", chattime=" + chattime +
+                ", rate=" + rate +
+                ", start=" + start +
+                ", end=" + end +
                 '}';
     }
 }

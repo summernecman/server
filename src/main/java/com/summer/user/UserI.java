@@ -4,6 +4,7 @@ import com.summer.base.OnFinishListener;
 import com.summer.base.bean.BaseResBean;
 import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBean;
+import com.summer.video.bean.LimitBean;
 
 import javax.sql.rowset.BaseRowSet;
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ public interface UserI  {
     public BaseResBean setUserState(UserBean userBean);
 
     public BaseResBean getUserList();
+
+
+    public BaseResBean getShortUserList();
 
     public BaseResBean getUnTypeUserList(UserBean userBean);
 
@@ -64,6 +68,8 @@ public interface UserI  {
 
     public BaseResBean getUserTypeInfoByPhone(UserBean user);
 
+    public BaseResBean getUserTypeInfoById(UserBean user);
+
     public BaseResBean getUserInfoById(UserBean userBean);
 
     public BaseResBean getUserShortInfoById(UserBean userBean);
@@ -92,5 +98,15 @@ public interface UserI  {
     public BaseResBean getHeadUrlById(UserBean userBean);
 
     public BaseResBean getUserIdByPhone(UserBean userBean);
+
+    public BaseResBean updateUserChatTimeById(UserBean userBean);
+
+    public BaseResBean updateRateByUserId(UserBean userBean);
+
+    public BaseResBean getRates();
+
+    public BaseResBean getChatTimes();
+
+
 
 }

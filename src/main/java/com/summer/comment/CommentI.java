@@ -48,6 +48,8 @@ public interface CommentI {
 
     public BaseResBean getVideoRateCommentByUseId(UserBean userBean);
 
+    public BaseResBean getVideoRateCommentByUseIdWithTimeLimit(UserBean userBean);
+
     public BaseResBean getVideoRateCommentByVideoid(VideoBean videoBean);
 
     public BaseResBean getVideoCommentRateLevelByuserId(UserBean userBean);

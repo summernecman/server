@@ -52,6 +52,11 @@ public interface VideoI {
 
     public BaseResBean getUserCallTimeInfo(UserBean user);
 
+    public BaseResBean getUserCallTimeInfoById(UserBean user);
+
+
+    public BaseResBean getUserCallTimeInfoByIdWithTimeLimit(UserBean user);
+
     public BaseResBean getCallTimeInfo();
 
     public BaseResBean isVideoUploaded(VideoBean videoBean);
@@ -65,4 +70,8 @@ public interface VideoI {
     public BaseResBean getCallNum();
 
     public BaseResBean getUnUploadVideoNum(UserBean u);
+
+    public BaseResBean getOutCallTimeDistribution();
+
+    public BaseResBean getInCallTimeDistribution();
 }

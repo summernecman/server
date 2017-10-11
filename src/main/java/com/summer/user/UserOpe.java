@@ -18,6 +18,7 @@ import com.summer.userarea.UserAreaI;
 import com.summer.userarea.UserAreaOpe;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
+import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoTimeBean;
 
 import javax.naming.NamingException;
@@ -161,6 +162,36 @@ public class UserOpe  implements UserI{
         for(int i=0;i<users.size();i++){
             UnitBean u = new UnitBean(users.get(i).getUnitid());
             users.get(i).setUnit((UnitBean) unitI.getUnitById(u).getData());
+        }
+        baseResBean.setData(users);
+        return baseResBean;
+    }
+
+    public BaseResBean getShortUserList() {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        String str = "select id,phone,name,usertype from user";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set  = ps.executeQuery();
+            while (set.next()){
+                UserBean userBean = new UserBean();
+                userBean.setId(set.getInt(set.findColumn("id")));
+                userBean.setPhone(set.getString(set.findColumn("phone")));
+                userBean.setUsertype(set.getInt(set.findColumn("usertype")));
+                userBean.setName(set.getString(set.findColumn("name")));
+                users.add(userBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(users);
         return baseResBean;
@@ -448,6 +479,32 @@ public class UserOpe  implements UserI{
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setString(1,user.getPhone());
+            set  = ps.executeQuery();
+            while (set.next()){
+                user.setUsertype(set.getInt(set.findColumn("usertype")));
+                break;
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(user);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserTypeInfoById(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select  usertype  from user where id = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,user.getId());
             set  = ps.executeQuery();
             while (set.next()){
                 user.setUsertype(set.getInt(set.findColumn("usertype")));
@@ -1097,6 +1154,112 @@ public class UserOpe  implements UserI{
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(id);
+        return baseResBean;
+    }
+
+    public BaseResBean updateUserChatTimeById(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update user set chattime = ? WHERE id = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setLong(1,userBean.getChattime());
+            ps.setInt(2,userBean.getId());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(userBean);
+        return baseResBean;
+    }
+
+    public BaseResBean updateRateByUserId(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "update user set rate = ? WHERE id = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setFloat(1,userBean.getRate());
+            ps.setInt(2,userBean.getId());
+            ps.execute();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(userBean);
+        return baseResBean;
+    }
+
+    public BaseResBean getRates() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select id,name,phone,rate from user ORDER BY  rate DESC ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set = ps.executeQuery();
+            while (set.next()){
+                UserBean u = new UserBean();
+                u.setId(set.getInt(set.findColumn("id")));
+                u.setName(set.getString(set.findColumn("name")));
+                u.setPhone(set.getString(set.findColumn("phone")));
+                u.setRate(set.getFloat(set.findColumn("rate")));
+                users.add(u);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(users);
+        return baseResBean;
+    }
+
+    public BaseResBean getChatTimes() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select id,name,phone,chattime from user ORDER BY  chattime DESC ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            set = ps.executeQuery();
+            while (set.next()){
+                UserBean u = new UserBean();
+                u.setId(set.getInt(set.findColumn("id")));
+                u.setName(set.getString(set.findColumn("name")));
+                u.setPhone(set.getString(set.findColumn("phone")));
+                u.setChattime(set.getLong(set.findColumn("chattime")));
+                users.add(u);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(users);
         return baseResBean;
     }
 }

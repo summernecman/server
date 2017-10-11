@@ -2,29 +2,27 @@ package com.summer.main;
 
 import com.google.gson.reflect.TypeToken;
 import com.summer.base.bean.BaseResBean;
+import com.summer.comment.CommentI;
+import com.summer.comment.CommentOpe;
 import com.summer.contact.ContactBean;
 import com.summer.contact.ContactOpe;
-import com.summer.em.EMI;
 import com.summer.em.EMOpe;
 import com.summer.em.bean.EMUserBean;
 import com.summer.em.bean.EMUserStatusBean;
 import com.summer.network.HttpRequest;
 import com.summer.unit.UnitBean;
-import com.summer.unit.UnitI;
 import com.summer.unit.UnitOpe;
-import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBaseResBean;
 import com.summer.user.bean.UserBean;
 import com.summer.user.bean.WebIndexInfo;
 import com.summer.userarea.UserAreaBean;
-import com.summer.userarea.UserAreaI;
 import com.summer.userarea.UserAreaOpe;
 import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
-import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
+import com.summer.video.bean.CallDistribution;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -58,6 +56,8 @@ public class UserMapping {
     ContactOpe contactI = new ContactOpe();
 
     UserAreaOpe userAreaI = new UserAreaOpe();
+
+    CommentOpe commentI = new CommentOpe();
 
     @RequestMapping(value = "/setHeadurl",method = RequestMethod.POST)
     public void setHeadUrl(HttpServletRequest req, HttpServletResponse rep){
@@ -798,8 +798,42 @@ public class UserMapping {
         userBean.setUsertype(0);
         UserBean u2 = new UserBean();
         u2.setUsertype(2);
-        webIndexInfo.setEngineerline(0);
-        webIndexInfo.setServeronline(0);
+
+        int engnum = 0;
+        int sernum = 0;
+        BaseResBean res = HttpRequest.sendGet(Global.URL+"/chatrooms?pagenum=1&pagesize=1",null,Global.emTokenBean.getAccess_token());
+        ChatRoomBean chatRoomBean = GsonUtil.getInstance().fromJson(res.getData().toString(),ChatRoomBean.class);
+        if(chatRoomBean!=null && chatRoomBean.getData()!=null && chatRoomBean.getData().size()>0){
+            BaseResBean r = HttpRequest.sendGet(Global.URL+"/chatrooms/"+chatRoomBean.getData().get(0).getId(), null,Global.emTokenBean.getAccess_token());
+            ChatRoomBean c = GsonUtil.getInstance().fromJson(r.getData().toString(),ChatRoomBean.class);
+            if(c!=null && c.getData()!=null && c.getData().size()>0){
+                for(int i=0;i<c.getData().size();i++){
+                    if(c.getData().get(i).getName().equals(Global.ChatRoomName) && c.getData().get(i).getAffiliations()!=null && c.getData().get(i).getAffiliations().size()>0){
+                        for(int j=0;j<c.getData().get(i).getAffiliations().size();j++){
+                            if(c.getData().get(i).getAffiliations().get(j).getMember()!=null &&!"".equals(c.getData().get(i).getAffiliations().get(j).getMember())){
+                                UserBean u = new UserBean();
+                                u.setPhone(c.getData().get(i).getAffiliations().get(j).getMember());
+                                UserBean uu = (UserBean) userI.getUserShortInfoByPhone(u).getData();
+                                if(uu!=null){
+                                    switch (uu.getUsertype()){
+                                        case UserBean.USER_TYPE_ENGINEER:
+                                            engnum++;
+                                            break;
+                                        case UserBean.USER_TYPE_SERVER:
+                                            sernum++;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        webIndexInfo.setEngineerline(engnum);
+        webIndexInfo.setServeronline(sernum);
+
+
         webIndexInfo.setCustomall((Long) userI.getUserNums(u2).getData());
         webIndexInfo.setServerall((Long) userI.getUserNums(userBean).getData());
         webIndexInfo.setEngineerall((Long) userI.getUserNums(u1).getData());
@@ -816,5 +850,207 @@ public class UserMapping {
             e.printStackTrace();
         }
     }
+
+
+    @RequestMapping(value = "/initUserChatTime",method = RequestMethod.POST)
+    public void initUserChatTime(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+
+        ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getUserList().getData();
+        for(int i=0;i<users.size();i++){
+            if(users.get(i)!=null &&users.get(i).getId()!=-1 ){
+                UserBean user = new UserBean();
+                user.setId(users.get(i).getId());
+                long t=(Long) videoI.getUserCallTimeInfoById(user).getData();
+                user.setChattime(t);
+                userI.updateUserChatTimeById(user);
+            }
+        }
+
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getUsersChatTime",method = RequestMethod.POST)
+    public void getUsersChatTime(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+
+        ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getShortUserList().getData();
+        for(int i=0;i<users.size();i++){
+            if(users.get(i)!=null &&users.get(i).getId()!=-1 ){
+                users.get(i).setStart(userBean.getStart());
+                users.get(i).setEnd(userBean.getEnd());
+                long t=(Long) videoI.getUserCallTimeInfoByIdWithTimeLimit(users.get(i)).getData();
+                users.get(i).setChattime(t);
+            }
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(users);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/initUserRate",method = RequestMethod.POST)
+    public void initUserRate(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+
+        ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getShortUserList().getData();
+        for(int i=0;i<users.size();i++){
+            if(users.get(i)!=null &&users.get(i).getId()!=-1 ){
+                UserBean user = new UserBean();
+                user.setId(users.get(i).getId());
+                float t=(Float) commentI.getVideoRateCommentByUseId(user).getData();
+                user.setRate(t);
+                userI.updateRateByUserId(user);
+            }
+        }
+
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @RequestMapping(value = "/getUsersRate",method = RequestMethod.POST)
+    public void getUsersRate(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+
+        ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getShortUserList().getData();
+        for(int i=0;i<users.size();i++){
+            if(users.get(i)!=null &&users.get(i).getId()!=-1 ){
+                users.get(i).setStart(userBean.getStart());
+                users.get(i).setEnd(userBean.getEnd());
+                float t=(Float) commentI.getVideoRateCommentByUseIdWithTimeLimit(users.get(i)).getData();
+                users.get(i).setRate(t);
+            }
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(users);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getOutCallTimeDistribution",method = RequestMethod.POST)
+    public void getOutCallTimeDistribution(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+
+        ArrayList<UserBean> fromid = (ArrayList<UserBean>) videoI.getOutCallTimeDistribution().getData();
+        CallDistribution callDistribution = new CallDistribution();
+        for(int i=0;i<fromid.size();i++){
+            switch (fromid.get(i).getUsertype()){
+                case UserBean.USER_TYPE_CUSTOMER:
+                    callDistribution.setCustomer(callDistribution.getCustomer()+1);
+                    break;
+                case UserBean.USER_TYPE_SERVER:
+                    callDistribution.setServer(callDistribution.getServer()+1);
+                    break;
+                case UserBean.USER_TYPE_ENGINEER:
+                    callDistribution.setEngineer(callDistribution.getEngineer()+1);
+                    break;
+            }
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(callDistribution);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getInCallTimeDistribution",method = RequestMethod.POST)
+    public void getInCallTimeDistribution(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+
+        ArrayList<UserBean> fromid = (ArrayList<UserBean>) videoI.getInCallTimeDistribution().getData();
+        CallDistribution callDistribution = new CallDistribution();
+        for(int i=0;i<fromid.size();i++){
+            switch (fromid.get(i).getUsertype()){
+                case UserBean.USER_TYPE_CUSTOMER:
+                    callDistribution.setCustomer(callDistribution.getCustomer()+1);
+                    break;
+                case UserBean.USER_TYPE_SERVER:
+                    callDistribution.setServer(callDistribution.getServer()+1);
+                    break;
+                case UserBean.USER_TYPE_ENGINEER:
+                    callDistribution.setEngineer(callDistribution.getEngineer()+1);
+                    break;
+            }
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(callDistribution);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+//    @RequestMapping(value = "/saveUserInfoInWeb",method = RequestMethod.POST)
+//    public void getOnlineUserNum(HttpServletRequest req, HttpServletResponse rep){
+//        VideoMapping.init(req,rep);
+//        String  str = req.getParameter("data");
+//        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+//        System.out.println(str);
+//        userAreaI.delete(userBean);
+//        for(int i=0;userBean.getArea()!=null && i<userBean.getArea().size();i++){
+//            userAreaI.addUserArea(new UserAreaBean(userBean.getId(),userBean.getArea().get(i).getId()));
+//        }
+//        userI.updateRemark(userBean);
+//        contactI.deleteContactsByUserId(userBean);
+//        for(int i=0;i<userBean.getContacts().size();i++){
+//            ContactBean contactBean = new ContactBean();
+//            contactBean.setFromid(userBean.getId());
+//            contactBean.setToid(userBean.getContacts().get(i).getId());
+//            contactI.addContactsByUserid(contactBean);
+//        }
+//        try {
+//            PrintWriter printWriter = rep.getWriter();
+//            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
+//            printWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }

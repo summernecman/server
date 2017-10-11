@@ -705,6 +705,33 @@ public class CommentOpe implements CommentI {
         return baseResBean;
     }
 
+    public BaseResBean getVideoRateCommentByUseIdWithTimeLimit(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select avg(rate) from comment WHERE  toid = ? and (created > ? and created < ?) ORDER BY avg(rate)";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        float num = 0f;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            ps.setString(2,userBean.getStart());
+            ps.setString(3,userBean.getEnd());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getFloat(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
     public BaseResBean getVideoRateCommentByVideoid(VideoBean videoBean) {
         BaseResBean baseResBean = new BaseResBean();
         String str = "select rate from comment WHERE  videoid = ?";

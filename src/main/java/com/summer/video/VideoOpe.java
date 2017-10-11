@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class VideoOpe implements VideoI {
 
-    UserI userI = new UserOpe();
+    UserOpe userI = new UserOpe();
 
     public BaseResBean getVideos(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
@@ -849,6 +849,60 @@ public class VideoOpe implements VideoI {
         return baseResBean;
     }
 
+    public BaseResBean getUserCallTimeInfoById(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select sum(timenum) from video WHERE fromid = ? or toid = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,user.getId());
+            ps.setInt(2,user.getId());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getLong(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserCallTimeInfoByIdWithTimeLimit(UserBean user) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select sum(timenum) from video WHERE (fromid = ? or toid = ?) and (created > ? and created < ? )";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        long num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,user.getId());
+            ps.setInt(2,user.getId());
+            ps.setString(3,user.getStart());
+            ps.setString(4,user.getEnd());
+            set  = ps.executeQuery();
+            set.next();
+            num = set.getLong(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
     public BaseResBean getCallTimeInfo() {
         BaseResBean baseResBean = new BaseResBean();
         String str = "select sum(timenum) from video";
@@ -1019,6 +1073,74 @@ public class VideoOpe implements VideoI {
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(max);
+        return baseResBean;
+    }
+
+    public BaseResBean getOutCallTimeDistribution() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select fromid from video WHERE file  <> ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        ArrayList<UserBean> fromid = new ArrayList<UserBean>();
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,"");
+            set = ps.executeQuery();
+            while (set.next()){
+                UserBean uu = new UserBean();
+                uu.setId(set.getInt(1));
+                fromid.add(uu);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        if(userI ==null){
+            userI = new UserOpe();
+        }
+        for(int i=0;i<fromid.size();i++){
+            fromid.get(i).setUsertype(((UserBean)userI.getUserTypeInfoById(fromid.get(i)).getData()).getUsertype());
+        }
+        baseResBean.setData(fromid);
+        return baseResBean;
+    }
+
+    public BaseResBean getInCallTimeDistribution() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select toid from video WHERE file  <> ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        ArrayList<UserBean> fromid = new ArrayList<UserBean>();
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,"");
+            set = ps.executeQuery();
+            while (set.next()){
+                UserBean uu = new UserBean();
+                uu.setId(set.getInt(1));
+                fromid.add(uu);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        if(userI ==null){
+            userI = new UserOpe();
+        }
+        for(int i=0;i<fromid.size();i++){
+            fromid.get(i).setUsertype(((UserBean)userI.getUserTypeInfoById(fromid.get(i)).getData()).getUsertype());
+        }
+        baseResBean.setData(fromid);
         return baseResBean;
     }
 

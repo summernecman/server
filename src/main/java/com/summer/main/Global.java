@@ -20,6 +20,7 @@ public class Global {
 
     public static String URL = "https://a1.easemob.com/1122170703115322/service";
 
+    public static String ChatRoomName = "chat";
 
     @PostConstruct
     public void onStart(){
