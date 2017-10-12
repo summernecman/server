@@ -21,7 +21,7 @@ import java.io.PrintWriter;
 @RequestMapping("/share")
 public class ShareMapping {
 
-    ShareI shareI = new ShareOpe();
+    ShareOpe shareI = new ShareOpe();
 
     @RequestMapping(value = "/getSharesByReceipt",method = RequestMethod.POST)
     public void getSharesByReceipt(HttpServletRequest req, HttpServletResponse rep){

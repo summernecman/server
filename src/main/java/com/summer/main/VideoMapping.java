@@ -1,6 +1,11 @@
 package com.summer.main;
 
+import com.summer.agree.AgreeBean;
+import com.summer.agree.AgreeI;
+import com.summer.agree.AgreeOpe;
 import com.summer.base.bean.BaseResBean;
+import com.summer.comment.CommentI;
+import com.summer.comment.CommentOpe;
 import com.summer.contact.ContactBean;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
@@ -38,6 +43,10 @@ public class VideoMapping {
     UserOpe userI = new UserOpe();
 
     VideoOpe videoI = new VideoOpe();
+
+    CommentOpe commentI = new CommentOpe();
+
+    AgreeOpe agreeI = new AgreeOpe();
 
 
     @RequestMapping(value = "/userlist",method = RequestMethod.POST)
@@ -263,13 +272,30 @@ public class VideoMapping {
         String  str = req.getParameter("data");
         CommentBean commentBean = GsonUtil.getInstance().fromJson(str,CommentBean.class);
         System.out.println(str);
+
+
+        videoI.commentVideos(commentBean);
+
+        UserBean a = new UserBean();
+        a.setId(commentBean.getToid());
+        UserBean u = (UserBean) userI.getUserInfoById(a).getData();
+
+        int num = (Integer) commentI.getToVideoCommentNumByUserId(u).getData();
+
+        u.setRate((commentBean.getRate()+u.getRate()*num)/(num+1));
+
+        userI.updateRateByUserId(u);
+
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(u);
         try {
             PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.commentVideos(commentBean)));
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
 
@@ -302,6 +328,33 @@ public class VideoMapping {
             e.printStackTrace();
         }
     }
+
+
+
+    @RequestMapping(value = "/getVideoCommentsById",method = RequestMethod.POST)
+    public void getVideoCommentsById(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
+        System.out.println(str);
+        ArrayList<CommentBean> comments = (ArrayList<CommentBean>) commentI.getVideoCommentsByVideoId(videoBean).getData();
+        for(int i=0;comments!=null && i<comments.size();i++){
+            AgreeBean agree = new AgreeBean();
+            agree.setCommentid(comments.get(i).getId());
+            comments.get(i).setAgreeNum(((Integer)agreeI.getAgreeNum(agree).getData()));
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(comments);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     @RequestMapping(value = "/getAllVideosWithLimitFrom1",method = RequestMethod.POST)
     public void getAllVideosWithLimitFrom1(HttpServletRequest req, HttpServletResponse rep){

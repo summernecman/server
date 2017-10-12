@@ -255,6 +255,7 @@ public class VideoOpe implements VideoI {
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
                 videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -949,6 +950,34 @@ public class VideoOpe implements VideoI {
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(uploaded==0?false:true);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideoUploadedNum(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from video WHERE file<> ? and (fromid = ? or toid = ? ) and uploaded = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int uploaded = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setString(1,"");
+            ps.setInt(2,userBean.getId());
+            ps.setInt(3,userBean.getId());
+            ps.setInt(4,0);
+            set  = ps.executeQuery();
+            set.next();
+            uploaded = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(uploaded);
         return baseResBean;
     }
 

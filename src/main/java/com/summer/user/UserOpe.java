@@ -714,6 +714,7 @@ public class UserOpe  implements UserI{
                 userBean.setHeadurl(set.getString(set.findColumn("headurl")));
                 userBean.setRemark(set.getString(set.findColumn("remark")));
                 userBean.setUsertype(set.getInt(set.findColumn("usertype")));
+                userBean.setRate(set.getFloat(set.findColumn("rate")));
                 break;
             }
         } catch (NamingException e) {

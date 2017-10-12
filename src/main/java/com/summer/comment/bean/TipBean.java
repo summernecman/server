@@ -6,6 +6,9 @@ import com.summer.base.bean.BaseBean;
  * Created by SWSD on 17-09-01.
  */
 public class TipBean extends BaseBean {
+
+
+
     private int position;
 
     private String tip;

@@ -19,6 +19,8 @@ public interface CommentI {
 
     public BaseResBean getCommentByUserIdWithLimit(UserBean userBean);
 
+    public BaseResBean getOtherCommentByUserIdWithLimit(UserBean userBean);
+
     public BaseResBean getCommentByUserId(UserBean userBean);
 
     public BaseResBean getShortCommentByUserIdWithLimit(UserBean userBean);
@@ -44,6 +46,8 @@ public interface CommentI {
 
     public BaseResBean getVideoCommentByVideoIdAndFrom(VideoBean videoBean);
 
+    public BaseResBean getVideoCommentsByVideoId(VideoBean videoBean);
+
     public BaseResBean getVideoRateCommentByUserPhone(UserBean userBean);
 
     public BaseResBean getVideoRateCommentByUseId(UserBean userBean);
@@ -53,4 +57,6 @@ public interface CommentI {
     public BaseResBean getVideoRateCommentByVideoid(VideoBean videoBean);
 
     public BaseResBean getVideoCommentRateLevelByuserId(UserBean userBean);
+
+    public BaseResBean getToVideoCommentNumByUserId(UserBean userBean);
 }

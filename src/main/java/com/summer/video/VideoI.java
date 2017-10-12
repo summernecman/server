@@ -61,6 +61,8 @@ public interface VideoI {
 
     public BaseResBean isVideoUploaded(VideoBean videoBean);
 
+    public BaseResBean getVideoUploadedNum(UserBean userBean);
+
     public BaseResBean setVideoUploaded(VideoBean videoBean);
 
     public BaseResBean getMaxVideoId();

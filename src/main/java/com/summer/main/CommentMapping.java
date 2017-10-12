@@ -5,6 +5,8 @@ import com.summer.comment.CommentOpe;
 import com.summer.comment.bean.RateLevelBean;
 import com.summer.comment.bean.TipBean;
 import com.summer.comment.bean.TipsBean;
+import com.summer.tip.TipI;
+import com.summer.tip.TipOpe;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
@@ -29,6 +31,8 @@ import java.util.HashMap;
 public class CommentMapping {
 
     CommentOpe commentI = new CommentOpe();
+
+    TipOpe tipI = new TipOpe();
 
     @RequestMapping(value = "/getCommentsWithLimit",method = RequestMethod.POST)
     public void getCommentsWithLimit(HttpServletRequest req, HttpServletResponse rep){
@@ -83,6 +87,23 @@ public class CommentMapping {
 
     @RequestMapping(value = "/getCommentByUserIdWithLimit",method = RequestMethod.POST)
     public void getCommentByUserIdWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        BaseResBean baseResBean = commentI.getCommentByUserIdWithLimit(userBean);
+        baseResBean.setTotal((Integer) commentI.getCommentNumByUserId(userBean).getData());
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/getOtherCommentByUserIdWithLimit",method = RequestMethod.POST)
+    public void getOtherCommentByUserIdWithLimit(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
         String  str = req.getParameter("data");
         UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
@@ -235,11 +256,22 @@ public class CommentMapping {
         String  str = req.getParameter("data");
         UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
         System.out.println(str);
+
+        ArrayList<TipBean> tipBeen  = (ArrayList<TipBean>) tipI.getTips().getData();
+        HashMap<Integer,String> h = new HashMap<Integer, String>();
+        for(int i=0;i<tipBeen.size();i++){
+            h.put(tipBeen.get(i).getPosition(),tipBeen.get(i).getTip());
+        }
+
         ArrayList<CommentBean> comments = (ArrayList<CommentBean>) commentI.getTips(userBean).getData();
         HashMap<Integer,TipBean> tipBeanHashMap = new HashMap<Integer, TipBean>();
         for(int i=0;i<comments.size();i++){
             TipsBean tipBean = GsonUtil.getInstance().fromJson(comments.get(i).getTips(),TipsBean.class);
+
             for(int j = 0; j<tipBean.getTipBeen().size(); j++){
+                if(h.get(tipBean.getTipBeen().get(j).getPosition())!=null){
+                    tipBean.getTipBeen().get(j).setTip(h.get(tipBean.getTipBeen().get(j).getPosition()));
+                }
                 if(tipBeanHashMap.get(tipBean.getTipBeen().get(j).getPosition())==null){
                     TipBean tipBean1 = new TipBean(tipBean.getTipBeen().get(j).getPosition(),tipBean.getTipBeen().get(j).getTip(),0,false);
                     tipBeanHashMap.put(tipBean.getTipBeen().get(j).getPosition(),tipBean1);
