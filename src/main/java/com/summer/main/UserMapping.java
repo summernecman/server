@@ -968,22 +968,42 @@ public class UserMapping {
         VideoMapping.init(req,rep);
 
         ArrayList<UserBean> fromid = (ArrayList<UserBean>) videoI.getOutCallTimeDistribution().getData();
-        CallDistribution callDistribution = new CallDistribution();
+        int customer = 0;
+        int server = 0;
+        int engineer = 0;
         for(int i=0;i<fromid.size();i++){
             switch (fromid.get(i).getUsertype()){
                 case UserBean.USER_TYPE_CUSTOMER:
-                    callDistribution.setCustomer(callDistribution.getCustomer()+1);
+                    customer++;
                     break;
                 case UserBean.USER_TYPE_SERVER:
-                    callDistribution.setServer(callDistribution.getServer()+1);
+                    server++;
                     break;
                 case UserBean.USER_TYPE_ENGINEER:
-                    callDistribution.setEngineer(callDistribution.getEngineer()+1);
+                    engineer++;
                     break;
             }
         }
+        CallDistribution callDistribution = new CallDistribution();
+        callDistribution.setName("engineer");
+        callDistribution.setContent(engineer+"");
+
+        CallDistribution callDistribution1 = new CallDistribution();
+        callDistribution1.setName("customer");
+        callDistribution1.setContent(customer+"");
+
+        CallDistribution callDistribution2 = new CallDistribution();
+        callDistribution2.setName("server");
+        callDistribution2.setContent(server+"");
+
+        ArrayList<CallDistribution> data = new ArrayList<CallDistribution>();
+        data.add(callDistribution);
+        data.add(callDistribution1);
+        data.add(callDistribution2);
+
+
         BaseResBean baseResBean = new BaseResBean();
-        baseResBean.setData(callDistribution);
+        baseResBean.setData(data);
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
@@ -997,24 +1017,43 @@ public class UserMapping {
     @RequestMapping(value = "/getInCallTimeDistribution",method = RequestMethod.POST)
     public void getInCallTimeDistribution(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
-
         ArrayList<UserBean> fromid = (ArrayList<UserBean>) videoI.getInCallTimeDistribution().getData();
-        CallDistribution callDistribution = new CallDistribution();
+        int customer = 0;
+        int server = 0;
+        int engineer = 0;
         for(int i=0;i<fromid.size();i++){
             switch (fromid.get(i).getUsertype()){
                 case UserBean.USER_TYPE_CUSTOMER:
-                    callDistribution.setCustomer(callDistribution.getCustomer()+1);
+                    customer++;
                     break;
                 case UserBean.USER_TYPE_SERVER:
-                    callDistribution.setServer(callDistribution.getServer()+1);
+                    server++;
                     break;
                 case UserBean.USER_TYPE_ENGINEER:
-                    callDistribution.setEngineer(callDistribution.getEngineer()+1);
+                    engineer++;
                     break;
             }
         }
+        CallDistribution callDistribution = new CallDistribution();
+        callDistribution.setName("engineer");
+        callDistribution.setContent(engineer+"");
+
+        CallDistribution callDistribution1 = new CallDistribution();
+        callDistribution1.setName("customer");
+        callDistribution1.setContent(customer+"");
+
+        CallDistribution callDistribution2 = new CallDistribution();
+        callDistribution2.setName("server");
+        callDistribution2.setContent(server+"");
+
+        ArrayList<CallDistribution> data = new ArrayList<CallDistribution>();
+        data.add(callDistribution);
+        data.add(callDistribution1);
+        data.add(callDistribution2);
+
+
         BaseResBean baseResBean = new BaseResBean();
-        baseResBean.setData(callDistribution);
+        baseResBean.setData(data);
         try {
             PrintWriter printWriter = rep.getWriter();
             printWriter.println(GsonUtil.getInstance().toJson(baseResBean));

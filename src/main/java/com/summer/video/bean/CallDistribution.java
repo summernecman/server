@@ -7,33 +7,23 @@ import com.summer.base.bean.BaseBean;
  */
 public class CallDistribution extends BaseBean{
 
-    private int engineer;
+    private String name;
 
-    private int customer;
+    private String content;
 
-    private int server;
-
-    public int getEngineer() {
-        return engineer;
+    public String getName() {
+        return name;
     }
 
-    public void setEngineer(int engineer) {
-        this.engineer = engineer;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getCustomer() {
-        return customer;
+    public String getContent() {
+        return content;
     }
 
-    public void setCustomer(int customer) {
-        this.customer = customer;
-    }
-
-    public int getServer() {
-        return server;
-    }
-
-    public void setServer(int server) {
-        this.server = server;
+    public void setContent(String content) {
+        this.content = content;
     }
 }
