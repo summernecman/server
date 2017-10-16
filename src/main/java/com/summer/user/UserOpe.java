@@ -416,12 +416,16 @@ public class UserOpe  implements UserI{
             while (set.next()){
                 user.setId(set.getInt(set.findColumn("id")));
                 user.setPhone(set.getString(set.findColumn("phone")));
+                user.setUuuid(set.getString(set.findColumn("uuuid")));
                 user.setPwd(set.getString(set.findColumn("pwd")));
-                user.setUsertype(set.getInt(set.findColumn("usertype")));
-                user.setBelong(set.getString(set.findColumn("belong")));
                 user.setName(set.getString(set.findColumn("name")));
-                user.setHeadurl(set.getString(set.findColumn("headurl")));
+                user.setBelong(set.getString(set.findColumn("belong")));
+                user.setState(set.getInt(set.findColumn("state")));
                 user.setUnitid(set.getInt(set.findColumn("unitid")));
+                user.setHeadurl(set.getString(set.findColumn("headurl")));
+                user.setRemark(set.getString(set.findColumn("remark")));
+                user.setUsertype(set.getInt(set.findColumn("usertype")));
+                user.setRate(set.getFloat(set.findColumn("rate")));
                 break;
             }
         } catch (NamingException e) {

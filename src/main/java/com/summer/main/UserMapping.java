@@ -985,15 +985,15 @@ public class UserMapping {
             }
         }
         CallDistribution callDistribution = new CallDistribution();
-        callDistribution.setName("engineer");
+        callDistribution.setName("工程师");
         callDistribution.setContent(engineer+"");
 
         CallDistribution callDistribution1 = new CallDistribution();
-        callDistribution1.setName("customer");
+        callDistribution1.setName("客户");
         callDistribution1.setContent(customer+"");
 
         CallDistribution callDistribution2 = new CallDistribution();
-        callDistribution2.setName("server");
+        callDistribution2.setName("客服");
         callDistribution2.setContent(server+"");
 
         ArrayList<CallDistribution> data = new ArrayList<CallDistribution>();
@@ -1035,15 +1035,15 @@ public class UserMapping {
             }
         }
         CallDistribution callDistribution = new CallDistribution();
-        callDistribution.setName("engineer");
+        callDistribution.setName("工程师");
         callDistribution.setContent(engineer+"");
 
         CallDistribution callDistribution1 = new CallDistribution();
-        callDistribution1.setName("customer");
+        callDistribution1.setName("客户");
         callDistribution1.setContent(customer+"");
 
         CallDistribution callDistribution2 = new CallDistribution();
-        callDistribution2.setName("server");
+        callDistribution2.setName("客服");
         callDistribution2.setContent(server+"");
 
         ArrayList<CallDistribution> data = new ArrayList<CallDistribution>();

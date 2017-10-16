@@ -268,13 +268,13 @@ public class VideoOpe implements VideoI {
 
         for(int i=0;i<videos.size();i++){
             UserBean userBean = new UserBean();
-            userBean.setPhone(videos.get(i).getFromphone());
-            UserBean userBean1 = (UserBean) userI.getUserInfoByPhone(userBean).getData();
+            userBean.setId(videos.get(i).getFromid());
+            UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean).getData();
             videos.get(i).setFromUser(userBean1);
 
             UserBean userBean2 = new UserBean();
-            userBean2.setPhone(videos.get(i).getTophone());
-            UserBean userBean3 = (UserBean) userI.getUserInfoByPhone(userBean2).getData();
+            userBean2.setId(videos.get(i).getToid());
+            UserBean userBean3 = (UserBean) userI.getUserInfoById(userBean2).getData();
             videos.get(i).setToUser(userBean3);
 
         }
