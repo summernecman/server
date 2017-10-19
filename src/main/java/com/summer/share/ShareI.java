@@ -13,4 +13,6 @@ public interface ShareI  {
     public BaseResBean getShareNumByUserPhone(UserBean userBean);
 
     public BaseResBean getSharesByReceipt(ShareBean shareBean);
+
+    public BaseResBean getSharesByReceiptWithLimit(ShareBean shareBean);
 }

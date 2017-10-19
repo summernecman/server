@@ -6,7 +6,11 @@ import com.summer.agree.AgreeOpe;
 import com.summer.base.bean.BaseResBean;
 import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
+import com.summer.comment.bean.TipBean;
+import com.summer.comment.bean.TipsBean;
 import com.summer.contact.ContactBean;
+import com.summer.tip.TipI;
+import com.summer.tip.TipOpe;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
@@ -47,6 +51,8 @@ public class VideoMapping {
     CommentOpe commentI = new CommentOpe();
 
     AgreeOpe agreeI = new AgreeOpe();
+
+    TipOpe tipI = new TipOpe();
 
 
     @RequestMapping(value = "/userlist",method = RequestMethod.POST)
@@ -344,6 +350,118 @@ public class VideoMapping {
             comments.get(i).setAgreeNum(((Integer)agreeI.getAgreeNum(agree).getData()));
         }
         BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(comments);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/getEachOtherVideoCommentsById",method = RequestMethod.POST)
+    public void getEachOtherVideoCommentsById(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        String  str = req.getParameter("data");
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
+        System.out.println(str);
+        ArrayList<CommentBean> comments = (ArrayList<CommentBean>) commentI.getVideoCommentsByVideoId(videoBean).getData();
+        for(int i=0;comments!=null && i<comments.size();i++){
+            AgreeBean agree = new AgreeBean();
+            agree.setCommentid(comments.get(i).getId());
+            comments.get(i).setAgreeNum(((Integer)agreeI.getAgreeNum(agree).getData()));
+        }
+
+        BaseResBean baseResBean = new BaseResBean();
+
+        if(comments.size()==0){
+            ArrayList<VideoBean> a = (ArrayList<VideoBean>) videoI.getVideoByVideoId(videoBean).getData();
+            if(a==null || a.size()==0){
+                baseResBean.setException(true);
+                baseResBean.setErrorMessage("找不到视频");
+                baseResBean.setData(comments);
+                try {
+                    PrintWriter printWriter = rep.getWriter();
+                    printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+                    printWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            VideoBean v = a.get(0);
+            CommentBean c1 = new CommentBean();
+            TipsBean tipsBean = new TipsBean();
+            ArrayList<TipBean> tipBeen = (ArrayList<TipBean>) tipI.getTips().getData();
+            tipsBean.setTipBeen(tipBeen);
+            c1.setTips(GsonUtil.getInstance().toJson(tipsBean));
+            c1.init();
+            c1.setFromid(v.getFromid());
+            c1.setFromuser(v.getFromphone());
+            c1.setToid(v.getToid());
+            c1.setTouser(v.getTophone());
+            CommentBean c2 = new CommentBean();
+            c2.setTips(GsonUtil.getInstance().toJson(tipsBean));
+            c2.init();
+            c2.setFromid(v.getToid());
+            c2.setFromuser(v.getTophone());
+            c2.setToid(v.getFromid());
+            c2.setTouser(v.getFromphone());
+            comments.add(c1);
+            comments.add(c2);
+        }
+
+        if(comments.size()==1){
+            ArrayList<VideoBean> a = (ArrayList<VideoBean>) videoI.getVideoByVideoId(videoBean).getData();
+            if(a==null || a.size()==0){
+                baseResBean.setException(true);
+                baseResBean.setErrorMessage("找不到视频");
+                baseResBean.setData(comments);
+                try {
+                    PrintWriter printWriter = rep.getWriter();
+                    printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
+                    printWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            VideoBean v = a.get(0);
+
+            if(comments.get(0).getFromid()==v.getFromid()){
+                CommentBean c2 = new CommentBean();
+                TipsBean tipsBean = new TipsBean();
+                ArrayList<TipBean> tipBeen = (ArrayList<TipBean>) tipI.getTips().getData();
+                tipsBean.setTipBeen(tipBeen);
+                c2.setTips(GsonUtil.getInstance().toJson(tipsBean));
+                c2.init();
+                c2.setFromid(v.getToid());
+                c2.setFromuser(v.getTophone());
+                c2.setToid(v.getFromid());
+                c2.setTouser(v.getFromphone());
+                comments.add(c2);
+            }else{
+                CommentBean c1 = new CommentBean();
+                TipsBean tipsBean = new TipsBean();
+                ArrayList<TipBean> tipBeen = (ArrayList<TipBean>) tipI.getTips().getData();
+                tipsBean.setTipBeen(tipBeen);
+                c1.setTips(GsonUtil.getInstance().toJson(tipsBean));
+                c1.init();
+                c1.setFromid(v.getFromid());
+                c1.setFromuser(v.getFromphone());
+                c1.setToid(v.getToid());
+                c1.setTouser(v.getTophone());
+                comments.add(c1);
+            }
+
+
+
+
+        }
+
+
         baseResBean.setData(comments);
         try {
             PrintWriter printWriter = rep.getWriter();

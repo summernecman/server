@@ -12,11 +12,15 @@ import javax.sql.rowset.BaseRowSet;
  */
 public interface CollectionI {
 
+    public  BaseResBean getCollectionsByUserIdWithLimit(UserBean userBean);
+
     public BaseResBean getCollectionsByUserId(UserBean userBean);
 
     public BaseResBean getCollectionNumByUserId(UserBean userBean);
 
     public BaseResBean getCollectionVideosByUserId(UserBean userBean);
+
+    public BaseResBean getCollectionVideosByUserIdWithLimit(UserBean userBean);
 
     public BaseResBean isCollectedByVideoIdAndUserId(CollectionBean collectionBean);
 

@@ -21,7 +21,7 @@ import java.io.PrintWriter;
 @RequestMapping("/collection")
 public class CollectionMapping {
 
-    CollectionI collectionI = new CollectionOpe();
+    CollectionOpe collectionI = new CollectionOpe();
 
     @RequestMapping(value = "/getCollectionVideosByUserId",method = RequestMethod.POST)
     public void getCollectionVideosByUserId(HttpServletRequest req, HttpServletResponse rep){
@@ -37,6 +37,22 @@ public class CollectionMapping {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping(value = "/getCollectionVideosByUserIdWithLimit",method = RequestMethod.POST)
+    public void getCollectionVideosByUserIdWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(collectionI.getCollectionVideosByUserIdWithLimit(userBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @RequestMapping(value = "/isCollectedByVideoIdAndUserId",method = RequestMethod.POST)
     public void isCollectedByVideoIdAndUserId(HttpServletRequest req, HttpServletResponse rep){

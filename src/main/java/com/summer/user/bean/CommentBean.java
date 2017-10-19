@@ -170,4 +170,10 @@ public class CommentBean extends BaseBean{
     public void setHeadUrl(String headUrl) {
         this.headUrl = headUrl;
     }
+
+    public void init(){
+        setId(-1);
+        setRemark("");
+        setCreated("");
+    }
 }

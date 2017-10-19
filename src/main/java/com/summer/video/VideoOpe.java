@@ -52,6 +52,8 @@ public class VideoOpe implements VideoI {
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -93,6 +95,8 @@ public class VideoOpe implements VideoI {
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
             }
         } catch (NamingException e) {
             e.printStackTrace();
@@ -133,6 +137,7 @@ public class VideoOpe implements VideoI {
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
                 videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -161,7 +166,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getAllVideosCount() {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id) from video";
+        String str = "select count(id)  from video WHERE file <> ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -169,6 +174,7 @@ public class VideoOpe implements VideoI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
+            ps.setString(1,"");
             set = ps.executeQuery();
             set.next();
             num = set.getInt(1);
@@ -186,15 +192,16 @@ public class VideoOpe implements VideoI {
     public BaseResBean getAllVideosWithLimit(LimitBean limitBean) {
         VideoBeseResBean baseResBean = new VideoBeseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video limit ?,?";
+        String str = "select * from video where file<> ? limit ?,?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setInt(1,limitBean.getPagestart()*limitBean.getPagesize());
-            ps.setInt(2,limitBean.getPagesize());
+            ps.setString(1,"");
+            ps.setInt(2,limitBean.getPagestart()*limitBean.getPagesize());
+            ps.setInt(3,limitBean.getPagesize());
             set  = ps.executeQuery();
             while (set.next()){
                 VideoBean videoBean = new VideoBean();
@@ -206,6 +213,7 @@ public class VideoOpe implements VideoI {
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
                 videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -304,6 +312,8 @@ public class VideoOpe implements VideoI {
                 videoBean.setToid(set.getInt(set.findColumn("toid")));
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
+                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -354,6 +364,7 @@ public class VideoOpe implements VideoI {
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
                 videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {
@@ -552,6 +563,7 @@ public class VideoOpe implements VideoI {
                 videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
                 videoBean.setTophone(set.getString(set.findColumn("tophone")));
                 videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
                 videos.add(videoBean);
             }
         } catch (NamingException e) {

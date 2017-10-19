@@ -23,6 +23,38 @@ public class CollectionOpe implements CollectionI {
     VideoI videoI = new VideoOpe();
 
 
+    public BaseResBean getCollectionsByUserIdWithLimit(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CollectionBean> collectionBeen = new ArrayList<CollectionBean>();
+        String str = "select * from collection WHERE  userid = ? limit ?,?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,userBean.getId());
+            ps.setInt(2,userBean.getPagestart()*userBean.getPagesize());
+            ps.setInt(3,userBean.getPagesize());
+            set  = ps.executeQuery();
+            while (set.next()){
+                CollectionBean collectionBean = new CollectionBean();
+                collectionBean.setId(set.getInt(set.findColumn("id")));
+                collectionBean.setVideoid(set.getInt(set.findColumn("videoid")));
+                collectionBean.setUserid(set.getInt(set.findColumn("userid")));
+                collectionBeen.add(collectionBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(collectionBeen);
+        return baseResBean;
+    }
+
     public BaseResBean getCollectionsByUserId(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CollectionBean> collectionBeen = new ArrayList<CollectionBean>();
@@ -53,6 +85,9 @@ public class CollectionOpe implements CollectionI {
         return baseResBean;
     }
 
+
+
+
     public BaseResBean getCollectionNumByUserId(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         String str = "select COUNT(id) from collection WHERE  userid = ? ";
@@ -81,6 +116,22 @@ public class CollectionOpe implements CollectionI {
     public BaseResBean getCollectionVideosByUserId(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CollectionBean> collectionBeen = (ArrayList<CollectionBean>) getCollectionsByUserId(userBean).getData();
+        VideoBean videoBean = new VideoBean();
+        ArrayList<VideoBean> vs = new ArrayList<VideoBean>();
+        for(int i=0;collectionBeen!=null && i<collectionBeen.size();i++){
+            videoBean.setId(collectionBeen.get(i).getVideoid());
+            ArrayList<VideoBean> videoBeen = (ArrayList<VideoBean>) videoI.getVideoByVideoId(videoBean).getData();
+            if(videoBeen!=null && videoBeen.size()>0){
+                vs.add(videoBeen.get(0));
+            }
+        }
+        baseResBean.setData(vs);
+        return baseResBean;
+    }
+
+    public BaseResBean getCollectionVideosByUserIdWithLimit(UserBean userBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CollectionBean> collectionBeen = (ArrayList<CollectionBean>) getCollectionsByUserIdWithLimit(userBean).getData();
         VideoBean videoBean = new VideoBean();
         ArrayList<VideoBean> vs = new ArrayList<VideoBean>();
         for(int i=0;collectionBeen!=null && i<collectionBeen.size();i++){

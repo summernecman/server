@@ -39,6 +39,22 @@ public class ShareMapping {
     }
 
 
+    @RequestMapping(value = "/getSharesByReceiptWithLimit",method = RequestMethod.POST)
+    public void getSharesByReceiptWithLimit(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        ShareBean shareBean = GsonUtil.getInstance().fromJson(str,ShareBean.class);
+        System.out.println(str);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(shareI.getSharesByReceiptWithLimit(shareBean)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @RequestMapping(value = "/getShareNumByUserPhone",method = RequestMethod.POST)
     public void getShareNumByUserPhone(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);
