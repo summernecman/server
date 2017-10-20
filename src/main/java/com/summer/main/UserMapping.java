@@ -261,7 +261,7 @@ public class UserMapping {
             data.setPwd("111111");
         }
         //注册环信账号
-        EMUserBean emUserBean = new EMUserBean(data.getPhone(),data.getPwd());
+        EMUserBean emUserBean = new EMUserBean(data.getPhone(),"111111");
         BaseResBean res = HttpRequest.postJson("https://a1.easemob.com/1122170703115322/service/users", GsonUtil.getInstance().toJson(emUserBean),Global.emTokenBean.getAccess_token());
         System.out.println(res.getData());
 
