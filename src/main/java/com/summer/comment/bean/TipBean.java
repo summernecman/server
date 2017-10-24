@@ -17,6 +17,8 @@ public class TipBean extends BaseBean {
 
     private boolean select;
 
+    private int enable;
+
     public TipBean() {
     }
 
@@ -57,5 +59,13 @@ public class TipBean extends BaseBean {
 
     public void setSelect(boolean select) {
         this.select = select;
+    }
+
+    public int getEnable() {
+        return enable;
+    }
+
+    public void setEnable(int enable) {
+        this.enable = enable;
     }
 }

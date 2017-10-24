@@ -321,6 +321,22 @@ public class UserMapping {
         }
     }
 
+    @RequestMapping(value = "/getUserInfoById",method = RequestMethod.POST)
+    public void getUserInfoById(HttpServletRequest req, HttpServletResponse rep){
+        VideoMapping.init(req,rep);
+        String  str = req.getParameter("data");
+        System.out.println(str);
+        UserBean  data  = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserInfoById(data)));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @RequestMapping(value = "/getArrayUsersInfoByPhone",method = RequestMethod.POST)
     public void getArrayUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
         VideoMapping.init(req,rep);

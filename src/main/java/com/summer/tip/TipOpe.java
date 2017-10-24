@@ -33,6 +33,7 @@ public class TipOpe implements TipI {
                 TipBean tipBean = new TipBean();
                 tipBean.setPosition(set.getInt(set.findColumn("position")));
                 tipBean.setTip(set.getString(set.findColumn("tip")));
+                tipBean.setEnable(set.getInt(set.findColumn("enable")));
                 tipBeen.add(tipBean);
             }
         } catch (NamingException e) {

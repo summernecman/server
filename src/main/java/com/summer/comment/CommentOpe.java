@@ -237,6 +237,15 @@ public class CommentOpe implements CommentI {
             UserBean userBean4 = (UserBean) userI.getUserInfoById(userBean3).getData();
             comments.get(i).setToUser(userBean1);
         }
+
+        if(agreeI == null){
+            agreeI = new AgreeOpe();
+        }
+        for(int i=0;i<comments.size();i++){
+            comments.get(i).setAgreeNum((Integer) agreeI.getAgreeNum(new AgreeBean(comments.get(i).getId(),0)).getData());
+        }
+
+
         baseResBean.setData(comments);
         return baseResBean;
     }
@@ -475,7 +484,7 @@ public class CommentOpe implements CommentI {
         for(int i=0;i<list.size();i++){
             AgreeBean agreeBean = new AgreeBean(list.get(i).getId(),commentBean.getFromUser().getId());
             list.get(i).setAgree((Boolean) (agreeI.isAgreeNum(agreeBean).getData()));
-            list.get(i).setAgreeNum((Integer) agreeI.getAgreeNum(new AgreeBean(list.get(i).getId(),0)).getData());
+            //list.get(i).setAgreeNum((Integer) agreeI.getAgreeNum(new AgreeBean(list.get(i).getId(),0)).getData());
 
         }
         baseResBean.setData(list);

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by SWSD on 17-08-29.
@@ -259,8 +260,10 @@ public class CommentMapping {
 
         ArrayList<TipBean> tipBeen  = (ArrayList<TipBean>) tipI.getTips().getData();
         HashMap<Integer,String> h = new HashMap<Integer, String>();
+        HashMap<Integer,TipBean> hh = new HashMap<Integer, TipBean>();
         for(int i=0;i<tipBeen.size();i++){
             h.put(tipBeen.get(i).getPosition(),tipBeen.get(i).getTip());
+            hh.put(tipBeen.get(i).getPosition(),tipBeen.get(i));
         }
 
         ArrayList<CommentBean> comments = (ArrayList<CommentBean>) commentI.getTips(userBean).getData();
@@ -281,6 +284,15 @@ public class CommentMapping {
                 }
             }
         }
+        Iterator<Integer> i = tipBeanHashMap.keySet().iterator();
+        while(i.hasNext()){
+            int m = i.next();
+            if(hh.get(m)==null||hh.get(m).getEnable()<1){
+                tipBeanHashMap.remove(m);
+                continue;
+            }
+        }
+
 
         try {
             PrintWriter printWriter = rep.getWriter();

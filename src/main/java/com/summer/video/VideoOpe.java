@@ -119,13 +119,14 @@ public class VideoOpe implements VideoI {
     public BaseResBean getAllVideos() {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video";
+        String str = "select * from video where file<> ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
+            ps.setString(1,"");
             set  = ps.executeQuery();
             while (set.next()){
                 VideoBean videoBean = new VideoBean();
