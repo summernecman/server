@@ -10,19 +10,13 @@ import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
-import com.summer.video.bean.LimitBean;
-import com.summer.video.bean.VideoBean;
-import com.summer.video.bean.VideoBeseResBean;
-import com.summer.video.bean.VideoTimeBean;
+import com.summer.video.bean.*;
 import sun.reflect.generics.tree.VoidDescriptor;
 
 import javax.naming.NamingException;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by SWSD on 17-08-24.
@@ -118,7 +112,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getAllVideos() {
         BaseResBean baseResBean = new BaseResBean();
-        ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
+        ArrayList<VideoBean1> videos = new ArrayList<VideoBean1>();
         String str = "select * from video where file<> ?";
         PreparedStatement ps = null;
         ResultSet set = null;
@@ -128,22 +122,28 @@ public class VideoOpe implements VideoI {
             ps = connection.prepareStatement(str);
             ps.setString(1,"");
             set  = ps.executeQuery();
-            while (set.next()){
-                VideoBean videoBean = new VideoBean();
-                videoBean.setId(set.getInt(set.findColumn("id")));
-                videoBean.setFile(set.getString(set.findColumn("file")));
-                videoBean.setCreated(set.getString(set.findColumn("created")));
-                videoBean.setFromid(set.getInt(set.findColumn("fromid")));
-                videoBean.setToid(set.getInt(set.findColumn("toid")));
-                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
-                videoBean.setTophone(set.getString(set.findColumn("tophone")));
-                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
-                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
-                videos.add(videoBean);
-            }
+//            while (set.next()){
+//                VideoBean videoBean = new VideoBean();
+//                videoBean.setId(set.getInt(set.findColumn("id")));
+//                videoBean.setFile(set.getString(set.findColumn("file")));
+//                videoBean.setCreated(set.getString(set.findColumn("created")));
+//                videoBean.setFromid(set.getInt(set.findColumn("fromid")));
+//                videoBean.setToid(set.getInt(set.findColumn("toid")));
+//                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
+//                videoBean.setTophone(set.getString(set.findColumn("tophone")));
+//                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
+//                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
+//                videos.add(videoBean);
+//            }
+
+            videos = (ArrayList<VideoBean1>) DBUtil.populate(set,VideoBean1.class);
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
@@ -151,13 +151,13 @@ public class VideoOpe implements VideoI {
 
         for(int i=0;i<videos.size();i++){
             UserBean userBean = new UserBean();
-            userBean.setPhone(videos.get(i).getFromphone());
-            UserBean userBean1 = (UserBean) userI.getUserInfoByPhone(userBean).getData();
+            userBean.setId(videos.get(i).getFromid());
+            UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean).getData();
             videos.get(i).setFromUser(userBean1);
 
             UserBean userBean2 = new UserBean();
-            userBean2.setPhone(videos.get(i).getTophone());
-            UserBean userBean3 = (UserBean) userI.getUserInfoByPhone(userBean2).getData();
+            userBean2.setId(videos.get(i).getToid());
+            UserBean userBean3 = (UserBean) userI.getUserInfoById(userBean2).getData();
             videos.get(i).setToUser(userBean3);
 
         }
