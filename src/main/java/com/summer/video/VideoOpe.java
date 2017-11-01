@@ -3,6 +3,7 @@ package com.summer.video;
 import com.summer.base.bean.BaseResBean;
 import com.summer.contact.ContactBean;
 import com.summer.contact.HistoryBean;
+import com.summer.main.DBI;
 import com.summer.main.DBUtil;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
@@ -111,57 +112,26 @@ public class VideoOpe implements VideoI {
     }
 
     public BaseResBean getAllVideos() {
-        BaseResBean baseResBean = new BaseResBean();
-        ArrayList<VideoBean1> videos = new ArrayList<VideoBean1>();
-        String str = "select * from video where file<> ?";
-        PreparedStatement ps = null;
-        ResultSet set = null;
-        Connection connection = null;
-        try {
-            connection = DBUtil.getConnection();
-            ps = connection.prepareStatement(str);
-            ps.setString(1,"");
-            set  = ps.executeQuery();
-//            while (set.next()){
-//                VideoBean videoBean = new VideoBean();
-//                videoBean.setId(set.getInt(set.findColumn("id")));
-//                videoBean.setFile(set.getString(set.findColumn("file")));
-//                videoBean.setCreated(set.getString(set.findColumn("created")));
-//                videoBean.setFromid(set.getInt(set.findColumn("fromid")));
-//                videoBean.setToid(set.getInt(set.findColumn("toid")));
-//                videoBean.setFromphone(set.getString(set.findColumn("fromphone")));
-//                videoBean.setTophone(set.getString(set.findColumn("tophone")));
-//                videoBean.setTimenum(set.getLong(set.findColumn("timenum")));
-//                videoBean.setUploaded(set.getInt(set.findColumn("uploaded")));
-//                videos.add(videoBean);
-//            }
+        System.out.println(System.currentTimeMillis());
+        BaseResBean baseResBean = DBI.executeQuery(VideoBean1.class,"select * from video where file<> ? ","");
+        ArrayList<VideoBean1> videos  = (ArrayList<VideoBean1>) baseResBean.getData();
+        System.out.println(System.currentTimeMillis());
+        if(videos!=null){
+            baseResBean.setTotal(videos.size());
+            for(int i=0;i<videos.size();i++){
+                UserBean userBean = new UserBean();
+                userBean.setId(videos.get(i).getFromid());
+                UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean).getData();
+                videos.get(i).setFromUser(userBean1);
 
-            videos = (ArrayList<VideoBean1>) DBUtil.populate(set,VideoBean1.class);
-        } catch (NamingException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.close(connection,ps,set);
+                UserBean userBean2 = new UserBean();
+                userBean2.setId(videos.get(i).getToid());
+                UserBean userBean3 = (UserBean) userI.getUserInfoById(userBean2).getData();
+                videos.get(i).setToUser(userBean3);
+
+            }
         }
-
-        for(int i=0;i<videos.size();i++){
-            UserBean userBean = new UserBean();
-            userBean.setId(videos.get(i).getFromid());
-            UserBean userBean1 = (UserBean) userI.getUserInfoById(userBean).getData();
-            videos.get(i).setFromUser(userBean1);
-
-            UserBean userBean2 = new UserBean();
-            userBean2.setId(videos.get(i).getToid());
-            UserBean userBean3 = (UserBean) userI.getUserInfoById(userBean2).getData();
-            videos.get(i).setToUser(userBean3);
-
-        }
-        baseResBean.setData(videos);
+        System.out.println(System.currentTimeMillis());
         return baseResBean;
     }
 

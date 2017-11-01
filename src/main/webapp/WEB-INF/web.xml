@@ -10,6 +10,11 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+    <!--
+        DispatcherServlet是前置控制器，配置在web.xml文件中的。拦截匹配的请求，Servlet拦截匹配规则要自己定义，把拦截下来的请求，依据相应的规则分发到目标Controller来处理，是配置spring MVC的第一步。
+        DispatcherServlet是前端控制器设计模式的实现，提供Spring Web MVC的集中访问点，而且负责职责的分派，而且与Spring IoC容器无缝集成，从而可以获得Spring的所有好处。
+    -->
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -20,7 +25,7 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-
+    <!--用于处理项目中的乱码问题。-->
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -38,6 +43,11 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+   <!-- resource-ref子元素的描述如下：
+    ● res-ref-name是资源工厂引用名的名称。该名称是一个与java:comp/env上下文相对应的JNDI名称，并且在整个Web应用中必须是惟一的。与tomcat conf/context.xml 中 Resource 中name 属性对应
+    ● res-auth表明：servlet代码通过编程注册到资源管理器，或者是容器将代表servlet注册到资源管理器。该元素的值必须为Application或Container。
+    ● res-sharing-scope表明：是否可以共享通过给定资源管理器连接工厂引用获得的连接。该元素的值必须为Shareable(默认值)或Unshareable。
+    -->
     <resource-ref>
         <description>DB Connection</description>
         <res-ref-name>jdbc/server</res-ref-name>
