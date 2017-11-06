@@ -1,7 +1,7 @@
 package com.summer.contact;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBUtil;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.UserBean;

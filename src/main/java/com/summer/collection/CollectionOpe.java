@@ -1,16 +1,14 @@
 package com.summer.collection;
 
-import com.mysql.jdbc.log.LogUtils;
 import com.summer.base.bean.BaseResBean;
 import com.summer.collection.bean.CollectionBean;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBUtil;
 import com.summer.user.bean.UserBean;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
 import com.summer.video.bean.VideoBean;
 
 import javax.naming.NamingException;
-import javax.sql.rowset.BaseRowSet;
 import java.sql.*;
 import java.util.ArrayList;
 

@@ -1,10 +1,9 @@
 package com.summer.em;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.Global;
+import com.summer.control.Global;
 import com.summer.network.HttpRequest;
 import com.summer.user.bean.UserBean;
-import com.summer.util.GsonUtil;
 
 /**
  * Created by SWSD on 17-09-14.

@@ -7,10 +7,7 @@ import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
 import com.summer.contact.ContactI;
 import com.summer.contact.ContactOpe;
-import com.summer.main.DBUtil;
-import com.summer.unit.UnitBean;
-import com.summer.unit.UnitI;
-import com.summer.unit.UnitOpe;
+import com.summer.unit.*;
 import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBaseResBean;
 import com.summer.user.bean.UserBean;
@@ -18,16 +15,15 @@ import com.summer.userarea.UserAreaI;
 import com.summer.userarea.UserAreaOpe;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
-import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoTimeBean;
 
 import javax.naming.NamingException;
-import java.lang.reflect.WildcardType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by SWSD on 17-08-23.
@@ -1263,6 +1259,40 @@ public class UserOpe  implements UserI{
             e.printStackTrace();
         } finally {
             DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(users);
+        return baseResBean;
+    }
+
+    public BaseResBean getUserAreaUser(UserBean u) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select distinct a.id from user as a,userarea as b,userarea as c where a.usertype <> ? and a.id = c.userid and c.areaid = b.areaid and b.userid = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,UserBean.USER_TYPE_CUSTOMER);
+            ps.setInt(2,u.getId());
+            set = ps.executeQuery();
+            while (set.next()){
+               ids.add(set.getInt(set.findColumn("id")));
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        for(int i=0;i<ids.size();i++){
+            UserBean uu = new UserBean();
+            uu.setId(ids.get(i));
+            users.add((UserBean) getUserInfoById(uu).getData());
         }
         baseResBean.setData(users);
         return baseResBean;

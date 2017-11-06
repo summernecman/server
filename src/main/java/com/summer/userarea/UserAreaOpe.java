@@ -2,8 +2,13 @@ package com.summer.userarea;
 
 import com.summer.area.AreaBean;
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBI;
+import com.summer.unit.DBUtil;
+import com.summer.user.UserI;
+import com.summer.user.UserOpe;
 import com.summer.user.bean.UserBean;
+import com.summer.user.bean.UserBean1;
+import com.sun.javafx.geom.Area;
 
 import javax.naming.NamingException;
 import java.sql.Connection;
@@ -11,12 +16,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by SWSD on 17-09-29.
  */
 public class UserAreaOpe implements UserAreaI {
 
+    UserI userI;
 
 
     public BaseResBean getUserAreaById(UserBean userBean) {
@@ -119,6 +126,23 @@ public class UserAreaOpe implements UserAreaI {
             DBUtil.close(connection,ps,set);
         }
         baseResBean.setData(userBean);
+        return baseResBean;
+    }
+
+    public BaseResBean getAreaUsesByAreaId(AreaBean areaBean) {
+        if(userI == null){
+            userI = new UserOpe();
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<UserAreaBean> list = new ArrayList<UserAreaBean>();
+        list.addAll((Collection<? extends UserAreaBean>) DBI.executeQuery(UserAreaBean.class,"select * from userarea where areaid = ? ",areaBean.getId()).getData());
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        for(int i=0;i<list.size();i++){
+            UserBean u = new UserBean();
+            u.setId(list.get(i).getUserid());
+            users.add((UserBean) userI.getUserInfoById(u).getData());
+        }
+        baseResBean.setData(users);
         return baseResBean;
     }
 

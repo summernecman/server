@@ -1,14 +1,12 @@
 package com.summer.comment;
 
-import com.google.gson.reflect.TypeToken;
 import com.summer.agree.AgreeBean;
 import com.summer.agree.AgreeI;
 import com.summer.agree.AgreeOpe;
 import com.summer.base.bean.BaseResBean;
 import com.summer.comment.bean.RateLevelBean;
-import com.summer.comment.bean.TipBean;
 import com.summer.comment.bean.TipsBean;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBUtil;
 import com.summer.tip.TipI;
 import com.summer.tip.TipOpe;
 import com.summer.user.UserI;
@@ -17,7 +15,6 @@ import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.VideoI;
-import com.summer.video.VideoOpe;
 import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 

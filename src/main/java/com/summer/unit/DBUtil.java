@@ -1,4 +1,4 @@
-package com.summer.main;
+package com.summer.unit;
 
 
 import javax.naming.InitialContext;

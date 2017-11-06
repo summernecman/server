@@ -1,7 +1,7 @@
 package com.summer.crash;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBUtil;
 import com.summer.util.GsonUtil;
 
 import javax.naming.NamingException;

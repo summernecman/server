@@ -3,16 +3,14 @@ package com.summer.video;
 import com.summer.base.bean.BaseResBean;
 import com.summer.contact.ContactBean;
 import com.summer.contact.HistoryBean;
-import com.summer.main.DBI;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBI;
+import com.summer.unit.DBUtil;
 import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.DateFormatUtil;
-import com.summer.util.GsonUtil;
 import com.summer.video.bean.*;
-import sun.reflect.generics.tree.VoidDescriptor;
 
 import javax.naming.NamingException;
 import java.sql.*;
@@ -117,7 +115,6 @@ public class VideoOpe implements VideoI {
         ArrayList<VideoBean1> videos  = (ArrayList<VideoBean1>) baseResBean.getData();
         System.out.println(System.currentTimeMillis());
         if(videos!=null){
-            baseResBean.setTotal(videos.size());
             for(int i=0;i<videos.size();i++){
                 UserBean userBean = new UserBean();
                 userBean.setId(videos.get(i).getFromid());

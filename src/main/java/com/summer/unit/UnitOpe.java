@@ -1,8 +1,6 @@
 package com.summer.unit;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.DBUtil;
-import com.summer.user.bean.UserBean;
 
 import javax.naming.NamingException;
 import java.sql.Connection;

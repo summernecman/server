@@ -1,9 +1,7 @@
 package com.summer.area;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.DBUtil;
-import com.summer.user.UserI;
-import com.summer.user.bean.UserBean;
+import com.summer.unit.DBUtil;
 
 import javax.naming.NamingException;
 import java.sql.Connection;

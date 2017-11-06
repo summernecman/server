@@ -1,9 +1,10 @@
-package com.summer.main;
+package com.summer.control;
 
 import com.summer.base.bean.BaseResBean;
 import com.summer.em.bean.EMTokenBean;
 import com.summer.em.bean.EMUserBean;
 import com.summer.network.HttpRequest;
+import com.summer.user.RoomBean;
 import com.summer.util.GsonUtil;
 import org.springframework.stereotype.Service;
 

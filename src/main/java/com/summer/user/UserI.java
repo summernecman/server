@@ -107,6 +107,7 @@ public interface UserI  {
 
     public BaseResBean getChatTimes();
 
+    public BaseResBean getUserAreaUser(UserBean u);
 
 
 }

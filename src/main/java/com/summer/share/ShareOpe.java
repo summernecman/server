@@ -1,14 +1,13 @@
 package com.summer.share;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBUtil;
 import com.summer.user.bean.UserBean;
 import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
 import com.summer.video.bean.VideoBean;
 
 import javax.naming.NamingException;
-import java.security.Signature;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

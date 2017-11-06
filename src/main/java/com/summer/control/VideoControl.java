@@ -1,22 +1,17 @@
-package com.summer.main;
+package com.summer.control;
 
 import com.summer.agree.AgreeBean;
-import com.summer.agree.AgreeI;
 import com.summer.agree.AgreeOpe;
 import com.summer.base.bean.BaseResBean;
-import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
 import com.summer.comment.bean.TipBean;
 import com.summer.comment.bean.TipsBean;
 import com.summer.contact.ContactBean;
-import com.summer.tip.TipI;
 import com.summer.tip.TipOpe;
-import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
-import com.summer.video.VideoI;
 import com.summer.video.VideoOpe;
 import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
@@ -42,7 +37,7 @@ import java.util.ArrayList;
  */
 @Controller
 @RequestMapping("/server")
-public class VideoMapping {
+public class VideoControl {
 
     UserOpe userI = new UserOpe();
 
@@ -59,14 +54,7 @@ public class VideoMapping {
     public void hello(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
         String  str = req.getParameter("data");
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserList()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,userI.getUserList());
     }
 
 
@@ -74,168 +62,79 @@ public class VideoMapping {
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public void login(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-//        UserBean userBean = new UserBean();
-//        userBean.setPhone("18711111111");
-//        BaseResBean baseResBean = new BaseResBean();
-//        baseResBean.setData(userBean);
-//        String sr= null;
-//         HttpRequest.postJson("http://192.168.20.175:8079/server/user/getUserInfoByPhone", GsonUtil.getInstance().toJson(userBean));
-//        System.out.println(sr);
-
-
-
-
-
-
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.login(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,userI.login(userBean));
     }
+
+
 
     @RequestMapping(value = "/loginOut",method = RequestMethod.POST)
     public void loginOut(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.logout(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,userI.logout(userBean));
     }
 
 
     @RequestMapping(value = "/getLoginInfo",method = RequestMethod.POST)
     public void getLoginInfo(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getLoginInfo(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,userI.getLoginInfo(userBean));
     }
 
 
     @RequestMapping(value = "/getVideos",method = RequestMethod.POST)
     public void getVideos(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideos(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,videoI.getVideos(userBean));
     }
 
 
     @RequestMapping(value = "/getHistoryVideos",method = RequestMethod.POST)
     public void getHistoryVideos(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideosByUserPhone(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,videoI.getVideosByUserPhone(userBean));
     }
 
     @RequestMapping(value = "/addVideo",method = RequestMethod.POST)
     public void addVideo(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.addVideo(videoBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.addVideo(videoBean));
     }
+
+
 
     @RequestMapping(value = "/getVideoByName",method = RequestMethod.POST)
     public void getVideoByName(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideoByName(videoBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.getVideoByName(videoBean));
     }
 
     @RequestMapping(value = "/getMyContactsById",method = RequestMethod.POST)
     public void getMyContactsById(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean u = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getByContacts(u)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean u = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,videoI.getByContacts(u));
     }
 
 
     @RequestMapping(value = "/getVideosByBothUserId",method = RequestMethod.POST)
     public void getVideosByBothUserId(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        ContactBean c = GsonUtil.getInstance().fromJson(str,ContactBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideosByBothUserId(c)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ContactBean c = GsonUtil.getInstance().fromJson(req.getParameter("data"),ContactBean.class);
+        printOut(rep,videoI.getVideosByBothUserId(c));
     }
 
     @RequestMapping(value = "/getVideosByBothUserIdWithLimit",method = RequestMethod.POST)
     public void getVideosByBothUserIdWithLimit(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        ContactBean c = GsonUtil.getInstance().fromJson(str,ContactBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideosByBothUserIdWithLimit(c)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ContactBean c = GsonUtil.getInstance().fromJson(req.getParameter("data"),ContactBean.class);
+        printOut(rep,videoI.getVideosByBothUserIdWithLimit(c));
     }
 
 
@@ -244,95 +143,50 @@ public class VideoMapping {
     @RequestMapping(value = "/getVideosByContacts",method = RequestMethod.POST)
     public void getVideosByContacts(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideosByContacts(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,videoI.getVideosByContacts(userBean));
     }
 
 
     @RequestMapping(value = "/getVideosByContacts2",method = RequestMethod.POST)
     public void getVideosByContacts2(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getVideosByContacts2(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,videoI.getVideosByContacts2(userBean));
     }
 
     @RequestMapping(value = "/commentVideos",method = RequestMethod.POST)
     public void commentVideos(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        CommentBean commentBean = GsonUtil.getInstance().fromJson(str,CommentBean.class);
-        System.out.println(str);
-
-
+        CommentBean commentBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),CommentBean.class);
         videoI.commentVideos(commentBean);
-
         UserBean a = new UserBean();
         a.setId(commentBean.getToid());
         UserBean u = (UserBean) userI.getUserInfoById(a).getData();
-
         int num = (Integer) commentI.getToVideoCommentNumByUserId(u).getData();
-
         u.setRate((commentBean.getRate()+u.getRate()*num)/(num+1));
-
         userI.updateRateByUserId(u);
-
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(u);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
+        printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/getAllVideos",method = RequestMethod.POST)
     public void getAllVideos(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getAllVideos()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,videoI.getAllVideos());
     }
 
 
     @RequestMapping(value = "/getAllVideosWithLimit",method = RequestMethod.POST)
     public void getAllVideosWithLimit(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        LimitBean limitBean = GsonUtil.getInstance().fromJson(str,LimitBean.class);
-        System.out.println(str);
+        LimitBean limitBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),LimitBean.class);
         VideoBeseResBean videoBeseResBean = (VideoBeseResBean) videoI.getAllVideosWithLimit(limitBean);
         videoBeseResBean.setTotal((Integer) videoI.getAllVideosCount().getData());
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoBeseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,videoBeseResBean);
     }
 
 
@@ -340,9 +194,7 @@ public class VideoMapping {
     @RequestMapping(value = "/getVideoCommentsById",method = RequestMethod.POST)
     public void getVideoCommentsById(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
         ArrayList<CommentBean> comments = (ArrayList<CommentBean>) commentI.getVideoCommentsByVideoId(videoBean).getData();
         for(int i=0;comments!=null && i<comments.size();i++){
             AgreeBean agree = new AgreeBean();
@@ -351,22 +203,14 @@ public class VideoMapping {
         }
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(comments);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/getEachOtherVideoCommentsById",method = RequestMethod.POST)
     public void getEachOtherVideoCommentsById(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
         ArrayList<CommentBean> comments = (ArrayList<CommentBean>) commentI.getVideoCommentsByVideoId(videoBean).getData();
         for(int i=0;comments!=null && i<comments.size();i++){
             AgreeBean agree = new AgreeBean();
@@ -382,13 +226,7 @@ public class VideoMapping {
                 baseResBean.setException(true);
                 baseResBean.setErrorMessage("找不到视频");
                 baseResBean.setData(comments);
-                try {
-                    PrintWriter printWriter = rep.getWriter();
-                    printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-                    printWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                printOut(rep,baseResBean);
                 return;
             }
             VideoBean v = a.get(0);
@@ -419,13 +257,7 @@ public class VideoMapping {
                 baseResBean.setException(true);
                 baseResBean.setErrorMessage("找不到视频");
                 baseResBean.setData(comments);
-                try {
-                    PrintWriter printWriter = rep.getWriter();
-                    printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-                    printWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                printOut(rep,baseResBean);
                 return;
             }
             VideoBean v = a.get(0);
@@ -456,20 +288,9 @@ public class VideoMapping {
                 comments.add(c1);
             }
 
-
-
-
         }
-
-
         baseResBean.setData(comments);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,baseResBean);
     }
 
 
@@ -477,61 +298,31 @@ public class VideoMapping {
     @RequestMapping(value = "/getAllVideosWithLimitFrom1",method = RequestMethod.POST)
     public void getAllVideosWithLimitFrom1(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        LimitBean limitBean = GsonUtil.getInstance().fromJson(str,LimitBean.class);
+        LimitBean limitBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),LimitBean.class);
         limitBean.setPagestart(limitBean.getPagestart()-1);
-        System.out.println(str);
         VideoBeseResBean videoBeseResBean = (VideoBeseResBean) videoI.getAllVideosWithLimit(limitBean);
         videoBeseResBean.setTotal((Integer) videoI.getAllVideosCount().getData());
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoBeseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,videoBeseResBean);
     }
 
     @RequestMapping(value = "/getAllVideosByGet",method = RequestMethod.GET)
     public void getAllVideosByGet(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getAllVideos()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,videoI.getAllVideos());
     }
 
     @RequestMapping(value = "/isVideoUploaded",method = RequestMethod.GET)
     public void isVideoUploaded(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.isVideoUploaded(videoBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.isVideoUploaded(videoBean));
     }
 
     @RequestMapping(value = "/setVideoUploaded",method = RequestMethod.POST)
     public void setVideoUploaded(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.setVideoUploaded(videoBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.setVideoUploaded(videoBean));
     }
 
 
@@ -541,7 +332,7 @@ public class VideoMapping {
 
     @RequestMapping(value = "/uploadvideo",method = RequestMethod.POST)
     public void addFiles(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
+        VideoControl.init(req,rep);
         DiskFileItemFactory factory = new DiskFileItemFactory();
         File parent = new File("c://files");
         if(!parent.exists()){
@@ -590,75 +381,36 @@ public class VideoMapping {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,baseResBean);
     }
 
     @RequestMapping(value = "/getMaxVideoId",method = RequestMethod.POST)
     public void getMaxVideoId(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getMaxVideoId()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printOut(rep,videoI.getMaxVideoId());
     }
 
     @RequestMapping(value = "/insert_and_getid_fromvieo",method = RequestMethod.POST)
     public void insert_and_getid_fromvieo(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.insert_and_getid_fromvieo(videoBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.insert_and_getid_fromvieo(videoBean));
     }
 
 
     @RequestMapping(value = "/updateVideoById",method = RequestMethod.POST)
     public void updateVideoById(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        VideoBean videoBean = GsonUtil.getInstance().fromJson(str,VideoBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.updateVideoById(videoBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.updateVideoById(videoBean));
     }
 
     @RequestMapping(value = "/getUnUploadVideoNum",method = RequestMethod.POST)
     public void getUnUploadVideoNum(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean u = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getUnUploadVideoNum(u)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserBean u = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        printOut(rep,videoI.getUnUploadVideoNum(u));
     }
-
-
-
 
 
 
@@ -672,6 +424,18 @@ public class VideoMapping {
         rep.setCharacterEncoding("UTF-8");
         rep.setContentType("application/json;charset=UTF-8");
     }
+
+    public static void printOut(HttpServletResponse rep,Object o){
+        try {
+            PrintWriter printWriter = rep.getWriter();
+            printWriter.println(GsonUtil.getInstance().toJson(o));
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 }

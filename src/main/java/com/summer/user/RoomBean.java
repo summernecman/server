@@ -1,4 +1,4 @@
-package com.summer.main;
+package com.summer.user;
 
 import com.summer.base.bean.BaseBean;
 

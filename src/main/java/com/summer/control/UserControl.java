@@ -1,8 +1,10 @@
-package com.summer.main;
+package com.summer.control;
 
 import com.google.gson.reflect.TypeToken;
+import com.summer.area.AreaBean;
+import com.summer.area.AreaI;
+import com.summer.area.AreaOpe;
 import com.summer.base.bean.BaseResBean;
-import com.summer.comment.CommentI;
 import com.summer.comment.CommentOpe;
 import com.summer.contact.ContactBean;
 import com.summer.contact.ContactOpe;
@@ -12,12 +14,14 @@ import com.summer.em.bean.EMUserStatusBean;
 import com.summer.network.HttpRequest;
 import com.summer.unit.UnitBean;
 import com.summer.unit.UnitOpe;
+import com.summer.user.UserI;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.AllUserBean;
 import com.summer.user.bean.UserBaseResBean;
 import com.summer.user.bean.UserBean;
 import com.summer.user.bean.WebIndexInfo;
 import com.summer.userarea.UserAreaBean;
+import com.summer.userarea.UserAreaI;
 import com.summer.userarea.UserAreaOpe;
 import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
@@ -37,13 +41,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by SWSD on 17-08-30.
  */
 @Controller
 @RequestMapping("/user")
-public class UserMapping {
+public class UserControl {
 
     UserOpe userI = new UserOpe();
 
@@ -59,155 +64,111 @@ public class UserMapping {
 
     CommentOpe commentI = new CommentOpe();
 
+    AreaOpe areaI = new AreaOpe();
+
+
     @RequestMapping(value = "/setHeadurl",method = RequestMethod.POST)
     public void setHeadUrl(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.setHeadUrl(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,userI.setHeadUrl(userBean));
     }
 
     @RequestMapping(value = "/getUserList",method = RequestMethod.POST)
     public void getUserList(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserList()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        VideoControl.printOut(rep,userI.getUserList());
     }
 
 
     @RequestMapping(value = "/getUserListWithOutMe",method = RequestMethod.POST)
     public void getUserListWithOutMe(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithOutMe(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,userI.getUserListWithOutMe(userBean));
     }
 
 
     @RequestMapping(value = "/getUsersInfoByPhone",method = RequestMethod.POST)
     public void getUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        ArrayList<UserBean> data  = GsonUtil.getInstance().fromJson(str,new TypeToken<ArrayList<UserBean>>(){}.getType());
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUsersInfoByPhone(data)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        ArrayList<UserBean> data  = GsonUtil.getInstance().fromJson(req.getParameter("data"),new TypeToken<ArrayList<UserBean>>(){}.getType());
+        VideoControl.printOut(rep,userI.getUsersInfoByPhone(data));
     }
 
 
 
     @RequestMapping(value = "/resetPwd",method = RequestMethod.POST)
     public void resetPwd(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean userBean  = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean  = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         BaseResBean b = userI.resetPwd(userBean);
-        //BaseResBean res = HttpRequest.putJson(Global.URL+"/users/"+userBean.getPhone()+"/"+userBean.getPwd(), null,Global.emTokenBean.getAccess_token());
-
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(b));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,b);
     }
 
 
     @RequestMapping(value = "/getOtherUsersInfoByPhone",method = RequestMethod.POST)
     public void getOtherUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        AllUserBean data = GsonUtil.getInstance().fromJson(str,AllUserBean.class);
+        VideoControl.init(req,rep);
+        AllUserBean data = GsonUtil.getInstance().fromJson(req.getParameter("data"),AllUserBean.class);
 
-        ArrayList<UserBean> users = (ArrayList<UserBean>) contactI.getContactsByUserIdWithOutAgree(data.getMe()).getData();
-        if(users.size()==0){
-            //users= (ArrayList<UserBean>) userI.getUnTypeUserList(data.getMe()).getData();
-        }
+//        1.除了客户不能和客户通讯，其他的都可以互相通讯。
+//        2.客户好友列表显示所属区域上班区间所有人。
+//        3.客服和工程师显示配置人员
+        if(data.getMe().getUsertype()==2){
+            VideoControl.printOut(rep,userI.getUserAreaUser(data.getMe()));
 
-        ArrayList<UserBean> userBeen = (ArrayList<UserBean>) userI.getOtherUsersShortInfoByPhone(data).getData();
+        }else{
+            //我的全部联系人
+            ArrayList<UserBean> users = (ArrayList<UserBean>) contactI.getContactsByUserIdWithOutAgree(data.getMe()).getData();
+            if(users.size()==0){
+                //users= (ArrayList<UserBean>) userI.getUnTypeUserList(data.getMe()).getData();
+            }
+            //环信聊天室在线人
+            ArrayList<UserBean> userBeen = (ArrayList<UserBean>) userI.getOtherUsersShortInfoByPhone(data).getData();
 
-        for(int i=0;i<users.size();i++){
-            for(int j=0;j<userBeen.size();j++){
-                if(userBeen.get(j).getPhone().equals(users.get(i).getPhone())){
-                    users.get(i).setState(UserBean.STATE_ONLINE);
-                    break;
-                }else{
-                    users.get(i).setState(UserBean.STATE_OFFLINE);
+            for(int i=0;i<users.size();i++){
+                for(int j=0;j<userBeen.size();j++){
+                    if(userBeen.get(j).getPhone().equals(users.get(i).getPhone())){
+                        users.get(i).setState(UserBean.STATE_ONLINE);
+                        break;
+                    }else{
+                        users.get(i).setState(UserBean.STATE_OFFLINE);
+                    }
                 }
             }
-        }
 
 
-        ArrayList<UserBean> a = new ArrayList<UserBean>();
-        ArrayList<UserBean> b = new ArrayList<UserBean>();
-        for(int i = 0;users!=null&&users.size()>0&& i<users.size();i++){
-            if(users.get(i).getState()==UserBean.STATE_ONLINE){
-                a.add(users.get(i));
-            }else{
-                b.add(users.get(i));
+            ArrayList<UserBean> a = new ArrayList<UserBean>();
+            ArrayList<UserBean> b = new ArrayList<UserBean>();
+            for(int i = 0;users!=null&&users.size()>0&& i<users.size();i++){
+                if(users.get(i).getState()==UserBean.STATE_ONLINE){
+                    a.add(users.get(i));
+                }else{
+                    b.add(users.get(i));
+                }
             }
-        }
-        a.addAll(b);
+            a.addAll(b);
 
-        BaseResBean baseResBean = new BaseResBean();
-        baseResBean.setData(a);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            BaseResBean baseResBean = new BaseResBean();
+            baseResBean.setData(a);
+            VideoControl.printOut(rep,baseResBean);
         }
+
+
     }
 
 
 
     @RequestMapping(value = "/registEMAccount",method = RequestMethod.POST)
     public void registEMAccount(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean data = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean data = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         if((Boolean) (userI.isUserExist(data).getData())){
             BaseResBean baseResBean = new BaseResBean();
             baseResBean.setException(true);
             baseResBean.setErrorMessage("用户已存在");
-            try {
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            VideoControl.printOut(rep,baseResBean);
             return;
         }
         EMUserBean emUserBean = new EMUserBean(data.getPhone(),"111111");
@@ -215,46 +176,26 @@ public class UserMapping {
         System.out.println(res.getData());
 
         if(!res.isException()){
-            try {
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(userI.addUser(data)));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            VideoControl.printOut(rep,userI.addUser(data));
         }else{
             BaseResBean baseResBean = new BaseResBean();
             baseResBean.setException(true);
             baseResBean.setErrorMessage(res.getData().toString());
-            try {
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            VideoControl.printOut(rep,baseResBean);
         }
 
     }
 
     @RequestMapping(value = "/AddUser",method = RequestMethod.POST)
     public void AddUser(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean data = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean data = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         //判断用户是否存在
         if((Boolean) (userI.isUserExist(data).getData())){
             BaseResBean baseResBean = new BaseResBean();
             baseResBean.setException(true);
             baseResBean.setErrorMessage("用户已存在");
-            try {
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            VideoControl.printOut(rep,baseResBean);
             return;
         }
         if(data.getPwd()==null || "".equals(data.getPwd())){
@@ -280,24 +221,12 @@ public class UserMapping {
                 contactBean.setToid(data.getContacts().get(i).getId());
                 contactI.addContactsByUserid(contactBean);
             }
-            try {
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            VideoControl.printOut(rep,new BaseResBean());
         }else{
             BaseResBean baseResBean = new BaseResBean();
             baseResBean.setException(true);
             baseResBean.setErrorMessage(res.getData()==null? "":res.getData().toString());
-            try {
-                PrintWriter printWriter = rep.getWriter();
-                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            VideoControl.printOut(rep,baseResBean);
         }
 
     }
@@ -308,88 +237,48 @@ public class UserMapping {
 
     @RequestMapping(value = "/getUserInfoByPhone",method = RequestMethod.POST)
     public void getUserInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean  data  = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserInfoByPhone(data)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean  data  = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,userI.getUserInfoByPhone(data));
     }
 
     @RequestMapping(value = "/getUserInfoById",method = RequestMethod.POST)
     public void getUserInfoById(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean  data  = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserInfoById(data)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean  data  = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,userI.getUserInfoById(data));
     }
 
 
     @RequestMapping(value = "/getArrayUsersInfoByPhone",method = RequestMethod.POST)
     public void getArrayUsersInfoByPhone(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        ArrayList<ArrayList<UserBean>> data  = GsonUtil.getInstance().fromJson(str,new TypeToken<ArrayList<ArrayList<UserBean>>>(){}.getType());
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getArrayUsersInfoByPhone(data)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        ArrayList<ArrayList<UserBean>> data  = GsonUtil.getInstance().fromJson(req.getParameter("data"),new TypeToken<ArrayList<ArrayList<UserBean>>>(){}.getType());
+        VideoControl.printOut(rep,userI.getArrayUsersInfoByPhone(data));
     }
 
 
 
     @RequestMapping(value = "/getusercallinfo",method = RequestMethod.POST)
     public void getUserCallInfo(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(videoI.getUserCallInfo(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,videoI.getUserCallInfo(userBean));
     }
 
 
 
     @RequestMapping(value = "/setUserName",method = RequestMethod.POST)
     public void setUserName(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.setUserName(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,userI.setUserName(userBean));
     }
 
 
     @RequestMapping(value = "/addfiles",method = RequestMethod.POST)
     public void addFiles(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
+        VideoControl.init(req,rep);
         DiskFileItemFactory factory = new DiskFileItemFactory();
         File parent = new File("c://files");
         if(!parent.exists()){
@@ -436,19 +325,13 @@ public class UserMapping {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/addheadurl",method = RequestMethod.POST)
     public void addFile(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
+        VideoControl.init(req,rep);
         DiskFileItemFactory factory = new DiskFileItemFactory();
         File parent = new File("c://files");
         if(!parent.exists()){
@@ -489,22 +372,14 @@ public class UserMapping {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/updateUnit",method = RequestMethod.POST)
     public void unpdateUnit(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean data = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean data = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         UnitBean userBean = (UnitBean) unitI.getUnitByName(data.getUnit()).getData();
         if(userBean==null){
             unitI.addUnit(data.getUnit());
@@ -512,22 +387,14 @@ public class UserMapping {
         }
         data.setUnit(userBean);
         data.setUnitid(userBean.getId());
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.updateUnitInfo(data)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userI.updateUnitInfo(data));
     }
 
 
     @RequestMapping(value = "/getUnTypeUserList",method = RequestMethod.POST)
     public void getUnTypeUserList(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         ArrayList<UserBean> list = (ArrayList<UserBean>) userI.getUnTypeUserList(userBean).getData();
         for(int i=0;list!=null && i<list.size();i++){
             EMUserStatusBean b = GsonUtil.getInstance().fromJson(emi.getEMUserStatus(list.get(i)).getData().toString(),EMUserStatusBean.class);
@@ -535,208 +402,100 @@ public class UserMapping {
         }
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(list);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,baseResBean);
     }
 
 
 
     @RequestMapping(value = "/getUsersInfo",method = RequestMethod.POST)
     public void getUsersInfo(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         UserBaseResBean userBaseResBean = (UserBaseResBean) userI.getUserListWithType(userBean);
         userBaseResBean.setTotal((Integer) userI.getUserNumWithType(userBean).getData());
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userBaseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userBaseResBean);
     }
 
 
     @RequestMapping(value = "/getUsersInfoWithLimit",method = RequestMethod.POST)
     public void getUsersInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         UserBaseResBean userBaseResBean = (UserBaseResBean) userI.getUserListWithTypeAndLimit(userBean);
         userBaseResBean.setTotal((Integer) userI.getUserNumWithType(userBean).getData());
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userBaseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userBaseResBean);
     }
 
 
 
     @RequestMapping(value = "/getServerInfo",method = RequestMethod.POST)
     public void getServerInfo(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         userBean.setUsertype(UserBean.USER_TYPE_SERVER);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithType(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userI.getUserListWithType(userBean));
     }
 
 
     @RequestMapping(value = "/getServerInfoWithLimit",method = RequestMethod.POST)
     public void getServerInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         userBean.setUsertype(UserBean.USER_TYPE_SERVER);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithTypeAndLimit(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userI.getUserListWithTypeAndLimit(userBean));
     }
 
     @RequestMapping(value = "/getCustomerInfo",method = RequestMethod.POST)
     public void getCustomerInfo(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         userBean.setUsertype(UserBean.USER_TYPE_CUSTOMER);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithType(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userI.getUserListWithType(userBean));
     }
 
 
     @RequestMapping(value = "/getCustomerInfoWithLimit",method = RequestMethod.POST)
     public void getCustomerInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         userBean.setUsertype(UserBean.USER_TYPE_CUSTOMER);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithTypeAndLimit(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userI.getUserListWithTypeAndLimit(userBean));
     }
 
 
 
     @RequestMapping(value = "/getEngineerInfo",method = RequestMethod.POST)
     public void getEngineerInfo(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         userBean.setUsertype(UserBean.USER_TYPE_ENGINEER);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithType(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userI.getUserListWithType(userBean));
     }
 
 
     @RequestMapping(value = "/getEngineerInfoWithLimit",method = RequestMethod.POST)
     public void getEngineerInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         userBean.setUsertype(UserBean.USER_TYPE_ENGINEER);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUserListWithTypeAndLimit(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,userI.getUserListWithTypeAndLimit(userBean));
     }
 
-//    @RequestMapping(value = "/addUser",method = RequestMethod.POST)
-//    public void addUser(HttpServletRequest req, HttpServletResponse rep){
-//        VideoMapping.init(req,rep);
-//        String  str = req.getParameter("data");
-//        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-//        System.out.println(str);
-//        if((Boolean) (userI.isUserExist(userBean).getData())){
-//            try {
-//                BaseResBean baseResBean = new BaseResBean();
-//                baseResBean.setException(true);
-//                baseResBean.setErrorMessage("用户已存在");
-//                PrintWriter printWriter = rep.getWriter();
-//                printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-//                printWriter.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }else{
-//            try {
-//                PrintWriter printWriter = rep.getWriter();
-//                printWriter.println(GsonUtil.getInstance().toJson(userI.addUser(userBean)));
-//                printWriter.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//    }
 
 
 
     @RequestMapping(value = "/getUnTypeUserShortList",method = RequestMethod.POST)
     public void getUnTypeUserShortList(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.getUnTypeUserShortList(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,userI.getUnTypeUserShortList(userBean));
     }
 
 
     @RequestMapping(value = "/updateAreaByid",method = RequestMethod.POST)
     public void updateAreaByid(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        ArrayList<UserAreaBean> userBean = GsonUtil.getInstance().fromJson(str,new TypeToken<ArrayList<UserAreaBean>>(){}.getType());
-        System.out.println(str);
+        VideoControl.init(req,rep);
+        ArrayList<UserAreaBean> userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),new TypeToken<ArrayList<UserAreaBean>>(){}.getType());
 
         for(int i=0;i<userBean.size();i++){
             if((Boolean) (userAreaI.isUserHaveArea(userBean.get(i)).getData())){
@@ -746,37 +505,21 @@ public class UserMapping {
         }
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(userBean);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,baseResBean);
     }
 
     @RequestMapping(value = "/updateRemarkById",method = RequestMethod.POST)
     public void updateRemarkById(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(userI.updateRemark(userBean)));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+        VideoControl.printOut(rep,userI.updateRemark(userBean));
     }
 
 
     @RequestMapping(value = "/saveUserInfoInWeb",method = RequestMethod.POST)
     public void saveUserInfoInWeb(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-        System.out.println(str);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         userAreaI.delete(userBean);
         for(int i=0;userBean.getArea()!=null && i<userBean.getArea().size();i++){
             userAreaI.addUserArea(new UserAreaBean(userBean.getId(),userBean.getArea().get(i).getId()));
@@ -789,13 +532,7 @@ public class UserMapping {
             contactBean.setToid(userBean.getContacts().get(i).getId());
             contactI.addContactsByUserid(contactBean);
         }
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,new BaseResBean());
     }
 
 
@@ -803,9 +540,7 @@ public class UserMapping {
 
     @RequestMapping(value = "/getWebIndexInfo",method = RequestMethod.POST)
     public void getWebIndexInfo(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
+        VideoControl.init(req,rep);
 
         WebIndexInfo webIndexInfo = new WebIndexInfo();
         UserBean u1 = new UserBean();
@@ -858,21 +593,14 @@ public class UserMapping {
         webIndexInfo.setVideonum((Long) videoI.getCallNum().getData());
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(webIndexInfo);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        VideoControl.printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/initUserChatTime",method = RequestMethod.POST)
     public void initUserChatTime(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
+        VideoControl.init(req,rep);
 
         ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getUserList().getData();
         for(int i=0;i<users.size();i++){
@@ -884,23 +612,14 @@ public class UserMapping {
                 userI.updateUserChatTimeById(user);
             }
         }
-
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,new BaseResBean());
     }
 
 
     @RequestMapping(value = "/getUsersChatTime",method = RequestMethod.POST)
     public void getUsersChatTime(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
 
         ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getShortUserList().getData();
         for(int i=0;i<users.size();i++){
@@ -913,21 +632,13 @@ public class UserMapping {
         }
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(users);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/initUserRate",method = RequestMethod.POST)
     public void initUserRate(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
+        VideoControl.init(req,rep);
 
         ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getShortUserList().getData();
         for(int i=0;i<users.size();i++){
@@ -939,24 +650,15 @@ public class UserMapping {
                 userI.updateRateByUserId(user);
             }
         }
-
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        VideoControl.printOut(rep,new BaseResBean());
     }
 
 
 
     @RequestMapping(value = "/getUsersRate",method = RequestMethod.POST)
     public void getUsersRate(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-        String  str = req.getParameter("data");
-        System.out.println(str);
-        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
+        VideoControl.init(req,rep);
+        UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
 
         ArrayList<UserBean> users = (ArrayList<UserBean>) userI.getShortUserList().getData();
         for(int i=0;i<users.size();i++){
@@ -969,20 +671,14 @@ public class UserMapping {
         }
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(users);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        VideoControl.printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/getOutCallTimeDistribution",method = RequestMethod.POST)
     public void getOutCallTimeDistribution(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
-
+        VideoControl.init(req,rep);
         ArrayList<UserBean> fromid = (ArrayList<UserBean>) videoI.getOutCallTimeDistribution().getData();
         int customer = 0;
         int server = 0;
@@ -1020,19 +716,14 @@ public class UserMapping {
 
         BaseResBean baseResBean = new BaseResBean();
         baseResBean.setData(data);
-        try {
-            PrintWriter printWriter = rep.getWriter();
-            printWriter.println(GsonUtil.getInstance().toJson(baseResBean));
-            printWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        VideoControl.printOut(rep,baseResBean);
     }
 
 
     @RequestMapping(value = "/getInCallTimeDistribution",method = RequestMethod.POST)
     public void getInCallTimeDistribution(HttpServletRequest req, HttpServletResponse rep){
-        VideoMapping.init(req,rep);
+        VideoControl.init(req,rep);
         ArrayList<UserBean> fromid = (ArrayList<UserBean>) videoI.getInCallTimeDistribution().getData();
         int customer = 0;
         int server = 0;
@@ -1079,33 +770,5 @@ public class UserMapping {
         }
     }
 
-
-
-//    @RequestMapping(value = "/saveUserInfoInWeb",method = RequestMethod.POST)
-//    public void getOnlineUserNum(HttpServletRequest req, HttpServletResponse rep){
-//        VideoMapping.init(req,rep);
-//        String  str = req.getParameter("data");
-//        UserBean userBean = GsonUtil.getInstance().fromJson(str,UserBean.class);
-//        System.out.println(str);
-//        userAreaI.delete(userBean);
-//        for(int i=0;userBean.getArea()!=null && i<userBean.getArea().size();i++){
-//            userAreaI.addUserArea(new UserAreaBean(userBean.getId(),userBean.getArea().get(i).getId()));
-//        }
-//        userI.updateRemark(userBean);
-//        contactI.deleteContactsByUserId(userBean);
-//        for(int i=0;i<userBean.getContacts().size();i++){
-//            ContactBean contactBean = new ContactBean();
-//            contactBean.setFromid(userBean.getId());
-//            contactBean.setToid(userBean.getContacts().get(i).getId());
-//            contactI.addContactsByUserid(contactBean);
-//        }
-//        try {
-//            PrintWriter printWriter = rep.getWriter();
-//            printWriter.println(GsonUtil.getInstance().toJson(new BaseResBean()));
-//            printWriter.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 }

@@ -1,4 +1,4 @@
-package com.summer.main;
+package com.summer.control;
 
 import com.google.gson.annotations.SerializedName;
 import com.summer.base.bean.BaseBean;

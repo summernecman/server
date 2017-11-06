@@ -1,7 +1,7 @@
 package com.summer.feedback;
 
 import com.summer.base.bean.BaseResBean;
-import com.summer.main.DBUtil;
+import com.summer.unit.DBUtil;
 
 import javax.naming.NamingException;
 import java.sql.Connection;

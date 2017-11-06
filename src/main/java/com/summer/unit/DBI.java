@@ -1,4 +1,4 @@
-package com.summer.main;
+package com.summer.unit;
 
 import com.summer.base.bean.BaseResBean;
 
@@ -56,7 +56,7 @@ public class DBI {
     }
 
 
-    public static  BaseResBean execute(String sql,List<?> params) {
+    public static  BaseResBean execute(String sql,Object... params) {
         BaseResBean baseResBean = new BaseResBean();
         PreparedStatement ps = null;
         ResultSet set = null;
@@ -64,8 +64,8 @@ public class DBI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(sql);
-            for(int i = 0;params!=null && i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
+            for(int i = 0;params!=null && i<params.length;i++){
+                ps.setObject(i+1,params[i]);
             }
             ps.execute();
         } catch (NamingException e) {
