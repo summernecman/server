@@ -11,6 +11,8 @@ import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
 import com.summer.util.DateFormatUtil;
 import com.summer.video.bean.*;
+import com.summer.videodetail.VideoDetailBean;
+import com.summer.videodetail.VideoDetailOpe;
 
 import javax.naming.NamingException;
 import java.sql.*;
@@ -23,6 +25,15 @@ import java.util.*;
 public class VideoOpe implements VideoI {
 
     UserOpe userI = new UserOpe();
+
+    VideoDetailOpe  videoDetailI;
+
+    public void getVideoDetail(VideoBean videoBean){
+        if(videoDetailI==null){
+            videoDetailI = new VideoDetailOpe();
+        }
+        videoBean.setVideodetail((ArrayList<VideoDetailBean>) videoDetailI.getVideoDetail(videoBean).getData());
+    }
 
     public BaseResBean getVideos(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
@@ -64,6 +75,8 @@ public class VideoOpe implements VideoI {
             to.setId(videos.get(i).getToid());
             videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
             videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
+            getVideoDetail(videos.get(i));
+
         }
         baseResBean.setData(videos);
         return baseResBean;
@@ -105,13 +118,14 @@ public class VideoOpe implements VideoI {
         to.setId(videoBean.getToid());
         videoBean.setFromUser((UserBean) userI.getUserInfoById(from).getData());
         videoBean.setToUser((UserBean) userI.getUserInfoById(to).getData());
+        getVideoDetail(videoBean);
         baseResBean.setData(videoBean);
         return baseResBean;
     }
 
     public BaseResBean getAllVideos() {
         System.out.println(System.currentTimeMillis());
-        BaseResBean baseResBean = DBI.executeQuery(VideoBean1.class,"select * from video where file<> ? ","");
+        BaseResBean baseResBean = DBI.executeQuery(VideoBean1.class,"select * from video where callstate = ? ",1);
         ArrayList<VideoBean1> videos  = (ArrayList<VideoBean1>) baseResBean.getData();
         System.out.println(System.currentTimeMillis());
         if(videos!=null){
@@ -134,7 +148,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getAllVideosCount() {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id)  from video WHERE file <> ?";
+        String str = "select count(id)  from video WHERE callstate =  ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -142,7 +156,7 @@ public class VideoOpe implements VideoI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             set = ps.executeQuery();
             set.next();
             num = set.getInt(1);
@@ -160,14 +174,14 @@ public class VideoOpe implements VideoI {
     public BaseResBean getAllVideosWithLimit(LimitBean limitBean) {
         VideoBeseResBean baseResBean = new VideoBeseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video where file<> ? limit ?,?";
+        String str = "select * from video where callstate = ? limit ?,?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             ps.setInt(2,limitBean.getPagestart()*limitBean.getPagesize());
             ps.setInt(3,limitBean.getPagesize());
             set  = ps.executeQuery();
@@ -202,7 +216,7 @@ public class VideoOpe implements VideoI {
             userBean2.setPhone(videos.get(i).getTophone());
             UserBean userBean3 = (UserBean) userI.getUserInfoByPhone(userBean2).getData();
             videos.get(i).setToUser(userBean3);
-
+            getVideoDetail(videos.get(i));
         }
         baseResBean.setTotal(videos.size());
         baseResBean.setData(videos);
@@ -252,7 +266,7 @@ public class VideoOpe implements VideoI {
             userBean2.setId(videos.get(i).getToid());
             UserBean userBean3 = (UserBean) userI.getUserInfoById(userBean2).getData();
             videos.get(i).setToUser(userBean3);
-
+            getVideoDetail(videos.get(i));
         }
         baseResBean.setData(videos);
         return baseResBean;
@@ -300,6 +314,7 @@ public class VideoOpe implements VideoI {
             to.setId(videos.get(i).getToid());
             videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
             videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
+            getVideoDetail(videos.get(i));
         }
         baseResBean.setData(videos);
         return baseResBean;
@@ -308,14 +323,14 @@ public class VideoOpe implements VideoI {
     public BaseResBean getVideosByBothUserId(ContactBean contactBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video WHERE file<> ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) ORDER  BY  id DESC limit ?,? ";
+        String str = "select * from video WHERE callstate =  ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) ORDER  BY  id DESC limit ?,? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             ps.setInt(2,contactBean.getFromid());
             ps.setInt(3,contactBean.getToid());
             ps.setInt(4,contactBean.getToid());
@@ -353,6 +368,7 @@ public class VideoOpe implements VideoI {
             to.setId(videos.get(i).getToid());
             videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
             videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
+            getVideoDetail(videos.get(i));
         }
         baseResBean.setData(videos);
         return baseResBean;
@@ -361,14 +377,14 @@ public class VideoOpe implements VideoI {
     public BaseResBean getVideosByBothUserIdWithLimit(ContactBean contactBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video WHERE file<> ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) ORDER  BY  id DESC limit ?,? ";
+        String str = "select * from video WHERE callstate =  ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) ORDER  BY  id DESC limit ?,? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             ps.setInt(2,contactBean.getFromid());
             ps.setInt(3,contactBean.getToid());
             ps.setInt(4,contactBean.getToid());
@@ -408,6 +424,7 @@ public class VideoOpe implements VideoI {
             to.setId(videos.get(i).getToid());
             videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
             videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
+            getVideoDetail(videos.get(i));
         }
         baseResBean.setData(videos);
         return baseResBean;
@@ -576,6 +593,8 @@ public class VideoOpe implements VideoI {
                 UserBean u1  = new UserBean();
                 u1.setPhone(data.get(i).get(j).getTophone());
                 data.get(i).get(j).setToUser((UserBean) userI.getUserInfoByPhone(u1).getData());
+
+                getVideoDetail(videos.get(i));
             }
         }
         baseResBean.setData(data);
@@ -641,6 +660,8 @@ public class VideoOpe implements VideoI {
                 UserBean u1  = new UserBean();
                 u1.setPhone(data.get(i).get(j).getTophone());
                 data.get(i).get(j).setToUser((UserBean) userI.getUserInfoByPhone(u1).getData());
+
+                getVideoDetail(videos.get(i));
             }
         }
         baseResBean.setData(data);
@@ -650,7 +671,7 @@ public class VideoOpe implements VideoI {
     public BaseResBean getByContacts(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select created,fromid,toid from video WHERE (fromid = ? or toid = ?) and file<> ? ORDER BY id";
+        String str = "select created,fromid,toid from video WHERE (fromid = ? or toid = ?) and callstate =  ? ORDER BY id";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -659,7 +680,7 @@ public class VideoOpe implements VideoI {
             ps = connection.prepareStatement(str);
             ps.setInt(1,userBean.getId());
             ps.setInt(2,userBean.getId());
-            ps.setString(3,"");
+            ps.setInt(3,1);
             set  = ps.executeQuery();
             while (set.next()){
                 VideoBean videoBean = new VideoBean();
@@ -935,7 +956,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getVideoUploadedNum(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id) from video WHERE file<> ? and (fromid = ? or toid = ? ) and uploaded = ?";
+        String str = "select count(id) from video WHERE callstate =  ? and (fromid = ? or toid = ? ) and uploaded = ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -943,7 +964,7 @@ public class VideoOpe implements VideoI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             ps.setInt(2,userBean.getId());
             ps.setInt(3,userBean.getId());
             ps.setInt(4,0);
@@ -1035,7 +1056,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getCallNum() {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id) from video WHERE file<> ?";
+        String str = "select count(id) from video WHERE callstate =  ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -1043,7 +1064,7 @@ public class VideoOpe implements VideoI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             set = ps.executeQuery();
             set.next();
             max = set.getInt(1);
@@ -1060,7 +1081,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getUnUploadVideoNum(UserBean u) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select count(id) from video WHERE uploaded = 0 and (fromid = ? or toid = ? ) and file<> ?";
+        String str = "select count(id) from video WHERE uploaded = 0 and (fromid = ? or toid = ? ) and callstate =  ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -1070,7 +1091,7 @@ public class VideoOpe implements VideoI {
             ps = connection.prepareStatement(str);
             ps.setInt(1,u.getId());
             ps.setInt(2,u.getId());
-            ps.setString(3,"");
+            ps.setInt(3,1);
             set = ps.executeQuery();
             set.next();
             max = set.getInt(1);
@@ -1087,7 +1108,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getOutCallTimeDistribution() {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select fromid from video WHERE file  <> ? ";
+        String str = "select fromid from video WHERE callstate =  ? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -1095,7 +1116,7 @@ public class VideoOpe implements VideoI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             set = ps.executeQuery();
             while (set.next()){
                 UserBean uu = new UserBean();
@@ -1121,7 +1142,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean getInCallTimeDistribution() {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select toid from video WHERE file  <> ? ";
+        String str = "select toid from video WHERE callstate =  ?";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -1129,7 +1150,7 @@ public class VideoOpe implements VideoI {
         try {
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
-            ps.setString(1,"");
+            ps.setInt(1,1);
             set = ps.executeQuery();
             while (set.next()){
                 UserBean uu = new UserBean();
@@ -1151,6 +1172,40 @@ public class VideoOpe implements VideoI {
         }
         baseResBean.setData(fromid);
         return baseResBean;
+    }
+
+    public BaseResBean getVideoNameById(VideoBean videoBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select file from video where id = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        String file = "";
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,videoBean.getId());
+            set = ps.executeQuery();
+            while (set.next()){
+                file = set.getString(set.findColumn("file"));
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(file);
+        return baseResBean;
+    }
+
+    public BaseResBean updateCallState(VideoBean videoBean) {
+        return DBI.execute("update video set callstate = ? where id = ?",videoBean.getCallstate(),videoBean.getId());
+    }
+
+    public BaseResBean updateVideoCallTimeNum(VideoBean videoBean) {
+        return DBI.execute("update video set timenum = ? where id = ?",videoBean.getTimenum(),videoBean.getId());
     }
 
 

@@ -76,4 +76,11 @@ public interface VideoI {
     public BaseResBean getOutCallTimeDistribution();
 
     public BaseResBean getInCallTimeDistribution();
+
+    public BaseResBean getVideoNameById(VideoBean videoBean);
+
+    public BaseResBean updateCallState(VideoBean videoBean);
+
+    public BaseResBean updateVideoCallTimeNum(VideoBean videoBean);
+
 }

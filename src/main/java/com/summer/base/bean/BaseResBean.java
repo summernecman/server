@@ -7,6 +7,8 @@ public class BaseResBean extends BaseBean {
 
     private Object data;
 
+    private Object other;
+
     private boolean isException = false;
 
     private int errorCode = -1;
@@ -53,5 +55,13 @@ public class BaseResBean extends BaseBean {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public Object getOther() {
+        return other;
+    }
+
+    public void setOther(Object other) {
+        this.other = other;
     }
 }

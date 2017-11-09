@@ -115,47 +115,41 @@ public class UserControl {
 //        1.除了客户不能和客户通讯，其他的都可以互相通讯。
 //        2.客户好友列表显示所属区域上班区间所有人。
 //        3.客服和工程师显示配置人员
-        if(data.getMe().getUsertype()==2){
-            VideoControl.printOut(rep,userI.getUserAreaUser(data.getMe()));
 
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        if(data.getMe().getUsertype()==2){
+            users.addAll((ArrayList<UserBean>) userI.getUserAreaUser(data.getMe()).getData());
         }else{
             //我的全部联系人
-            ArrayList<UserBean> users = (ArrayList<UserBean>) contactI.getContactsByUserIdWithOutAgree(data.getMe()).getData();
-            if(users.size()==0){
-                //users= (ArrayList<UserBean>) userI.getUnTypeUserList(data.getMe()).getData();
-            }
-            //环信聊天室在线人
-            ArrayList<UserBean> userBeen = (ArrayList<UserBean>) userI.getOtherUsersShortInfoByPhone(data).getData();
-
-            for(int i=0;i<users.size();i++){
-                for(int j=0;j<userBeen.size();j++){
-                    if(userBeen.get(j).getPhone().equals(users.get(i).getPhone())){
-                        users.get(i).setState(UserBean.STATE_ONLINE);
-                        break;
-                    }else{
-                        users.get(i).setState(UserBean.STATE_OFFLINE);
-                    }
-                }
-            }
-
-
-            ArrayList<UserBean> a = new ArrayList<UserBean>();
-            ArrayList<UserBean> b = new ArrayList<UserBean>();
-            for(int i = 0;users!=null&&users.size()>0&& i<users.size();i++){
-                if(users.get(i).getState()==UserBean.STATE_ONLINE){
-                    a.add(users.get(i));
-                }else{
-                    b.add(users.get(i));
-                }
-            }
-            a.addAll(b);
-
-            BaseResBean baseResBean = new BaseResBean();
-            baseResBean.setData(a);
-            VideoControl.printOut(rep,baseResBean);
+            users.addAll((ArrayList<UserBean>) contactI.getContactsByUserIdWithOutAgree(data.getMe()).getData());
         }
 
+        //环信聊天室在线人
+        ArrayList<UserBean> userBeen = (ArrayList<UserBean>) userI.getOtherUsersShortInfoByPhone(data).getData();
+        for(int i=0;i<users.size();i++){
+            for(int j=0;j<userBeen.size();j++){
+                if(userBeen.get(j).getPhone().equals(users.get(i).getPhone())){
+                    users.get(i).setState(UserBean.STATE_ONLINE);
+                    break;
+                }else{
+                    users.get(i).setState(UserBean.STATE_OFFLINE);
+                }
+            }
+        }
+        ArrayList<UserBean> a = new ArrayList<UserBean>();
+        ArrayList<UserBean> b = new ArrayList<UserBean>();
+        for(int i = 0;users!=null&&users.size()>0&& i<users.size();i++){
+            if(users.get(i).getState()==UserBean.STATE_ONLINE){
+                a.add(users.get(i));
+            }else{
+                b.add(users.get(i));
+            }
+        }
+        a.addAll(b);
 
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(a);
+        VideoControl.printOut(rep,baseResBean);
     }
 
 

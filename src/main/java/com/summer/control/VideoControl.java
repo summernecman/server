@@ -11,11 +11,13 @@ import com.summer.tip.TipOpe;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
+import com.summer.util.DateFormatUtil;
 import com.summer.util.GsonUtil;
 import com.summer.video.VideoOpe;
 import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 import com.summer.video.bean.VideoBeseResBean;
+import com.summer.videotip.VideoTipOpe;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -49,6 +51,8 @@ public class VideoControl {
 
     TipOpe tipI = new TipOpe();
 
+    VideoTipOpe videoTipI = new VideoTipOpe();
+
 
     @RequestMapping(value = "/userlist",method = RequestMethod.POST)
     public void hello(HttpServletRequest req, HttpServletResponse rep){
@@ -63,7 +67,9 @@ public class VideoControl {
     public void login(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
         UserBean userBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
-        printOut(rep,userI.login(userBean));
+        BaseResBean b = userI.login(userBean);
+        b.setOther(GsonUtil.getInstance().toJson(videoTipI.getAllVideoTipsMap().getData()));
+        printOut(rep,b);
     }
 
 
@@ -348,15 +354,15 @@ public class VideoControl {
             ArrayList<FileItem> list = (ArrayList<FileItem>) upload.parseRequest(req);
             for(int i=0;i<list.size();i++){
                 list.get(i).getInputStream();
-                String[] ss = list.get(i).getName().split("_");
-                File typeFile = new File(parent, ss[1]);
+
+                File typeFile = new File(parent, DateFormatUtil.getNowStr(DateFormatUtil.YYYYMMDD));
                 if(!typeFile.exists()){
                     typeFile.mkdirs();
                 }
                 File file = new File(typeFile,list.get(i).getName());
 
                 System.out.println(file.getPath());
-                files.add(ss[1]+"/"+list.get(i).getName());
+                files.add(file.getPath());
                 if(!file.exists()){
                     //file.createNewFile();
                     list.get(i).write(file);
@@ -402,6 +408,13 @@ public class VideoControl {
     public void updateVideoById(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
         VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        if(videoBean.isfrom()){
+            videoBean.setFile("from"+videoBean.getFile());
+        }else{
+            videoBean.setFile("to"+videoBean.getFile());
+        }
+        String file = (String) videoI.getVideoNameById(videoBean).getData();
+        videoBean.setFile(videoBean.getFile()+"&&&"+file);
         printOut(rep,videoI.updateVideoById(videoBean));
     }
 
@@ -410,6 +423,21 @@ public class VideoControl {
         init(req,rep);
         UserBean u = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
         printOut(rep,videoI.getUnUploadVideoNum(u));
+    }
+
+    @RequestMapping(value = "/updateCallState",method = RequestMethod.POST)
+    public void updateCallState(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        VideoBean u = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.updateCallState(u));
+    }
+
+
+    @RequestMapping(value = "/updateVideoCallTimeNum",method = RequestMethod.POST)
+    public void updateVideoCallTimeNum(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        VideoBean u = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        printOut(rep,videoI.updateVideoCallTimeNum(u));
     }
 
 

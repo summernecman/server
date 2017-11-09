@@ -27,6 +27,9 @@ public class DateFormatUtil {
 
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
+
+    public static final String YYYYMMDD = "yyyyMMdd";
+
     public static final String YEAR = "yyyy";
     public static final String MONTH = "MM";
     public static final String DAY = "dd";

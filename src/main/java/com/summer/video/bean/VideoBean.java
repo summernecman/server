@@ -2,6 +2,9 @@ package com.summer.video.bean;
 
 import com.summer.base.bean.BaseBean;
 import com.summer.user.bean.UserBean;
+import com.summer.videodetail.VideoDetailBean;
+
+import java.util.ArrayList;
 
 /**
  * Created by SWSD on 17-08-24.
@@ -29,6 +32,12 @@ public class VideoBean extends BaseBean {
     private UserBean toUser;
 
     private int uploaded;
+
+    private boolean isfrom = false;
+
+    private int callstate;
+
+    private ArrayList<VideoDetailBean> videodetail;
 
     public int getId() {
         return id;
@@ -116,5 +125,29 @@ public class VideoBean extends BaseBean {
 
     public void setUploaded(int uploaded) {
         this.uploaded = uploaded;
+    }
+
+    public boolean isfrom() {
+        return isfrom;
+    }
+
+    public void setIsfrom(boolean isfrom) {
+        this.isfrom = isfrom;
+    }
+
+    public int getCallstate() {
+        return callstate;
+    }
+
+    public void setCallstate(int callstate) {
+        this.callstate = callstate;
+    }
+
+    public ArrayList<VideoDetailBean> getVideodetail() {
+        return videodetail;
+    }
+
+    public void setVideodetail(ArrayList<VideoDetailBean> videodetail) {
+        this.videodetail = videodetail;
     }
 }
