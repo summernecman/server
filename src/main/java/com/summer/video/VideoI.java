@@ -30,6 +30,8 @@ public interface VideoI {
 
     public BaseResBean getVideosByBothUserIdWithLimit(ContactBean contactBean);
 
+    public BaseResBean getVideosByBothUserIdWithLimitAndSeach(ContactBean contactBean);
+
     public BaseResBean addVideo(VideoBean videoBean);
 
     public BaseResBean insert_and_getid_fromvieo(VideoBean videoBean);

@@ -21,8 +21,8 @@ public class VideoCommentController {
 
     VideoCommentOpe videoCommentI = new VideoCommentOpe();
 
-    @RequestMapping(value = "/insertvideo" ,method = RequestMethod.POST)
-    public void insertvideo(HttpServletRequest req, HttpServletResponse rep){
+    @RequestMapping(value = "/addVideoComment" ,method = RequestMethod.POST)
+    public void addVideoComment(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
         VideoCommentBean v = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoCommentBean.class);
         VideoControl.printOut(rep,videoCommentI.addVideoComment(v));

@@ -20,7 +20,7 @@ public class VideoTipOpe implements VideoTipI {
 
     public BaseResBean getAllVideoTipsMap() {
         ArrayList<VideoTipBean> videotips = (ArrayList<VideoTipBean>) DBI.executeQuery(VideoTipBean.class,"select * from videotip",null).getData();
-        HashMap<Integer,VideoTipBean> data = new HashMap<Integer, VideoTipBean>();
+        HashMap<String,VideoTipBean> data = new HashMap<String, VideoTipBean>();
         for(int i=0;videotips!=null && i<videotips.size();i++){
             data.put(videotips.get(i).getType(),videotips.get(i));
         }

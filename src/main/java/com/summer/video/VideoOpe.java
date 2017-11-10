@@ -35,6 +35,13 @@ public class VideoOpe implements VideoI {
         videoBean.setVideodetail((ArrayList<VideoDetailBean>) videoDetailI.getVideoDetail(videoBean).getData());
     }
 
+    public void getVideoDetail(VideoBean1 videoBean){
+        if(videoDetailI==null){
+            videoDetailI = new VideoDetailOpe();
+        }
+        videoBean.setVideodetail((ArrayList<VideoDetailBean>) videoDetailI.getVideoDetail(videoBean).getData());
+    }
+
     public BaseResBean getVideos(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
@@ -425,6 +432,44 @@ public class VideoOpe implements VideoI {
             videos.get(i).setFromUser((UserBean) userI.getUserInfoById(from).getData());
             videos.get(i).setToUser((UserBean) userI.getUserInfoById(to).getData());
             getVideoDetail(videos.get(i));
+        }
+        baseResBean.setData(videos);
+        return baseResBean;
+    }
+
+    public BaseResBean getVideosByBothUserIdWithLimitAndSeach(ContactBean contactBean) {
+        BaseResBean baseResBean = new BaseResBean();
+
+        ArrayList<Integer> videoids = new ArrayList<Integer>();
+        ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
+
+        String tt = "";
+        if(contactBean.getType().size()>0){
+            tt+="and ";
+        }
+        for(int i=0;i<contactBean.getType().size();i++){
+            tt+="videocomment.type = "+ contactBean.getType().get(i)+" or ";
+        }
+
+        if(contactBean.getType().size()>0){
+            tt = tt.substring(0,tt.length()-" or ".length());
+        }
+        String sql = "select video.id " +
+                "from video , videocomment " +
+                "where video.id = videocomment.callid " +
+                "and videocomment.txt like ? " +
+                tt+
+                "and callstate =  ?"+
+                "and ((video.fromid = ? and video.toid = ?) " +
+                "or  (video.fromid = ? and video.toid = ?)) " +
+                "ORDER  BY  video.id DESC limit ?,? ";
+        videoids.addAll((Collection<? extends Integer>) DBI.executeQuery(VideoBean1.class,
+                sql,
+                contactBean.getTxt(),1,contactBean.getFromid(),contactBean.getToid(),contactBean.getToid(),contactBean.getFromid(),contactBean.getPagestart()*contactBean.getPagesize(),contactBean.getPagesize()).getData());
+        for(int i=0;i<videoids.size();i++){
+            VideoBean vv = new VideoBean();
+            vv.setId(videoids.get(i));
+            videos.addAll((Collection<? extends VideoBean>) getVideoByVideoId(vv).getData());
         }
         baseResBean.setData(videos);
         return baseResBean;

@@ -2,6 +2,7 @@ package com.summer.video.bean;
 
 import com.summer.base.bean.BaseBean;
 import com.summer.user.bean.UserBean;
+import com.summer.videocomment.VideoCommentBean;
 import com.summer.videodetail.VideoDetailBean;
 
 import java.util.ArrayList;
@@ -38,6 +39,10 @@ public class VideoBean extends BaseBean {
     private int callstate;
 
     private ArrayList<VideoDetailBean> videodetail;
+
+    private ArrayList<VideoCommentBean> videoCommentBeans;
+
+    private String videotips ="";
 
     public int getId() {
         return id;
@@ -149,5 +154,21 @@ public class VideoBean extends BaseBean {
 
     public void setVideodetail(ArrayList<VideoDetailBean> videodetail) {
         this.videodetail = videodetail;
+    }
+
+    public ArrayList<VideoCommentBean> getVideoCommentBeans() {
+        return videoCommentBeans;
+    }
+
+    public void setVideoCommentBeans(ArrayList<VideoCommentBean> videoCommentBeans) {
+        this.videoCommentBeans = videoCommentBeans;
+    }
+
+    public String getVideotips() {
+        return videotips;
+    }
+
+    public void setVideotips(String videotips) {
+        this.videotips = videotips;
     }
 }

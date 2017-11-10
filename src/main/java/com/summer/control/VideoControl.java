@@ -17,6 +17,10 @@ import com.summer.video.VideoOpe;
 import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 import com.summer.video.bean.VideoBeseResBean;
+import com.summer.videocomment.VideoCommentBean;
+import com.summer.videocomment.VideoCommentI;
+import com.summer.videocomment.VideoCommentOpe;
+import com.summer.videotip.VideoTipBean;
 import com.summer.videotip.VideoTipOpe;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -33,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SWSD on 2017-07-19.
@@ -52,6 +57,8 @@ public class VideoControl {
     TipOpe tipI = new TipOpe();
 
     VideoTipOpe videoTipI = new VideoTipOpe();
+
+    VideoCommentOpe videoCommentI = new VideoCommentOpe();
 
 
     @RequestMapping(value = "/userlist",method = RequestMethod.POST)
@@ -140,7 +147,48 @@ public class VideoControl {
     public void getVideosByBothUserIdWithLimit(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
         ContactBean c = GsonUtil.getInstance().fromJson(req.getParameter("data"),ContactBean.class);
-        printOut(rep,videoI.getVideosByBothUserIdWithLimit(c));
+        HashMap<Integer,VideoTipBean> data  = (HashMap<Integer, VideoTipBean>) videoTipI.getAllVideoTipsMap().getData();
+        ArrayList<VideoBean> videos = (ArrayList<VideoBean>) videoI.getVideosByBothUserIdWithLimit(c).getData();
+        for(int i=0;i<videos.size();i++){
+            ArrayList<VideoCommentBean> videoCommentBeen = (ArrayList<VideoCommentBean>) videoCommentI.getVideoCommentByCallId(videos.get(i)).getData();
+            videos.get(i).setVideoCommentBeans(videoCommentBeen);
+            for(int j=0;j<videoCommentBeen.size();j++){
+                VideoTipBean vvvv = data.get(videoCommentBeen.get(j).getType());
+                if(vvvv!=null){
+                    videos.get(i).setVideotips(vvvv.getTxt()+","+videos.get(i).getVideotips());
+                }
+            }
+            if(videos.get(i).getVideotips().length()>0){
+                videos.get(i).setVideotips(videos.get(i).getVideotips().substring(0,videos.get(i).getVideotips().length()-1));
+            }
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(videos);
+        printOut(rep,baseResBean);
+    }
+
+    @RequestMapping(value = "/getVideosByBothUserIdWithLimitAndSeach",method = RequestMethod.POST)
+    public void getVideosByBothUserIdWithLimitAndSeach(HttpServletRequest req, HttpServletResponse rep){
+        init(req,rep);
+        ContactBean c = GsonUtil.getInstance().fromJson(req.getParameter("data"),ContactBean.class);
+        HashMap<Integer,VideoTipBean> data  = (HashMap<Integer, VideoTipBean>) videoTipI.getAllVideoTipsMap().getData();
+        ArrayList<VideoBean> videos = (ArrayList<VideoBean>) videoI.getVideosByBothUserIdWithLimit(c).getData();
+        for(int i=0;i<videos.size();i++){
+            ArrayList<VideoCommentBean> videoCommentBeen = (ArrayList<VideoCommentBean>) videoCommentI.getVideoCommentByCallId(videos.get(i)).getData();
+            videos.get(i).setVideoCommentBeans(videoCommentBeen);
+            for(int j=0;j<videoCommentBeen.size();j++){
+                VideoTipBean vvvv = data.get(videoCommentBeen.get(j).getType());
+                if(vvvv!=null){
+                    videos.get(i).setVideotips(vvvv.getTxt()+","+videos.get(i).getVideotips());
+                }
+            }
+            if(videos.get(i).getVideotips().length()>0){
+                videos.get(i).setVideotips(videos.get(i).getVideotips().substring(0,videos.get(i).getVideotips().length()-1));
+            }
+        }
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(videos);
+        printOut(rep,baseResBean);
     }
 
 

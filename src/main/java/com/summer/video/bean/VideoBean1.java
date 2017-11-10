@@ -2,8 +2,11 @@ package com.summer.video.bean;
 
 import com.summer.base.bean.BaseBean;
 import com.summer.user.bean.UserBean;
+import com.summer.videocomment.VideoCommentBean;
+import com.summer.videodetail.VideoDetailBean;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 /**
  * Created by SWSD on 17-08-24.
@@ -31,6 +34,12 @@ public class VideoBean1 extends BaseBean {
     private UserBean toUser;
 
     private long uploaded;
+
+    private ArrayList<VideoDetailBean> videodetail;
+
+    private ArrayList<VideoCommentBean> videoCommentBeans;
+
+    private String videotips ="";
 
     public int getId() {
         return id;
@@ -118,5 +127,29 @@ public class VideoBean1 extends BaseBean {
 
     public void setUploaded(long uploaded) {
         this.uploaded = uploaded;
+    }
+
+    public ArrayList<VideoDetailBean> getVideodetail() {
+        return videodetail;
+    }
+
+    public void setVideodetail(ArrayList<VideoDetailBean> videodetail) {
+        this.videodetail = videodetail;
+    }
+
+    public ArrayList<VideoCommentBean> getVideoCommentBeans() {
+        return videoCommentBeans;
+    }
+
+    public void setVideoCommentBeans(ArrayList<VideoCommentBean> videoCommentBeans) {
+        this.videoCommentBeans = videoCommentBeans;
+    }
+
+    public String getVideotips() {
+        return videotips;
+    }
+
+    public void setVideotips(String videotips) {
+        this.videotips = videotips;
     }
 }

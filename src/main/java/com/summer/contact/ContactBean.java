@@ -2,6 +2,8 @@ package com.summer.contact;
 
 import com.summer.base.bean.BaseBean;
 
+import java.util.ArrayList;
+
 /**
  * Created by SWSD on 17-09-26.
  */
@@ -12,6 +14,11 @@ public class ContactBean extends BaseBean {
     private int fromid;
 
     private int toid;
+
+    private String txt;
+
+    private ArrayList<String> type;
+
 
     private int pagesize;
 
@@ -55,5 +62,21 @@ public class ContactBean extends BaseBean {
 
     public void setPagestart(int pagestart) {
         this.pagestart = pagestart;
+    }
+
+    public String getTxt() {
+        return txt;
+    }
+
+    public void setTxt(String txt) {
+        this.txt = txt;
+    }
+
+    public ArrayList<String> getType() {
+        return type;
+    }
+
+    public void setType(ArrayList<String> type) {
+        this.type = type;
     }
 }
