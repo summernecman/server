@@ -172,7 +172,7 @@ public class VideoControl {
         init(req,rep);
         ContactBean c = GsonUtil.getInstance().fromJson(req.getParameter("data"),ContactBean.class);
         HashMap<Integer,VideoTipBean> data  = (HashMap<Integer, VideoTipBean>) videoTipI.getAllVideoTipsMap().getData();
-        ArrayList<VideoBean> videos = (ArrayList<VideoBean>) videoI.getVideosByBothUserIdWithLimit(c).getData();
+        ArrayList<VideoBean> videos = (ArrayList<VideoBean>) videoI.getVideosByBothUserIdWithLimitAndSeach(c).getData();
         for(int i=0;i<videos.size();i++){
             ArrayList<VideoCommentBean> videoCommentBeen = (ArrayList<VideoCommentBean>) videoCommentI.getVideoCommentByCallId(videos.get(i)).getData();
             videos.get(i).setVideoCommentBeans(videoCommentBeen);

@@ -44,6 +44,8 @@ public class VideoBean extends BaseBean {
 
     private String videotips ="";
 
+    private int commentid;
+
     public int getId() {
         return id;
     }
@@ -170,5 +172,13 @@ public class VideoBean extends BaseBean {
 
     public void setVideotips(String videotips) {
         this.videotips = videotips;
+    }
+
+    public int getCommentid() {
+        return commentid;
+    }
+
+    public void setCommentid(int commentid) {
+        this.commentid = commentid;
     }
 }

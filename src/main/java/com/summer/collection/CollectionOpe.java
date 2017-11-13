@@ -24,7 +24,7 @@ public class CollectionOpe implements CollectionI {
     public BaseResBean getCollectionsByUserIdWithLimit(UserBean userBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CollectionBean> collectionBeen = new ArrayList<CollectionBean>();
-        String str = "select * from collection WHERE  userid = ? limit ?,?";
+        String str = "select * from collection WHERE  userid = ? ORDER BY id DESC limit ?,? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;

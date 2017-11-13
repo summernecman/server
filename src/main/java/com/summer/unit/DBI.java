@@ -1,5 +1,6 @@
 package com.summer.unit;
 
+import com.summer.base.OnFinishListener;
 import com.summer.base.bean.BaseResBean;
 
 import javax.naming.NamingException;
@@ -46,6 +47,39 @@ public class DBI {
             baseResBean.setException(true);
             baseResBean.setErrorMessage(e.getMessage()==null?e.toString():e.getMessage());
         } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        if(baseResBean.isException()){
+            return baseResBean;
+        }
+        baseResBean.setData(list);
+        return baseResBean;
+    }
+
+
+    public static  BaseResBean executeQuerySet(OnFinishListener onFinishListener,String sql, Object... params) {
+        BaseResBean baseResBean = new BaseResBean();
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        List list = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(sql);
+            for(int i = 0;params!=null && i<params.length;i++){
+                ps.setObject(i+1,params[i]);
+            }
+            set  = ps.executeQuery();
+            onFinishListener.onFinish(set);
+        } catch (NamingException e) {
+            baseResBean.setException(true);
+            baseResBean.setErrorMessage(e.getMessage()==null?e.toString():e.getMessage());
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            baseResBean.setException(true);
+            baseResBean.setErrorMessage(e.getMessage()==null?e.toString():e.getMessage());
+        }finally {
             DBUtil.close(connection,ps,set);
         }
         if(baseResBean.isException()){

@@ -1,5 +1,8 @@
 package com.summer.control;
 
+import com.summer.user.UserI;
+import com.summer.user.UserOpe;
+import com.summer.user.bean.UserBean;
 import com.summer.util.GsonUtil;
 import com.summer.video.bean.VideoBean;
 import com.summer.videodetail.VideoDetailBean;
@@ -23,6 +26,8 @@ public class VideoDetailController {
 
     VideoDetailOpe videoDetailI = new VideoDetailOpe();
 
+    UserOpe userI = new UserOpe();
+
     @RequestMapping(value = "/insertvideo" ,method = RequestMethod.POST)
     public void insertvideo(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
@@ -35,6 +40,16 @@ public class VideoDetailController {
         VideoControl.init(req,rep);
         VideoDetailBean v = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoDetailBean.class);
         VideoControl.printOut(rep,videoDetailI.updateUpload(v));
+    }
+
+    @RequestMapping(value = "/getCommentToType" ,method = RequestMethod.POST)
+    public void getCommentToType(HttpServletRequest req, HttpServletResponse rep){
+        VideoControl.init(req,rep);
+        VideoDetailBean v = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoDetailBean.class);
+        int id = (Integer) videoDetailI.getCommentOtherId(v).getData();
+        UserBean u = new UserBean();
+        u.setId(id);
+        VideoControl.printOut(rep,userI.getUserTypeInfoById(u));
     }
 
 }

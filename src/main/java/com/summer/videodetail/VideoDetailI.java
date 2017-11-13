@@ -17,5 +17,7 @@ public interface VideoDetailI {
 
     public BaseResBean updateUpload(VideoDetailBean v);
 
+    public BaseResBean getCommentOtherId(VideoDetailBean v);
+
 
 }

@@ -1,5 +1,6 @@
 package com.summer.video;
 
+import com.summer.base.OnFinishListener;
 import com.summer.base.bean.BaseResBean;
 import com.summer.contact.ContactBean;
 import com.summer.contact.HistoryBean;
@@ -440,7 +441,7 @@ public class VideoOpe implements VideoI {
     public BaseResBean getVideosByBothUserIdWithLimitAndSeach(ContactBean contactBean) {
         BaseResBean baseResBean = new BaseResBean();
 
-        ArrayList<Integer> videoids = new ArrayList<Integer>();
+        final ArrayList<Integer> videoids = new ArrayList<Integer>();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
 
         String tt = "";
@@ -454,18 +455,33 @@ public class VideoOpe implements VideoI {
         if(contactBean.getType().size()>0){
             tt = tt.substring(0,tt.length()-" or ".length());
         }
-        String sql = "select video.id " +
-                "from video , videocomment " +
-                "where video.id = videocomment.callid " +
-                "and videocomment.txt like ? " +
+        String sql = "select distinct video.id " +
+                " from video , videocomment " +
+                " where video.id = videocomment.callid " +
+                " and videocomment.txt like ? " +
                 tt+
-                "and callstate =  ?"+
-                "and ((video.fromid = ? and video.toid = ?) " +
-                "or  (video.fromid = ? and video.toid = ?)) " +
-                "ORDER  BY  video.id DESC limit ?,? ";
-        videoids.addAll((Collection<? extends Integer>) DBI.executeQuery(VideoBean1.class,
+                " and callstate =  ? "+
+                " and ((video.fromid = ? and video.toid = ?) " +
+                " or  (video.fromid = ? and video.toid = ?)) " +
+                " ORDER  BY  video.id DESC limit ?,? ";
+
+
+
+        DBI.executeQuerySet(new OnFinishListener() {
+                                public void onFinish(Object o) {
+                                    ResultSet set = (ResultSet) o;
+                                    try {
+                                        while (set.next()){
+                                            videoids.add(set.getInt(set.findColumn("id")));
+                                        }
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            },
                 sql,
-                contactBean.getTxt(),1,contactBean.getFromid(),contactBean.getToid(),contactBean.getToid(),contactBean.getFromid(),contactBean.getPagestart()*contactBean.getPagesize(),contactBean.getPagesize()).getData());
+                "%"+contactBean.getTxt()+"%", 1, contactBean.getFromid(), contactBean.getToid(), contactBean.getToid(), contactBean.getFromid(), contactBean.getPagestart() * contactBean.getPagesize(), contactBean.getPagesize());
+
         for(int i=0;i<videoids.size();i++){
             VideoBean vv = new VideoBean();
             vv.setId(videoids.get(i));

@@ -734,6 +734,58 @@ public class CommentOpe implements CommentI {
         return baseResBean;
     }
 
+    public BaseResBean getVideoCommentByVideoIdAndCommentId(VideoBean videoBean) {
+        BaseResBean baseResBean = new BaseResBean();
+        ArrayList<CommentBean> comments = new ArrayList<CommentBean>();
+        String str = "select * from comment WHERE  videoid = ? and fromid = ?  ORDER  BY  id DESC";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,videoBean.getId());
+            ps.setInt(2,videoBean.getCommentid());
+            set  = ps.executeQuery();
+            while (set.next()){
+                CommentBean commentBean = new CommentBean();
+                commentBean.setCreated(set.getString(set.findColumn("created")));
+                commentBean.setFromuser(set.getString(set.findColumn("fromuser")));
+                commentBean.setId(set.getInt(set.findColumn("id")));
+                commentBean.setRate(set.getFloat(set.findColumn("rate")));
+                commentBean.setRemark(set.getString(set.findColumn("remark")));
+                commentBean.setTips(set.getString(set.findColumn("tips")));
+                commentBean.setTouser(set.getString(set.findColumn("touser")));
+                commentBean.setVideoname(set.getString(set.findColumn("videoname")));
+                commentBean.setFromid(set.getInt(set.findColumn("fromid")));
+                commentBean.setToid(set.getInt(set.findColumn("toid")));
+                comments.add(commentBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+
+        if(tipI ==null){
+            tipI = new TipOpe();
+        }
+        HashMap<Integer,String> map = (HashMap<Integer, String>) tipI.getMapTips().getData();
+        for(int i=0;comments!=null&&i<comments.size();i++){
+            TipsBean tipsBeen  = GsonUtil.getInstance().fromJson(comments.get(i).getTips(),TipsBean.class);
+            for(int j=0;tipsBeen!=null&&tipsBeen.getTipBeen()!=null && j<tipsBeen.getTipBeen().size();j++){
+                if(map.get(tipsBeen.getTipBeen().get(j).getPosition())!=null){
+                    tipsBeen.getTipBeen().get(j).setTip(map.get(tipsBeen.getTipBeen().get(j).getPosition()));
+                }
+            }
+            comments.get(i).setTips(GsonUtil.getInstance().toJson(tipsBeen));
+        }
+        baseResBean.setData(comments);
+        return baseResBean;
+    }
+
     public BaseResBean getVideoCommentsByVideoId(VideoBean videoBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<CommentBean> comments = new ArrayList<CommentBean>();

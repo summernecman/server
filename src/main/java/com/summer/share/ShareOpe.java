@@ -73,7 +73,7 @@ public class ShareOpe implements ShareI {
 
     public BaseResBean getSharesByReceipt(ShareBean shareBean) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select * from share WHERE receiptid = ? ";
+        String str = "select * from share WHERE receiptid = ?  ORDER BY id DESC ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -114,7 +114,7 @@ public class ShareOpe implements ShareI {
 
     public BaseResBean getSharesByReceiptWithLimit(ShareBean shareBean) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "select * from share WHERE receiptid = ? limit ?,?";
+        String str = "select * from share WHERE receiptid = ?  ORDER BY id DESC limit ?,? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;

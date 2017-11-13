@@ -225,6 +225,14 @@ public class CommentControl {
         VideoControl.printOut(rep,commentI.getVideoCommentByVideoIdAndFrom(videoBean));
     }
 
+
+    @RequestMapping(value = "/getVideoCommentByVideoIdAndCommentId",method = RequestMethod.POST)
+    public void getVideoCommentByVideoIdAndCommentId(HttpServletRequest req, HttpServletResponse rep){
+        VideoControl.init(req,rep);
+        VideoBean videoBean = GsonUtil.getInstance().fromJson(req.getParameter("data"),VideoBean.class);
+        VideoControl.printOut(rep,commentI.getVideoCommentByVideoIdAndCommentId(videoBean));
+    }
+
     @RequestMapping(value = "/getVideoCommentRateLevelByuserId",method = RequestMethod.POST)
     public void getVideoCommentRateLevelByuserId(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
