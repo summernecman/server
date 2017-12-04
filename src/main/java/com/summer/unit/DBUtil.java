@@ -1,22 +1,100 @@
 package com.summer.unit;
 
 
+import org.springframework.jdbc.support.JdbcUtils;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class DBUtil {
 
 
-    public static Connection  getConnection() throws NamingException,SQLException {
+    public static  String url = "jdbc:mysql://127.0.0.1/server";
+    public static  String name = "com.mysql.jdbc.Driver";
+    public static  String user = "root";
+    public static  String password = "summer";
+
+    public static  String driverName = "";
+
+    public static  String record = "c://Siweisoft/files";
+
+
+    /*
+     * 静态代码块，类初始化时加载数据库驱动
+     */
+    static {
+        try {
+            // 加载dbinfo.properties配置文件
+            File file = new File(DBUtil.class.getResource("/").toString());
+            String s = file.getParent().substring("file:/".length(),file.getParent().length());
+            File f = new File(s+"/dbinfo.properties");
+            InputStream in = new FileInputStream(f);
+            Properties properties = new Properties();
+            properties.load(in);
+
+            // 获取驱动名称、url、用户名以及密码
+            driverName = properties.getProperty("driverName");
+            url = properties.getProperty("url");
+            user = properties.getProperty("user");
+            password = properties.getProperty("password");
+
+
+
+            File f2 = new File(s+"/path.properties");
+            InputStream in2 = new FileInputStream(f2);
+            Properties properties2 = new Properties();
+            properties2.load(in2);
+
+            // 获取驱动名称、url、用户名以及密码
+            record = properties2.getProperty("files");
+
+
+
+            // 加载驱动
+            Class.forName(driverName);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+//    public static Connection  getConnection() throws NamingException,SQLException {
+//        Connection result=null;
+//        InitialContext ctx=new InitialContext();
+//        DataSource ds=(DataSource)ctx.lookup("java:/comp/env/jdbc/server");
+//        result =ds.getConnection();
+//        return result;
+//    }
+//
+//    public static Connection  getConnection() throws SQLException,NamingException {
+//        Connection result=null;
+//        try {
+//            Class.forName(name);//指定连接类型
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        result = DriverManager.getConnection(url, user, password);//获取连接
+//        return result;
+//    }
+
+
+    public static Connection  getConnection() throws SQLException,NamingException {
         Connection result=null;
-        InitialContext ctx=new InitialContext();
-        DataSource ds=(DataSource)ctx.lookup("java:/comp/env/jdbc/server");
-        result =ds.getConnection();
+        result = DriverManager.getConnection(url, user, password);//获取连接
         return result;
     }
 

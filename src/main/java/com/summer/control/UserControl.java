@@ -12,6 +12,7 @@ import com.summer.em.EMOpe;
 import com.summer.em.bean.EMUserBean;
 import com.summer.em.bean.EMUserStatusBean;
 import com.summer.network.HttpRequest;
+import com.summer.unit.DBUtil;
 import com.summer.unit.UnitBean;
 import com.summer.unit.UnitOpe;
 import com.summer.user.UserI;
@@ -274,7 +275,7 @@ public class UserControl {
     public void addFiles(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
         DiskFileItemFactory factory = new DiskFileItemFactory();
-        File parent = new File("c://files");
+        File parent = new File(DBUtil.record);
         if(!parent.exists()){
             parent.mkdirs();
         }
@@ -327,7 +328,7 @@ public class UserControl {
     public void addFile(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
         DiskFileItemFactory factory = new DiskFileItemFactory();
-        File parent = new File("c://files");
+        File parent = new File(DBUtil.record);
         if(!parent.exists()){
             parent.mkdirs();
         }

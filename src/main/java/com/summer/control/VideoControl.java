@@ -8,6 +8,7 @@ import com.summer.comment.bean.TipBean;
 import com.summer.comment.bean.TipsBean;
 import com.summer.contact.ContactBean;
 import com.summer.tip.TipOpe;
+import com.summer.unit.DBUtil;
 import com.summer.user.UserOpe;
 import com.summer.user.bean.CommentBean;
 import com.summer.user.bean.UserBean;
@@ -388,7 +389,7 @@ public class VideoControl {
     public void addFiles(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
         DiskFileItemFactory factory = new DiskFileItemFactory();
-        File parent = new File("c://files");
+        File parent = new File(DBUtil.record);
         if(!parent.exists()){
             parent.mkdirs();
         }
