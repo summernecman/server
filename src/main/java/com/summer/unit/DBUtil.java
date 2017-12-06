@@ -20,7 +20,7 @@ import java.util.Properties;
 public class DBUtil {
 
 
-    public static  String url = "jdbc:mysql://127.0.0.1/server";
+    public static  String url = "jdbc:mysql://127.0.0.1/server111111111";
     public static  String name = "com.mysql.jdbc.Driver";
     public static  String user = "root";
     public static  String password = "summer";
@@ -36,7 +36,8 @@ public class DBUtil {
     static {
         try {
             // 加载dbinfo.properties配置文件
-            File file = new File(DBUtil.class.getResource("/").toString());
+            File file = new File(DBUtil.class.getResource("/").toString().replace("%20"," "));
+            url+=(file.getPath()+"**"+file.exists());
             String s = file.getParent().substring("file:/".length(),file.getParent().length());
             File f = new File(s+"/dbinfo.properties");
             InputStream in = new FileInputStream(f);
