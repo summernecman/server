@@ -159,19 +159,20 @@ public class UserControl {
     public void registEMAccount(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
         UserBean data = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
-        if((Boolean) (userI.isUserExist(data).getData())){
-            BaseResBean baseResBean = new BaseResBean();
-            baseResBean.setException(true);
-            baseResBean.setErrorMessage("用户已存在");
-            VideoControl.printOut(rep,baseResBean);
-            return;
-        }
+
+
+
         EMUserBean emUserBean = new EMUserBean(data.getPhone(),"111111");
         BaseResBean res = HttpRequest.postJson("https://a1.easemob.com/1122170703115322/service/users", GsonUtil.getInstance().toJson(emUserBean),Global.emTokenBean.getAccess_token());
         System.out.println(res.getData());
 
         if(!res.isException()){
-            VideoControl.printOut(rep,userI.addUser(data));
+            if(!(Boolean) (userI.isUserExist(data).getData())){
+                VideoControl.printOut(rep,userI.addUser(data));
+            }else{
+                VideoControl.printOut(rep,data);
+            }
+
         }else{
             BaseResBean baseResBean = new BaseResBean();
             baseResBean.setException(true);
