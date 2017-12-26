@@ -2,6 +2,7 @@ package com.summer.control;
 
 import com.summer.crash.CrashBean;
 import com.summer.crash.CrashOpe;
+import com.summer.crash.GetCrashBean;
 import com.summer.util.GsonUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +25,13 @@ public class CrashControl {
         VideoControl.init(req,rep);
         CrashBean crashBean  = GsonUtil.getInstance().fromJson(req.getParameter("data"),CrashBean.class);
         VideoControl.printOut(rep,crashI.sendCrash(crashBean));
+    }
+
+
+    @RequestMapping(value = "/getCrash",method = RequestMethod.POST)
+    public void getCrashs(HttpServletRequest req, HttpServletResponse rep){
+        VideoControl.init(req,rep);
+        GetCrashBean getCrashBean  = GsonUtil.getInstance().fromJson(req.getParameter("data"),GetCrashBean.class);
+        VideoControl.printOut(rep,crashI.getCrash(getCrashBean));
     }
 }

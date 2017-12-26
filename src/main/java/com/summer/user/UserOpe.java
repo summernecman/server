@@ -666,7 +666,7 @@ public class UserOpe  implements UserI{
         ArrayList<UserBean> list = allUserBean.getOther();
         for(int i=0;list!=null && i<list.size();i++){
             UserBean userBean = (UserBean) getUserTypeInfoByPhone(list.get(i)).getData();
-            if(allUserBean.getMe().getUsertype()==userBean.getUsertype()){
+            if(allUserBean.getMe().getPhone()==userBean.getPhone()){
                 list.remove(i);
                 i--;
             }

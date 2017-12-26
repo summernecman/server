@@ -29,6 +29,10 @@ public class DBUtil {
 
     public static  String record = "c://Siweisoft/files";
 
+    public static  String getDBStr(){
+        return url+"@@@"+name+"@@@"+user+"@@@"+password+"@@@"+driverName+"@@@"+record;
+    }
+
 
     /*
      * 静态代码块，类初始化时加载数据库驱动

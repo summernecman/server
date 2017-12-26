@@ -16,6 +16,8 @@ public class CrashBean extends BaseBean {
 
     private UserBean userBean;
 
+    private String platform;
+
     public int getId() {
         return id;
     }
@@ -46,5 +48,13 @@ public class CrashBean extends BaseBean {
 
     public void setUserBean(UserBean userBean) {
         this.userBean = userBean;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 }
