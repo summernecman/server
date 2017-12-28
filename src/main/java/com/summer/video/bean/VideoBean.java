@@ -46,6 +46,10 @@ public class VideoBean extends BaseBean {
 
     private int commentid;
 
+    private boolean isRecord;
+
+    private boolean video;
+
     public int getId() {
         return id;
     }
@@ -180,5 +184,21 @@ public class VideoBean extends BaseBean {
 
     public void setCommentid(int commentid) {
         this.commentid = commentid;
+    }
+
+    public boolean isRecord() {
+        return isRecord;
+    }
+
+    public void setRecord(boolean record) {
+        isRecord = record;
+    }
+
+    public boolean isVideo() {
+        return video;
+    }
+
+    public void setVideo(boolean video) {
+        this.video = video;
     }
 }

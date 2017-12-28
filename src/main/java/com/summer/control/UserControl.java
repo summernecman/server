@@ -154,6 +154,27 @@ public class UserControl {
     }
 
 
+    @RequestMapping(value = "/getUserContactsByUserIdAndType",method = RequestMethod.POST)
+    public void getUserContactsByUserIdAndType(HttpServletRequest req, HttpServletResponse rep){
+        VideoControl.init(req,rep);
+        UserBean data = GsonUtil.getInstance().fromJson(req.getParameter("data"),UserBean.class);
+//        1.除了客户不能和客户通讯，其他的都可以互相通讯。
+//        2.客户好友列表显示所属区域所有客服和工程师。
+//        3.客服和工程师显示配置人员
+
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        if(data.getUsertype()==2){
+            users.addAll((ArrayList<UserBean>) userI.getUserAreaUser(data).getData());
+        }else{
+            //我的全部联系人
+            users.addAll((ArrayList<UserBean>) contactI.getContactsByUserIdWithOutAgree(data).getData());
+        }
+
+        BaseResBean baseResBean = new BaseResBean();
+        baseResBean.setData(users);
+        VideoControl.printOut(rep,baseResBean);
+    }
+
 
     @RequestMapping(value = "/registEMAccount",method = RequestMethod.POST)
     public void registEMAccount(HttpServletRequest req, HttpServletResponse rep){
