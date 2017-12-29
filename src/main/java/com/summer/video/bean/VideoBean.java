@@ -12,6 +12,12 @@ import java.util.ArrayList;
  */
 public class VideoBean extends BaseBean {
 
+    public static int type_video_record = 1;
+
+    public static int type_video = 2;
+
+    public static int type_voice = 3;
+
     private int id;
 
     private String file;
@@ -49,6 +55,8 @@ public class VideoBean extends BaseBean {
     private boolean isRecord;
 
     private boolean video;
+
+    private int type;
 
     public int getId() {
         return id;
@@ -200,5 +208,13 @@ public class VideoBean extends BaseBean {
 
     public void setVideo(boolean video) {
         this.video = video;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

@@ -385,7 +385,7 @@ public class VideoOpe implements VideoI {
     public BaseResBean getVideosByBothUserIdWithLimit(ContactBean contactBean) {
         BaseResBean baseResBean = new BaseResBean();
         ArrayList<VideoBean> videos = new ArrayList<VideoBean>();
-        String str = "select * from video WHERE callstate =  ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) ORDER  BY  id DESC limit ?,? ";
+        String str = "select * from video WHERE callstate =  ? and  ((fromid = ? and toid = ?) or  (fromid = ? and toid = ?)) and type = 1 ORDER  BY  id DESC limit ?,? ";
         PreparedStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -533,7 +533,7 @@ public class VideoOpe implements VideoI {
 
     public BaseResBean insert_and_getid_fromvieo(VideoBean videoBean) {
         BaseResBean baseResBean = new BaseResBean();
-        String str = "{call insert_and_getid_fromvieo(?,?,?,?,?,?,?,?)}";
+        String str = "{call insert_and_getid_fromvieo(?,?,?,?,?,?,?,?,?)}";
         CallableStatement ps = null;
         ResultSet set = null;
         Connection connection = null;
@@ -547,9 +547,10 @@ public class VideoOpe implements VideoI {
             ps.setString(5,videoBean.getFromphone());
             ps.setString(6,videoBean.getTophone());
             ps.setLong(7,videoBean.getTimenum());
-            ps.registerOutParameter(8,Types.INTEGER);
+            ps.setLong(8,videoBean.getType());
+            ps.registerOutParameter(9,Types.INTEGER);
             ps.execute();
-            videoBean.setId(ps.getInt(8));
+            videoBean.setId(ps.getInt(9));
         } catch (NamingException e) {
             e.printStackTrace();
         } catch (SQLException e) {
