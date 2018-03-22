@@ -80,9 +80,15 @@ public interface UserI  {
 
     public BaseResBean getUserListWithType(UserBean userBean);
 
+    public BaseResBean getServerAndEngneerInfo();
+
+    public BaseResBean getServerAndEngneershortInfo();
+
     public BaseResBean getUserListWithTypeAndLimit(UserBean userBean);
 
     public BaseResBean getUserNumWithType(UserBean userBean);
+
+    public BaseResBean getServerAndEngneerNum();
 
     public BaseResBean addUser(UserBean userBean);
 

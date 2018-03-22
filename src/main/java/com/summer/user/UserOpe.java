@@ -878,6 +878,116 @@ public class UserOpe  implements UserI{
         return baseResBean;
     }
 
+
+    public BaseResBean getServerAndEngneerInfo() {
+        UserBaseResBean baseResBean = new UserBaseResBean();
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        String str = "select * from user WHERE usertype = ? or usertype = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,UserBean.USER_TYPE_ENGINEER);
+            ps.setInt(2,UserBean.USER_TYPE_SERVER);
+            set  = ps.executeQuery();
+            while (set.next()){
+                UserBean userBean = new UserBean();
+                userBean.setId(set.getInt(set.findColumn("id")));
+                userBean.setPhone(set.getString(set.findColumn("phone")));
+                userBean.setPwd(set.getString(set.findColumn("pwd")));
+                userBean.setUsertype(set.getInt(set.findColumn("usertype")));
+                userBean.setBelong(set.getString(set.findColumn("belong")));
+                userBean.setName(set.getString(set.findColumn("name")));
+                userBean.setRemark(set.getString(set.findColumn("remark")));
+                userBean.setState(set.getInt(set.findColumn("state")));
+                userBean.setHeadurl(set.getString(set.findColumn("headurl")));
+                userBean.setUuuid(set.getString(set.findColumn("uuuid")));
+                userBean.setUnitid(set.getInt(set.findColumn("unitid")));
+                users.add(userBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        if(unitI==null){
+            unitI = new UnitOpe();
+        }
+        if(videoI ==null){
+            videoI = new VideoOpe();
+        }
+
+        if(commentI==null){
+            commentI = new CommentOpe();
+
+        }
+        if(contactI==null){
+            contactI=new ContactOpe();
+        }
+
+        if(userAreaI==null){
+            userAreaI = new UserAreaOpe();
+        }
+        for(int i=0;i<users.size();i++){
+            UnitBean u = new UnitBean(users.get(i).getUnitid());
+            users.get(i).setUnit((UnitBean) unitI.getUnitById(u).getData());
+            VideoTimeBean videoTimeBean = (VideoTimeBean) videoI.getUserCallInfo(users.get(i)).getData();
+            users.get(i).setCallinfo(videoTimeBean);
+            users.get(i).setAvg((Float) commentI.getVideoRateCommentByUseId(users.get(i)).getData());
+            users.get(i).setContacts((ArrayList<UserBean>) contactI.getContactsByUserIdWithOutAgree(users.get(i)).getData());
+            users.get(i).setArea((ArrayList<AreaBean>) userAreaI.getUserAreaById(users.get(i)).getData());
+        }
+
+        baseResBean.setData(users);
+        return baseResBean;
+    }
+
+    public BaseResBean getServerAndEngneershortInfo() {
+        UserBaseResBean baseResBean = new UserBaseResBean();
+        ArrayList<UserBean> users = new ArrayList<UserBean>();
+        String str = "select * from user WHERE usertype = ? or usertype = ? ";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,UserBean.USER_TYPE_ENGINEER);
+            ps.setInt(2,UserBean.USER_TYPE_SERVER);
+            set  = ps.executeQuery();
+            while (set.next()){
+                UserBean userBean = new UserBean();
+                userBean.setId(set.getInt(set.findColumn("id")));
+                userBean.setPhone(set.getString(set.findColumn("phone")));
+                userBean.setPwd(set.getString(set.findColumn("pwd")));
+                userBean.setUsertype(set.getInt(set.findColumn("usertype")));
+                userBean.setBelong(set.getString(set.findColumn("belong")));
+                userBean.setName(set.getString(set.findColumn("name")));
+                userBean.setRemark(set.getString(set.findColumn("remark")));
+                userBean.setState(set.getInt(set.findColumn("state")));
+                userBean.setHeadurl(set.getString(set.findColumn("headurl")));
+                userBean.setUuuid(set.getString(set.findColumn("uuuid")));
+                userBean.setUnitid(set.getInt(set.findColumn("unitid")));
+                users.add(userBean);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+
+        baseResBean.setData(users);
+        return baseResBean;
+    }
+
+
+
     public BaseResBean getUserListWithTypeAndLimit(UserBean user) {
         UserBaseResBean baseResBean = new UserBaseResBean();
         ArrayList<UserBean> users = new ArrayList<UserBean>();
@@ -957,6 +1067,33 @@ public class UserOpe  implements UserI{
             connection = DBUtil.getConnection();
             ps = connection.prepareStatement(str);
             ps.setInt(1,user.getUsertype());
+            set = ps.executeQuery();
+            set.next();
+            num = set.getInt(1);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(connection,ps,set);
+        }
+        baseResBean.setData(num);
+        return baseResBean;
+    }
+
+
+    public BaseResBean getServerAndEngneerNum() {
+        BaseResBean baseResBean = new BaseResBean();
+        String str = "select count(id) from user WHERE usertype = ? or usertype  = ?";
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        Connection connection = null;
+        int num = 0;
+        try {
+            connection = DBUtil.getConnection();
+            ps = connection.prepareStatement(str);
+            ps.setInt(1,UserBean.USER_TYPE_SERVER);
+            ps.setInt(2,UserBean.USER_TYPE_ENGINEER);
             set = ps.executeQuery();
             set.next();
             num = set.getInt(1);

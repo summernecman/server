@@ -434,6 +434,25 @@ public class UserControl {
     }
 
 
+    @RequestMapping(value = "/getServerAndEngneerInfo",method = RequestMethod.POST)
+    public void getServerAndEngneerInfo(HttpServletRequest req, HttpServletResponse rep){
+        VideoControl.init(req,rep);
+        UserBaseResBean userBaseResBean = (UserBaseResBean) userI.getServerAndEngneerInfo();
+        userBaseResBean.setTotal((Integer) userI.getServerAndEngneerNum().getData());
+        VideoControl.printOut(rep,userBaseResBean);
+    }
+
+    @RequestMapping(value = "/getServerAndEngneershortInfo",method = RequestMethod.POST)
+    public void getServerAndEngneershortInfo(HttpServletRequest req, HttpServletResponse rep){
+        VideoControl.init(req,rep);
+        UserBaseResBean userBaseResBean = (UserBaseResBean) userI.getServerAndEngneershortInfo();
+        userBaseResBean.setTotal((Integer) userI.getServerAndEngneerNum().getData());
+        VideoControl.printOut(rep,userBaseResBean);
+    }
+
+
+
+
     @RequestMapping(value = "/getUsersInfoWithLimit",method = RequestMethod.POST)
     public void getUsersInfoWithLimit(HttpServletRequest req, HttpServletResponse rep){
         VideoControl.init(req,rep);
