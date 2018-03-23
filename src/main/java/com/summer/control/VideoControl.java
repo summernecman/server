@@ -7,6 +7,9 @@ import com.summer.comment.CommentOpe;
 import com.summer.comment.bean.TipBean;
 import com.summer.comment.bean.TipsBean;
 import com.summer.contact.ContactBean;
+import com.summer.mybatis.DBTools;
+import com.summer.mybatis.entity.User;
+import com.summer.mybatis.mapper.UserMapper;
 import com.summer.tip.TipOpe;
 import com.summer.unit.DBUtil;
 import com.summer.user.UserOpe;
@@ -19,7 +22,6 @@ import com.summer.video.bean.LimitBean;
 import com.summer.video.bean.VideoBean;
 import com.summer.video.bean.VideoBeseResBean;
 import com.summer.videocomment.VideoCommentBean;
-import com.summer.videocomment.VideoCommentI;
 import com.summer.videocomment.VideoCommentOpe;
 import com.summer.videotip.VideoTipBean;
 import com.summer.videotip.VideoTipOpe;
@@ -27,6 +29,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -363,6 +366,28 @@ public class VideoControl {
     @RequestMapping(value = "/getAllVideosByGet",method = RequestMethod.GET)
     public void getAllVideosByGet(HttpServletRequest req, HttpServletResponse rep){
         init(req,rep);
+
+        SqlSession session = DBTools.getSession();
+        UserMapper userMapper = session.getMapper(UserMapper.class);
+        User user = new User();
+        user.setArea("");
+        user.setName("summer");
+        user.setUuuid("uuid");
+        user.setUsertype(1);
+        user.setState(1);
+        user.setPwd("1234567");
+        user.setUnitid(1);
+        user.setRemark("fdfd");
+        user.setRate(1.4f);
+        user.setPhone("1875154847");
+        user.setChattime(0l);
+
+
+        userMapper.insert(user);
+        System.out.println(GsonUtil.getInstance().toJson(user));
+
+        session.commit();
+
         printOut(rep,videoI.getAllVideos());
     }
 

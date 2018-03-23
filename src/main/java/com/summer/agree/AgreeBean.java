@@ -1,10 +1,15 @@
 package com.summer.agree;
 
 import com.summer.base.bean.BaseBean;
+import jdk.nashorn.internal.objects.annotations.Getter;
+import jdk.nashorn.internal.objects.annotations.Setter;
 
 /**
  * Created by SWSD on 17-09-12.
  */
+
+@lombok.Getter
+@lombok.Setter
 public class AgreeBean extends BaseBean {
 
     private int id;
@@ -18,30 +23,6 @@ public class AgreeBean extends BaseBean {
 
     public AgreeBean(int commentid, int agreeid) {
         this.commentid = commentid;
-        this.agreeid = agreeid;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getCommentid() {
-        return commentid;
-    }
-
-    public void setCommentid(int commentid) {
-        this.commentid = commentid;
-    }
-
-    public int getAgreeid() {
-        return agreeid;
-    }
-
-    public void setAgreeid(int agreeid) {
         this.agreeid = agreeid;
     }
 }

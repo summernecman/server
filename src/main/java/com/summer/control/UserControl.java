@@ -42,7 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by SWSD on 17-08-30.
